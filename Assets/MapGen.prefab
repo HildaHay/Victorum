@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4954842645006975018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4954842645006975016}
+  - component: {fileID: 4954842645006975017}
+  m_Layer: 0
+  m_Name: MapGen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4954842645006975016
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4954842645006975018}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4954842645006975017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4954842645006975018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ef570da33ef346418ede443cf953a55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
+  grassTile: {fileID: 6622056777648452395, guid: 5c076a95fd1356c4595b1f7ffed71982,
+    type: 3}
+  sandTile: {fileID: 8976584420132885943, guid: 25c7d886b2fd9654c93ca1da18984489,
+    type: 3}
+  dirtTile: {fileID: 7445982729142136475, guid: c13623c2e6eccbc419e124d66fb485fc,
+    type: 3}
+  stoneTile: {fileID: 1637392663116852833, guid: b1bc8165df4021442a13a164497faa92,
+    type: 3}
+  waterTile: {fileID: 5679519308693705190, guid: fdc481aeac09b7042ab9fa99e617df85,
+    type: 3}
+  knight: {fileID: 4756081786176530174, guid: 230c58fe595551b4e9d282bd81bc6a95, type: 3}
