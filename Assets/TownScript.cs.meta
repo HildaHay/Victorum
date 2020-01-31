@@ -3,7 +3,12 @@ guid: 2a039d660c374d342a2e518138941194
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - unitPrefab: {instanceID: 0}
+  - playerTownSprite: {fileID: -2228487531470528590, guid: 9edad0c31a717be45a321c11da7f7597,
+      type: 3}
+  - enemyTownSprite: {fileID: -5263330345866281169, guid: 9edad0c31a717be45a321c11da7f7597,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

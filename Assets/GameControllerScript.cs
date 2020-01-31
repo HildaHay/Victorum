@@ -10,19 +10,39 @@ public class GameControllerScript : MonoBehaviour
     public GameObject[,] terrainGrid;
     public GameObject[,] unitGrid;
 
+    // Prefabs
+
+    // Terrain
     public GameObject grassTile;
     public GameObject sandTile;
     public GameObject dirtTile;
     public GameObject stoneTile;
     public GameObject waterTile;
 
-    public List<GameObject> unitList;
-
+    // Units
+    public GameObject playerControllerPrefab;
     public GameObject knightPrefab;
     public GameObject strongholdPrefab;
 
+    public List<GameObject> unitList;
+
+
+    // Game Mechanics Objects
+    // public GameObject PlayerController;
+    // PlayerControllerScript playerControllerScript;
+    public GameObject[] playerControllerObjects;
+    PlayerControllerScript[] playerControllers;
+
+    public GameObject UIControllerObject;
+    UIControllerScript uiController;
+
     int mapWidth;
     int mapHeight;
+    
+    public int currPlayer;
+    public int numPlayers = 2;
+
+    bool endTurnPressed;
 
     // Start is called before the first frame update
     void Start()
@@ -33,115 +53,57 @@ public class GameControllerScript : MonoBehaviour
         terrainGrid = new GameObject[mapWidth, mapHeight];
         unitGrid = new GameObject[mapWidth, mapHeight];
 
+        uiController = UIControllerObject.GetComponent<UIControllerScript>();
+
+        playerControllerObjects = new GameObject[2];
+        playerControllers = new PlayerControllerScript[2];
+
+        for (int i = 0; i < numPlayers; i++)
+        {
+            playerControllerObjects[i] = Instantiate(playerControllerPrefab);
+            playerControllers[i] = playerControllerObjects[i].GetComponent<PlayerControllerScript>();
+            playerControllers[i].gameControllerScript = this;
+            playerControllers[i].uiScript = uiController;
+        }
+
         GenerateMap(mapWidth, mapHeight);
+
+        currPlayer = 0;
+        uiController.SetCurrPlayer(currPlayer);
+
+        endTurnPressed = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetKeyDown("up"))
         {
 
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector3(0, 0, 1));
-
-            if (hit)
-            {
-                if (hit.transform.gameObject.tag == "Unit")
-                {
-                    selected = hit.transform.gameObject;
-                    print(selected);
-                }
-                else if (hit.transform.gameObject.tag == "Town")
-                {
-                    int x = hit.transform.gameObject.GetComponent<TownScript>().mapX;
-                    int y = hit.transform.gameObject.GetComponent<TownScript>().mapY - 1;
-
-                    if (terrainGrid[x, y] != null)
-                    {
-                        GameObject newUnit = hit.transform.gameObject.GetComponent<TownScript>().CreateUnit();
-                        if (newUnit != null)
-                        {
-                            unitList.Add(newUnit);
-                            terrainGrid[x, y] = newUnit;
-                            newUnit.GetComponent<KnightScript>().mapX = x;
-                            newUnit.GetComponent<KnightScript>().mapY = y;
-
-                            int[] screenCoords = mapToScreenCoordinates(x, y);
-                            newUnit.transform.position = new Vector3(screenCoords[0], screenCoords[1], -1);
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("Space occupied");
-                    }
-
-                    // spawnUnit(x, y - 1);
-
-                    print("Spawning unit");
-
-                } else if(hit.transform.gameObject.tag == "Terrain")
-                {
-                    if (selected)
-                    {
-                        if (hit.transform.gameObject.GetComponent<TileScript>().walkable)
-                        {
-                            moveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
-                        }
-                    }
-                }
-                
-                // Do something with the object that was hit by the raycast.
-            }
         }
 
-        bool turnOver = true;
+        selected = playerControllers[0].getPlayerSelection(selected);
 
-        foreach (GameObject u in unitList)
+        if(endTurnPressed)
         {
-            if (u.tag == "Unit")
-            {
-                if (u.GetComponent<KnightScript>().CanMove())
-                {
-                    turnOver = false;
-                }
-            } else if (u.tag == "Town")
-            {
-                if (u.GetComponent<TownScript>().CanBuy())
-                {
-                    turnOver = false;
-                }
-            }
-        }
-
-        if (turnOver)
-        {
-            Debug.Log("All units have moved, starting new turn");
-            foreach (GameObject u in unitList)
-            {
-                if (u.tag == "Unit")
-                {
-                    u.GetComponent<KnightScript>().ResetMovePoints();
-                }
-                if (u.tag == "Town")
-                {
-                    u.GetComponent<TownScript>().TurnStart();
-                }
-            }
+            print("e");
+            EndTurn();
         }
     }
 
-    public GameObject spawnStronghold(int x, int y)
+    public GameObject SpawnStronghold(int x, int y, int p)
     {
         if (terrainGrid[x, y] != null)
         {
-            int[] screencoords = mapToScreenCoordinates(x, y);
+            int[] screencoords = MapToScreenCoordinates(x, y);
 
             GameObject newStronghold = Instantiate(strongholdPrefab, new Vector3(screencoords[0], screencoords[1], -1), Quaternion.identity);
             unitList.Add(newStronghold);
             terrainGrid[x, y] = newStronghold;
             newStronghold.GetComponent<TownScript>().mapX = x;
             newStronghold.GetComponent<TownScript>().mapY = y;
-            return null;
+            newStronghold.GetComponent<TownScript>().player = p;
+            return newStronghold;
         }
         else
         {
@@ -193,20 +155,19 @@ public class GameControllerScript : MonoBehaviour
             }
         }
 
-        spawnStronghold(wOffset, hOffset);
+        GameObject playerTown = SpawnStronghold(wOffset - 3, hOffset, 0);
+        GameObject enemyTown = SpawnStronghold(wOffset + 3, hOffset, 1);
     }
 
-    public int[] mapToScreenCoordinates(int x, int y)
+    public int[] MapToScreenCoordinates(int x, int y)
     {
         int a = x - mapWidth / 2;
         int b = y - mapHeight / 2;
 
-        print(a + ", " + b);
-
         return new int[] { x - mapWidth / 2, -y + mapHeight / 2};
     }
 
-    bool moveUnit(GameObject unit, int x, int y)
+    public bool MoveUnit(GameObject unit, int x, int y)
     {
         if (unitGrid[x, y] != null)
         {
@@ -229,16 +190,36 @@ public class GameControllerScript : MonoBehaviour
                 unitScript.mapX = x;
                 unitScript.mapY = y;
 
-                int[] newScreenCords = mapToScreenCoordinates(x, y);
+                int[] newScreenCords = MapToScreenCoordinates(x, y);
                 unit.transform.position = new Vector3(newScreenCords[0], newScreenCords[1], -1);
+
+                uiController.ShowUnitInfo(unit);
 
                 return true;
             }
             else
             {
+                uiController.ShowUnitInfo(unit);
                 Debug.Log("Out of movement");
+                
                 return false;
             }
         }
+    }
+
+    public void EndTurnButtonPressed()
+    {
+        endTurnPressed = true;
+    }
+
+    public void EndTurn()
+    {
+        playerControllers[0].EndTurn();
+        endTurnPressed = false;
+    }
+
+    public int[] GetMapDimensions()
+    {
+        return new int[] {mapHeight, mapWidth };
     }
 }

@@ -9,6 +9,10 @@ public class KnightScript : MonoBehaviour
     int maxMovement;
     int movementPoints;
 
+    int player;
+
+    static string unitName = "Knight";
+
     public int mapX;
     public int mapY;
     void Start()
@@ -39,12 +43,28 @@ public class KnightScript : MonoBehaviour
         }
     }
 
+    public string GetName()
+    {
+        return unitName;
+    }
+
+    public int GetPlayer()
+    {
+        return player;
+    }
+
+    public int SetPlayer(int p)
+    {
+        player = p;
+        return player;
+    }
+
     public bool CanMove()
     {
         return movementPoints > 0;
     }
 
-    public int getMovePoints()
+    public int GetMovePoints()
     {
         return movementPoints;
     }

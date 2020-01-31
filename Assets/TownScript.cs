@@ -12,11 +12,28 @@ public class TownScript : MonoBehaviour
 
     public GameObject unitPrefab;
 
+    public Sprite playerTownSprite;
+    public Sprite enemyTownSprite;
+    public SpriteRenderer sRenderer;
+
+    // public bool isPlayer;
+    public int player;
+
     // Start is called before the first frame update
     void Start()
     {
         goldPerTurn = 1;
         gold = 0;
+
+        sRenderer = gameObject.GetComponent<SpriteRenderer>();
+
+        if(player == 0)
+        {
+            sRenderer.sprite = playerTownSprite;
+        } else
+        {
+            sRenderer.sprite = enemyTownSprite;
+        }
     }
 
     // Update is called once per frame
@@ -33,6 +50,16 @@ public class TownScript : MonoBehaviour
     public bool CanBuy()
     {
         return gold > 0;
+    }
+
+    public int GetGold()
+    {
+        return gold;
+    }
+
+    public int GetPlayer()
+    {
+        return player;
     }
 
     public GameObject CreateUnit()

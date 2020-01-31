@@ -51,6 +51,10 @@ MonoBehaviour:
   goldPerTurn: 0
   unitPrefab: {fileID: 4756081786176530174, guid: 230c58fe595551b4e9d282bd81bc6a95,
     type: 3}
+  playerTownSprite: {fileID: -2228487531470528590, guid: 9edad0c31a717be45a321c11da7f7597,
+    type: 3}
+  enemyTownSprite: {fileID: -5263330345866281169, guid: 9edad0c31a717be45a321c11da7f7597,
+    type: 3}
 --- !u!212 &5734647812586531818
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -89,8 +93,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5753180877012514534, guid: 9edad0c31a717be45a321c11da7f7597,
-    type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -98,7 +101,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &4853050217736683117
