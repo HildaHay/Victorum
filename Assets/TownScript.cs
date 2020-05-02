@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class TownScript : MonoBehaviour
 {
@@ -19,9 +20,22 @@ public class TownScript : MonoBehaviour
     // public bool isPlayer;
     public int player;
 
+    public GameObject gameControllerObject;
+    GameControllerScript gameController;
+
+    public GameObject playerControllerObject;
+    PlayerControllerScript playerController;
+
+    public GameObject uiControllerObject;
+    UIControllerScript uiController;
+
     // Start is called before the first frame update
     void Start()
     {
+        gameController = gameControllerObject.GetComponent<GameControllerScript>();
+
+        uiController = uiControllerObject.GetComponent<UIControllerScript>();
+
         goldPerTurn = 1;
         gold = 0;
 
@@ -45,6 +59,7 @@ public class TownScript : MonoBehaviour
     public void TurnStart()
     {
         gold += goldPerTurn;
+        Debug.Log("goldadd");
     }
 
     public bool CanBuy()
@@ -62,13 +77,20 @@ public class TownScript : MonoBehaviour
         return player;
     }
 
-    public GameObject CreateUnit()
+    public void OpenMenu()
     {
-        if(gold >= 1)
+        uiController.OpenTownMenu();
+    }
+
+    public GameObject BuildUnit()
+    {
+        // actual unit spawning handled by GameControllerScript
+
+        if (gold >= 1)
         {
             gold -= 1;
-            GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
-            return newUnit;
+
+            return gameController.SpawnUnit(unitPrefab, player);
         }
         else
         {
@@ -76,4 +98,19 @@ public class TownScript : MonoBehaviour
             return null;
         }
     }
+
+    //public GameObject CreateUnit()
+    //{
+    //    if(gold >= 1)
+    //    {
+    //        gold -= 1;
+    //        GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
+    //        return newUnit;
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Out of gold");
+    //        return null;
+    //    }
+    //}
 }

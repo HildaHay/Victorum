@@ -1,27 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerControllerScript : MonoBehaviour
 {
-    public List<GameObject> playerUnits;
-    private GameObject selected;
+    // GameObject selected;
 
-    public GameObject gameController;
-    public GameControllerScript gameControllerScript;
-    public GameObject uiController;
-    public UIControllerScript uiScript;
+    GameControllerScript gameController;
+    UIControllerScript uiController;
 
-    public List<GameObject> terrainGrid;
-    public List<GameObject> playerUnitList;
-    public List<GameObject> allUnitList;
+    List<GameObject> playerUnitList;
+    GameObject mainTown;
 
     int playerNumber;
+
+    Camera mainCamera;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        mainCamera = Camera.main;
     }
 
     // Update is called once per frame
@@ -30,24 +29,41 @@ public class PlayerControllerScript : MonoBehaviour
 
     }
 
+    public void Initialize(int p, GameControllerScript gC, UIControllerScript uiC)
+    {
+        playerNumber = p;
+        gameController = gC;
+        uiController = uiC;
+
+        playerUnitList = new List<GameObject>();
+    }
+
     GameObject selectUnit(GameObject u)
     {
-        selected = u;
 
-        uiScript.ShowUnitInfo(u);
-
-        return u;
+        if(u.GetComponent<KnightScript>().GetPlayer() == playerNumber)
+        {
+            uiController.SetSelectedObject(u);
+            return u;
+        } else
+        {
+            return null;
+        }
     }
     GameObject selectTown(GameObject t)
     {
-        selected = t;
+        if (t.GetComponent<TownScript>().GetPlayer() == playerNumber)
+        {
+            uiController.SetSelectedObject(t);
 
-        uiScript.ShowTownInfo(t);
-
-        return t;
+            return t;
+        } else
+        {
+            return null;
+        }
     }
 
-    GameObject townRecruit(GameObject t)
+    GameObject TownRecruit(GameObject t)
     {
         TownScript townScript = t.GetComponent<TownScript>();
 
@@ -56,13 +72,13 @@ public class PlayerControllerScript : MonoBehaviour
 
         GameObject newUnit = null;
 
-        if (gameControllerScript.terrainGrid[x, y] != null)
+        if (gameController.unitGrid[x, y] == null)
         {
-            newUnit = townScript.CreateUnit();
+            newUnit = townScript.BuildUnit();
             if (newUnit != null)
             {
-                allUnitList.Add(newUnit);
-                gameControllerScript.terrainGrid[x, y] = newUnit;
+                gameController.unitList.Add(newUnit);
+                gameController.unitGrid[x, y] = newUnit;
                 newUnit.GetComponent<KnightScript>().mapX = x;
                 newUnit.GetComponent<KnightScript>().mapY = y;
 
@@ -75,14 +91,23 @@ public class PlayerControllerScript : MonoBehaviour
             Debug.Log("Space occupied");
         }
 
-        uiScript.ShowTownInfo(t);
+        // uiScript.SetSelectedObject(t);
 
         return newUnit;
     }
 
+    public void combat(KnightScript attacker, KnightScript defender)
+    {
+        int aDmg = attacker.attackDamage();
+        int dDmg = defender.attackDamage();
+
+        defender.receiveDamage(aDmg);
+        attacker.receiveDamage(dDmg);
+    }
+
     public GameObject getPlayerSelection(GameObject s)
     {
-        selected = s;
+        GameObject selected = s;    // Necessary?
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -93,17 +118,50 @@ public class PlayerControllerScript : MonoBehaviour
             {
                 if (hit.transform.gameObject.tag == "Unit")
                 {
-                    selectUnit(hit.transform.gameObject);
+                    if (selected)
+                    {
+                        // check if we can attack the unit
+                        if (selected.tag == "Unit")
+                        {
+                            KnightScript attacker = selected.GetComponent<KnightScript>();
+                            KnightScript target = hit.transform.gameObject.GetComponent<KnightScript>();
+                            if (attacker.GetComponent<KnightScript>().player == playerNumber
+                                && target.GetComponent<KnightScript>().player != playerNumber)
+                            {
+                                if(attacker.tryAttack())
+                                {
+                                    target.receiveDamage(attacker.attackDamage());
+                                }
+                            }
+                            else
+                            {
+                                // select the unit
+                                selected = selectUnit(hit.transform.gameObject);
+                            }
+                        }
+                        else
+                        {
+                            // select the unit
+                            selected = selectUnit(hit.transform.gameObject);
+                        }
+                    }
+                    else
+                    {
+                        selected = selectUnit(hit.transform.gameObject);
+                    }
                 }
                 else if (hit.transform.gameObject.tag == "Town")
                 {
-                    if(hit.transform.gameObject == selected)
+                    /*if(hit.transform.gameObject == selected)
                     {
-                        townRecruit(hit.transform.gameObject);
+                        selected = townRecruit(hit.transform.gameObject);
                     } else
                     {
-                        selectTown(hit.transform.gameObject);
-                    }
+                        selected = selectTown(hit.transform.gameObject);
+                    }*/
+
+                    selected = selectTown(hit.transform.gameObject);
+                    selected.GetComponent<TownScript>().OpenMenu();
 
                 }
                 else if (hit.transform.gameObject.tag == "Terrain")
@@ -116,7 +174,7 @@ public class PlayerControllerScript : MonoBehaviour
                     {
                         if (hit.transform.gameObject.GetComponent<TileScript>().walkable)
                         {
-                            gameControllerScript.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                            gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                         }
                     }
                     else
@@ -132,8 +190,15 @@ public class PlayerControllerScript : MonoBehaviour
         return selected;
     }
 
+    public void StartTurn()
+    {
+        mainCamera.transform.position = mainTown.transform.position + new Vector3(0, 0, -10);
+    }
+
     public void EndTurn()
     {
+        uiController.SetSelectedObject(null);
+
         foreach(GameObject u in playerUnitList)
         {
             if(u.tag == "Unit")
@@ -144,18 +209,36 @@ public class PlayerControllerScript : MonoBehaviour
             {
                 u.GetComponent<TownScript>().TurnStart();
             }
-            gameControllerScript.currPlayer = (gameControllerScript.currPlayer + 1) % gameControllerScript.numPlayers;
-            uiScript.SetCurrPlayer(gameControllerScript.currPlayer);
         }
     }
 
     public int[] mapToScreenCoordinates(int x, int y)
     {
-        int[] mapDimensions = gameControllerScript.GetMapDimensions();
+        int[] mapDimensions = gameController.GetMapDimensions();
 
         int a = x - mapDimensions[1] / 2;
         int b = -y + mapDimensions[0] / 2;
 
         return new int[] { a, b };
+    }
+
+    public GameObject addUnit(GameObject newUnit)
+    {
+        playerUnitList.Add(newUnit);
+
+        return newUnit;
+    }
+
+    public GameObject setMainTown(GameObject t)
+    {
+        mainTown = t;
+        return mainTown;
+    } 
+
+    public bool deleteUnit(GameObject u)
+    {
+        playerUnitList.Remove(u);
+
+        return true;
     }
 }

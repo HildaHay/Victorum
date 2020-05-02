@@ -6,19 +6,36 @@ public class KnightScript : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    int maxMovement;
+    int maxMovement = 3;
     int movementPoints;
 
-    int player;
+    int maxHP = 10;
+    int HP;
+
+    int baseDamage = 2;
+    int defense = 0;
+
+    public int player;
 
     static string unitName = "Knight";
 
     public int mapX;
     public int mapY;
+
+    GameControllerScript gameController;
+
     void Start()
     {
-        maxMovement = 3;
+        // maxMovement = 3;
         movementPoints = maxMovement;
+
+        HP = maxHP;
+    }
+
+    public void Initialize(int p, GameControllerScript gC)
+    {
+        player = p;
+        gameController = gC;
     }
 
     // Update is called once per frame
@@ -28,6 +45,43 @@ public class KnightScript : MonoBehaviour
         {
             movementPoints = maxMovement;
         }
+    }
+
+    public bool tryAttack()
+    {
+        if(movementPoints > 0)
+        {
+            movementPoints--;
+            return true;
+        } else
+        {
+            Debug.Log("Out of movement.");
+            return false;
+        }
+    }
+
+    public int attackDamage()
+    {
+        return baseDamage;
+    }
+
+    public bool receiveDamage(int d) {
+        HP -= System.Math.Max(d - defense, 0);
+
+        if(HP <= 0)
+        {
+            die();
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
+    bool die()
+    {
+        gameController.DeleteUnit(this.gameObject);
+        return true;
     }
 
     public bool TryMove(int x)
