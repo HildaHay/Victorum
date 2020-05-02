@@ -52,23 +52,18 @@ public class PlayerControllerScript : MonoBehaviour
     }
     GameObject selectTown(GameObject t)
     {
-        if (t.GetComponent<TownScript>().GetPlayer() == playerNumber)
-        {
-            uiController.SetSelectedObject(t);
-
-            return t;
-        } else
-        {
-            return null;
-        }
+        uiController.SetSelectedObject(t);
+        return t;
     }
 
-    GameObject TownRecruit(GameObject t)
+    public GameObject TownRecruit(GameObject t)
     {
         TownScript townScript = t.GetComponent<TownScript>();
 
         int x = townScript.mapX;
-        int y = townScript.mapY - 1;
+        int y = townScript.mapY + 1;
+
+        print(x + ", " + y);
 
         GameObject newUnit = null;
 
@@ -96,14 +91,14 @@ public class PlayerControllerScript : MonoBehaviour
         return newUnit;
     }
 
-    public void combat(KnightScript attacker, KnightScript defender)
+    /* public void Combat(KnightScript attacker, KnightScript defender)
     {
         int aDmg = attacker.attackDamage();
         int dDmg = defender.attackDamage();
 
         defender.receiveDamage(aDmg);
         attacker.receiveDamage(dDmg);
-    }
+    } */
 
     public GameObject getPlayerSelection(GameObject s)
     {
@@ -128,7 +123,7 @@ public class PlayerControllerScript : MonoBehaviour
                             if (attacker.GetComponent<KnightScript>().player == playerNumber
                                 && target.GetComponent<KnightScript>().player != playerNumber)
                             {
-                                if(attacker.tryAttack())
+                                if(attacker.TryAttack(target))
                                 {
                                     target.receiveDamage(attacker.attackDamage());
                                 }
@@ -161,7 +156,10 @@ public class PlayerControllerScript : MonoBehaviour
                     }*/
 
                     selected = selectTown(hit.transform.gameObject);
-                    selected.GetComponent<TownScript>().OpenMenu();
+                    if (selected.GetComponent<TownScript>().player == playerNumber)
+                    {
+                        selected.GetComponent<TownScript>().OpenMenu();
+                    }
 
                 }
                 else if (hit.transform.gameObject.tag == "Terrain")
@@ -193,23 +191,23 @@ public class PlayerControllerScript : MonoBehaviour
     public void StartTurn()
     {
         mainCamera.transform.position = mainTown.transform.position + new Vector3(0, 0, -10);
+
+        foreach (GameObject u in playerUnitList)
+        {
+            if (u.tag == "Unit")
+            {
+                u.GetComponent<KnightScript>().ResetMovePoints();
+            }
+            if (u.tag == "Town")
+            {
+                u.GetComponent<TownScript>().TurnStart();
+            }
+        }
     }
 
     public void EndTurn()
     {
         uiController.SetSelectedObject(null);
-
-        foreach(GameObject u in playerUnitList)
-        {
-            if(u.tag == "Unit")
-            {
-                u.GetComponent<KnightScript>().ResetMovePoints();
-            }
-            if(u.tag == "Town")
-            {
-                u.GetComponent<TownScript>().TurnStart();
-            }
-        }
     }
 
     public int[] mapToScreenCoordinates(int x, int y)

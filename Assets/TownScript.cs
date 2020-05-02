@@ -34,6 +34,8 @@ public class TownScript : MonoBehaviour
     {
         gameController = gameControllerObject.GetComponent<GameControllerScript>();
 
+        playerController = playerControllerObject.GetComponent<PlayerControllerScript>();
+
         uiController = uiControllerObject.GetComponent<UIControllerScript>();
 
         goldPerTurn = 1;
@@ -80,6 +82,11 @@ public class TownScript : MonoBehaviour
     public void OpenMenu()
     {
         uiController.OpenTownMenu();
+    }
+
+    public void OrderBuildUnit()
+    {
+        playerController.TownRecruit(this.gameObject);
     }
 
     public GameObject BuildUnit()

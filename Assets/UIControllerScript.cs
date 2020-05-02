@@ -100,7 +100,7 @@ public class UIControllerScript : MonoBehaviour
 
     public void OrderBuildUnit()
     {
-        selectedObject.GetComponent<TownScript>().BuildUnit();
+        selectedObject.GetComponent<TownScript>().OrderBuildUnit();
     }
 
     public void CloseTownMenu()

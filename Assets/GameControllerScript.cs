@@ -46,6 +46,8 @@ public class GameControllerScript : MonoBehaviour
 
     bool endTurnPressed;
 
+    bool startGame;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -75,11 +77,19 @@ public class GameControllerScript : MonoBehaviour
         uiController.SetCurrPlayer(currPlayer);
 
         endTurnPressed = false;
+
+        startGame = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(startGame == true)
+        {
+            startGame = false;
+            StartTurn();
+        }
+
         if(Input.GetKeyDown("up"))
         {
             mainCamera.transform.position += new Vector3(0, 1, 0);
@@ -113,15 +123,18 @@ public class GameControllerScript : MonoBehaviour
 
             GameObject newStronghold = Instantiate(strongholdPrefab, new Vector3(screencoords[0], screencoords[1], -1), Quaternion.identity);
 
-            newStronghold.GetComponent<TownScript>().gameControllerObject = this.transform.gameObject;
-            newStronghold.GetComponent<TownScript>().uiControllerObject = UIControllerObject;
+            TownScript townScript = newStronghold.GetComponent<TownScript>();
+
+            townScript.gameControllerObject = this.transform.gameObject;
+            townScript.playerControllerObject = playerControllerObjects[p];
+            townScript.uiControllerObject = UIControllerObject;
 
             unitList.Add(newStronghold);
 
             unitGrid[x, y] = newStronghold;
-            newStronghold.GetComponent<TownScript>().mapX = x;
-            newStronghold.GetComponent<TownScript>().mapY = y;
-            newStronghold.GetComponent<TownScript>().player = p;
+            townScript.mapX = x;
+            townScript.mapY = y;
+            townScript.player = p;
 
             playerControllers[p].addUnit(newStronghold);
 
@@ -273,19 +286,21 @@ public class GameControllerScript : MonoBehaviour
         endTurnPressed = true;
     }
 
-    public void EndTurn()
+    public void StartTurn()
     {
-        selected = null;
-        
-        playerControllers[currPlayer].EndTurn();
-
-        currPlayer = (currPlayer + 1) % numPlayers;
-        
         uiController.SetCurrPlayer(currPlayer);
 
         playerControllers[currPlayer].StartTurn();
+    }
 
+    public void EndTurn()
+    {
         endTurnPressed = false;
+        selected = null;
+        playerControllers[currPlayer].EndTurn();
+        currPlayer = (currPlayer + 1) % numPlayers;
+
+        StartTurn();
     }
 
     public int[] GetMapDimensions()

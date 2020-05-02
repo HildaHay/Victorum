@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,8 @@ public class KnightScript : MonoBehaviour
 
     int baseDamage = 2;
     int defense = 0;
+
+    int range = 1;
 
     public int player;
 
@@ -47,17 +50,23 @@ public class KnightScript : MonoBehaviour
         }
     }
 
-    public bool tryAttack()
+    public bool TryAttack(KnightScript target)
     {
-        if(movementPoints > 0)
-        {
-            movementPoints--;
-            return true;
-        } else
+        int distance = (Math.Abs(mapX - target.mapX) + Math.Abs(mapY - target.mapY));
+        print(distance);
+
+        if(distance > range) {
+            Debug.Log("Out of range");
+            return false;
+        }
+        if(movementPoints <= 0)
         {
             Debug.Log("Out of movement.");
             return false;
         }
+
+        movementPoints--;
+        return true;
     }
 
     public int attackDamage()
