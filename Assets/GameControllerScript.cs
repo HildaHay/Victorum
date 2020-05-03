@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameControllerScript : MonoBehaviour
 {
@@ -51,12 +54,15 @@ public class GameControllerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mapWidth = 17;
-        mapHeight = 11;
+        // mapWidth = 17;
+        // mapHeight = 11;
+
+        mapWidth = 51;
+        mapHeight = 51;
 
         mainCamera = Camera.main;
 
-        terrainGrid = new GameObject[mapWidth, mapHeight];
+        // terrainGrid = new GameObject[mapWidth, mapHeight];
         unitGrid = new GameObject[mapWidth, mapHeight];
 
         uiController = UIControllerObject.GetComponent<UIControllerScript>();
@@ -105,6 +111,25 @@ public class GameControllerScript : MonoBehaviour
         if (Input.GetKeyDown("left"))
         {
             mainCamera.transform.position += new Vector3(-1, 0, 0);
+        }
+        if (Input.GetKeyDown(KeyCode.PageUp))
+        {
+            if (mainCamera.orthographicSize < 100)
+            {
+                mainCamera.orthographicSize += 1;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.PageDown))
+        {
+            if (mainCamera.orthographicSize > 1)
+            {
+                mainCamera.orthographicSize -= 1;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Home))
+        {
+            mainCamera.orthographicSize = 7;
+            
         }
 
         selected = playerControllers[currPlayer].getPlayerSelection(selected);
@@ -186,7 +211,7 @@ public class GameControllerScript : MonoBehaviour
 
     void GenerateMap(int w, int h)
     {
-        int wOffset = w / 2;
+        /* int wOffset = w / 2;
         int hOffset = h / 2;
 
         for (int i = 0; i < w; i++)
@@ -230,7 +255,100 @@ public class GameControllerScript : MonoBehaviour
         GameObject playerTown = SpawnStronghold(wOffset - 3, hOffset, 0);
         playerControllers[0].setMainTown(playerTown);
         GameObject enemyTown = SpawnStronghold(wOffset + 3, hOffset, 1);
-        playerControllers[1].setMainTown(enemyTown);
+        playerControllers[1].setMainTown(enemyTown); */
+
+        Debug.Log("Generating terrain");
+
+        // int mapsize = 31;
+        // int mapcenter = mapsize / 2;
+        int landsize = 500;
+
+        int wOffset = w / 2;
+        int hOffset = h / 2;
+
+        int[][] map = new int[mapWidth][];
+        for (int i = 0; i < mapWidth; i++)
+        {
+            map[i] = new int[mapHeight];
+        }
+
+        List<int[]> land = new List<int[]>();
+
+        int[] landStart = { mapWidth / 2, mapHeight / 2 };
+
+        land.Add(landStart);
+
+        while(land.Count < landsize)
+        {
+
+            // Pick a random tile to start at
+
+            int r = UnityEngine.Random.Range(0, land.Count());
+            int[] newLand = { land[r][0], land[r][1] };
+
+            // Move one tile in a random direction
+            // WARNING: there is nothing to stop this from going off the map!
+            // This will be fixed later but for now just hope it doesn't happen
+            int dir = UnityEngine.Random.Range(0, 4);
+            switch (dir)
+            {
+                case 0: // shift up
+                    newLand[0] -= 1;
+                    break;
+                case 1: // shift down
+                    newLand[0] += 1;
+                    break;
+                case 2: // shift left
+                    newLand[1] -= 1;
+                    break;
+                default: // shift right
+                    newLand[1] += 1;
+                    break;
+            }
+
+            if(map[newLand[0]][newLand[1]] == 0)
+            {
+                map[newLand[0]][newLand[1]] = 1;
+                land.Add(newLand);
+            }
+        }
+
+        Debug.Log("Terrain completed");
+
+        string s = "";
+
+        for(int i = 0; i < mapWidth; i++)
+        {
+            for(int j = 0; j < mapHeight; j++) {
+                s = s + map[i][j].ToString();
+            }
+            s = s + "\n";
+        }
+
+        Debug.Log(s);
+
+        terrainGrid = new GameObject[mapWidth, mapHeight];
+
+        for(int i = 0; i < mapWidth; i++)
+        {
+            for(int j = 0; j < mapHeight; j++)
+            {
+                GameObject newTile;
+                if(map[i][j] == 0)
+                {
+                    newTile = Instantiate(waterTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
+                    terrainGrid[i,j] = newTile;
+                } else
+                {
+                    newTile = Instantiate(grassTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
+                }
+
+                newTile.GetComponent<TileScript>().mapX = i;
+                newTile.GetComponent<TileScript>().mapY = j;
+
+                terrainGrid[i, j] = newTile;
+            }
+        }
     }
 
     public int[] MapToScreenCoordinates(int x, int y)

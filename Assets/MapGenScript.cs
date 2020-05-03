@@ -18,7 +18,7 @@ public class MapGenScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameObject[,] terrainGrid = new GameObject[9,9];
+        GameObject[,] terrainGrid = new GameObject[9, 9];
 
         for(int i = -4; i <= 4; i++)
         {
@@ -64,7 +64,8 @@ public class MapGenScript : MonoBehaviour
 
         units.Add(Instantiate(knight, new Vector3(0, 0, -1), Quaternion.identity));
         units[0].GetComponent<KnightScript>().mapX = 0 + 3;
-        units[0].GetComponent<KnightScript>().mapY = 0 + 3;
+        units[0].GetComponent<KnightScript>().mapY = 0 + 3; 
+
     }
 
     // Update is called once per frame
