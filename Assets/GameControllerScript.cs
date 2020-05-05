@@ -349,6 +349,18 @@ public class GameControllerScript : MonoBehaviour
                 terrainGrid[i, j] = newTile;
             }
         }
+
+        // create starting towns
+
+        int r2 = UnityEngine.Random.Range(0, land.Count());
+        int[] playerTownLocation = { land[r2][0], land[r2][1] };
+        GameObject playerTown = SpawnStronghold(playerTownLocation[0], playerTownLocation[1], 0);
+        playerControllers[0].setMainTown(playerTown);
+
+        r2 = UnityEngine.Random.Range(0, land.Count());
+        int[] enemyTownLocation = { land[r2][0], land[r2][1] };
+        GameObject enemyTown = SpawnStronghold(enemyTownLocation[0], enemyTownLocation[1], 1);
+        playerControllers[1].setMainTown(enemyTown);
     }
 
     public int[] MapToScreenCoordinates(int x, int y)
