@@ -543,6 +543,9 @@ MonoBehaviour:
     type: 3}
   waterTile: {fileID: 5679519308693705190, guid: fdc481aeac09b7042ab9fa99e617df85,
     type: 3}
+  treeTile: {fileID: 7159196299320742324, guid: 9da4c1e7060253c4bb37801855fba62e,
+    type: 3}
+  tileWeights: 
   playerControllerPrefab: {fileID: 8423272147467407230, guid: 5d1e1465bc20f574e9838eeee5c2dbfe,
     type: 3}
   knightPrefab: {fileID: 4756081786176530174, guid: 230c58fe595551b4e9d282bd81bc6a95,

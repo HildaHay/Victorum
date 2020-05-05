@@ -23,6 +23,9 @@ public class GameControllerScript : MonoBehaviour
     public GameObject dirtTile;
     public GameObject stoneTile;
     public GameObject waterTile;
+    public GameObject treeTile;
+
+    public int[] tileWeights;
 
     // Units
     public GameObject playerControllerPrefab;
@@ -329,10 +332,15 @@ public class GameControllerScript : MonoBehaviour
 
         terrainGrid = new GameObject[mapWidth, mapHeight];
 
+        int currTerrainType = 1;
+
         for(int i = 0; i < mapWidth; i++)
         {
             for(int j = 0; j < mapHeight; j++)
             {
+
+                int r = UnityEngine.Random.Range(1, 6);
+
                 GameObject newTile;
                 if(map[i][j] == 0)
                 {
@@ -340,7 +348,7 @@ public class GameControllerScript : MonoBehaviour
                     terrainGrid[i,j] = newTile;
                 } else
                 {
-                    newTile = Instantiate(grassTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
+                    newTile = Instantiate(getTerrainByID(r), new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
                 }
 
                 newTile.GetComponent<TileScript>().mapX = i;
@@ -369,6 +377,28 @@ public class GameControllerScript : MonoBehaviour
         int b = y - mapHeight / 2;
 
         return new int[] { x - mapWidth / 2, -y + mapHeight / 2};
+    }
+
+    public GameObject getTerrainByID(int id)
+    {
+        switch (id)
+        {
+            case 0:
+                return waterTile;
+            case 1:
+                return grassTile;
+            case 2:
+                return sandTile;
+            case 3:
+                return dirtTile;
+            case 4:
+                return stoneTile;
+            case 5:
+                return treeTile;
+            default:
+                return waterTile;
+                break;
+        }
     }
 
     public bool MoveUnit(GameObject unit, int x, int y)
