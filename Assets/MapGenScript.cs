@@ -63,8 +63,8 @@ public class MapGenScript : MonoBehaviour
         units = new List<GameObject>();
 
         units.Add(Instantiate(knight, new Vector3(0, 0, -1), Quaternion.identity));
-        units[0].GetComponent<KnightScript>().mapX = 0 + 3;
-        units[0].GetComponent<KnightScript>().mapY = 0 + 3; 
+        units[0].GetComponent<UnitScript>().mapX = 0 + 3;
+        units[0].GetComponent<UnitScript>().mapY = 0 + 3; 
 
     }
 
@@ -75,7 +75,7 @@ public class MapGenScript : MonoBehaviour
 
         foreach(GameObject u in units)
         {
-            if(u.GetComponent<KnightScript>().CanMove())
+            if(u.GetComponent<UnitScript>().CanMove())
             {
                 turnOver = false;
             }
@@ -86,7 +86,7 @@ public class MapGenScript : MonoBehaviour
             Debug.Log("All units have moved, starting new turn");
             foreach(GameObject u in units)
             {
-                u.GetComponent<KnightScript>().ResetMovePoints();
+                u.GetComponent<UnitScript>().ResetMovePoints();
             }
         }
     }

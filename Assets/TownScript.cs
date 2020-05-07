@@ -5,11 +5,14 @@ using UnityEngine.UIElements;
 
 public class TownScript : MonoBehaviour
 {
+    public int maxHP;
+    int HP;
+
     public int mapX;
     public int mapY;
 
-    public int gold;
     public int goldPerTurn;
+    int gold;
 
     public GameObject unitPrefab;
 
@@ -38,8 +41,9 @@ public class TownScript : MonoBehaviour
 
         uiController = uiControllerObject.GetComponent<UIControllerScript>();
 
-        goldPerTurn = 1;
         gold = 0;
+
+        HP = maxHP;
 
         sRenderer = gameObject.GetComponent<SpriteRenderer>();
 
@@ -104,6 +108,32 @@ public class TownScript : MonoBehaviour
             Debug.Log("Out of gold");
             return null;
         }
+    }
+
+    public bool receiveDamage(int d)
+    {
+        HP -= System.Math.Max(d /* - defense*/, 0);
+
+        if (HP <= 0)
+        {
+            die();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool die()
+    {
+        gameController.DeleteTown(this.gameObject);
+        return true;
+    }
+
+    public int[] xy()
+    {
+        return new int[] { mapX, mapY };
     }
 
     //public GameObject CreateUnit()

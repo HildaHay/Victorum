@@ -73,7 +73,7 @@ public class UIControllerScript : MonoBehaviour
     {
         selectedObject = unit;
 
-        KnightScript script = selectedObject.GetComponent<KnightScript>();
+        UnitScript script = selectedObject.GetComponent<UnitScript>();
 
         selectionText.text = script.GetName() + "\n" + "Player: " + script.GetPlayer().ToString() + "\n"
             + "Movement: " + script.GetMovePoints().ToString();

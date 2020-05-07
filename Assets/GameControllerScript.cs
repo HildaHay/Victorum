@@ -29,10 +29,10 @@ public class GameControllerScript : MonoBehaviour
 
     // Units
     public GameObject playerControllerPrefab;
-    public GameObject knightPrefab;
     public GameObject strongholdPrefab;
 
     public List<GameObject> unitList;
+    public List<GameObject> townList;   // could possibly be combined with unitList
 
 
     // Game Mechanics Objects
@@ -43,6 +43,8 @@ public class GameControllerScript : MonoBehaviour
 
     public GameObject UIControllerObject;
     UIControllerScript uiController;
+
+    public GameObject highlightBox;
 
     int mapWidth;
     int mapHeight;
@@ -135,6 +137,12 @@ public class GameControllerScript : MonoBehaviour
             
         }
 
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector3(0, 0, 1));
+
+        if (hit) {
+            highlightBox.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, -1);
+        }
+
         selected = playerControllers[currPlayer].getPlayerSelection(selected);
 
         if(endTurnPressed)
@@ -157,7 +165,7 @@ public class GameControllerScript : MonoBehaviour
             townScript.playerControllerObject = playerControllerObjects[p];
             townScript.uiControllerObject = UIControllerObject;
 
-            unitList.Add(newStronghold);
+            townList.Add(newStronghold);
 
             unitGrid[x, y] = newStronghold;
             townScript.mapX = x;
@@ -178,7 +186,7 @@ public class GameControllerScript : MonoBehaviour
     public GameObject SpawnUnit(GameObject unitPrefab, int p)
     {
         GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
-        newUnit.GetComponent<KnightScript>().Initialize(p, this);
+        newUnit.GetComponent<UnitScript>().Initialize(p, this);
 
         unitList.Add(newUnit);
 
@@ -194,20 +202,46 @@ public class GameControllerScript : MonoBehaviour
             return false;
         }
 
-        int[] unitCoords = u.GetComponent<KnightScript>().xy();
+        int[] unitCoords = u.GetComponent<UnitScript>().xy();
 
         print(unitCoords[0]);
         print(unitCoords[1]);
 
         print(unitGrid[unitCoords[0], unitCoords[1]]);
 
-        KnightScript unitScript = u.GetComponent<KnightScript>();
+        UnitScript unitScript = u.GetComponent<UnitScript>();
 
         unitGrid[unitScript.mapX, unitScript.mapY] = null;
 
-        playerControllers[u.GetComponent<KnightScript>().player].deleteUnit(u);
+        playerControllers[u.GetComponent<UnitScript>().GetPlayer()].deleteUnit(u);
 
         Destroy(u);
+
+        return true;
+    }
+
+    public bool DeleteTown(GameObject t)    // could possibly be combined with deleteUnit
+    {
+        if (!townList.Remove(t))
+        {
+            Debug.Log("Error: failed to delete unit from list");
+            return false;
+        }
+
+        int[] townCoords = t.GetComponent<TownScript>().xy();
+
+        print(townCoords[0]);
+        print(townCoords[1]);
+
+        print(unitGrid[townCoords[0], townCoords[1]]);
+
+        TownScript unitScript = t.GetComponent<TownScript>();
+
+        unitGrid[unitScript.mapX, unitScript.mapY] = null;
+
+        playerControllers[t.GetComponent<TownScript>().GetPlayer()].deleteTown(t);
+
+        Destroy(t);
 
         return true;
     }
@@ -332,8 +366,6 @@ public class GameControllerScript : MonoBehaviour
 
         terrainGrid = new GameObject[mapWidth, mapHeight];
 
-        int currTerrainType = 1;
-
         for(int i = 0; i < mapWidth; i++)
         {
             for(int j = 0; j < mapHeight; j++)
@@ -397,7 +429,6 @@ public class GameControllerScript : MonoBehaviour
                 return treeTile;
             default:
                 return waterTile;
-                break;
         }
     }
 
@@ -411,7 +442,7 @@ public class GameControllerScript : MonoBehaviour
         else
         {
 
-            KnightScript unitScript = unit.GetComponent<KnightScript>();
+            UnitScript unitScript = unit.GetComponent<UnitScript>();
 
             int x_diff = Mathf.Abs(unitScript.mapX - x);
             int y_diff = Mathf.Abs(unitScript.mapY - y);

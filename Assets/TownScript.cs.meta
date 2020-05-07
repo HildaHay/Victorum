@@ -4,11 +4,16 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - unitPrefab: {instanceID: 0}
+  - unitPrefab: {fileID: 6200691036465997887, guid: 17659d733adfab740b264288c2b6b39b,
+      type: 3}
   - playerTownSprite: {fileID: -2228487531470528590, guid: 9edad0c31a717be45a321c11da7f7597,
       type: 3}
   - enemyTownSprite: {fileID: -5263330345866281169, guid: 9edad0c31a717be45a321c11da7f7597,
       type: 3}
+  - sRenderer: {instanceID: 0}
+  - gameControllerObject: {instanceID: 0}
+  - playerControllerObject: {instanceID: 0}
+  - uiControllerObject: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

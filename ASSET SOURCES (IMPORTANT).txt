@@ -1,0 +1,4 @@
+Unit sprites:
+http://blogoscoped.com/archive/2006-08-08-n51.html (Philipp Lenssen)
+Terrain sprites:
+https://www.kenney.nl/assets/roguelike-rpg-pack
