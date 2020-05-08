@@ -199,7 +199,18 @@ public class PlayerControllerScript : MonoBehaviour
                     }
                     else if (selected.tag == "Unit")
                     {
-                        if (hit.transform.gameObject.GetComponent<TileScript>().walkable)
+                        int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
+                        int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
+                        if (gameController.Walkable(x, y))
+                        {
+                            gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                        }
+                    }
+                    else if (selected.tag == "MapFeature")
+                    {
+                        int x = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapX;
+                        int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
+                        if (gameController.Walkable(x, y))
                         {
                             gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                         }

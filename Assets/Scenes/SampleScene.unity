@@ -543,16 +543,15 @@ MonoBehaviour:
     type: 3}
   waterTile: {fileID: 5679519308693705190, guid: fdc481aeac09b7042ab9fa99e617df85,
     type: 3}
-  treeTile: {fileID: 7159196299320742324, guid: 9da4c1e7060253c4bb37801855fba62e,
+  treeFeature: {fileID: 5905416010919775522, guid: 7b895a339f501244bacbb8a7cd601faf,
     type: 3}
   tileWeights: 
   playerControllerPrefab: {fileID: 8423272147467407230, guid: 5d1e1465bc20f574e9838eeee5c2dbfe,
     type: 3}
-  knightPrefab: {fileID: 6200691036465997887, guid: 17659d733adfab740b264288c2b6b39b,
-    type: 3}
   strongholdPrefab: {fileID: 5734647812586531819, guid: 43b5903c82999a9438af246a15b23aa6,
     type: 3}
   unitList: []
+  townList: []
   playerControllerObjects: []
   UIControllerObject: {fileID: 616805846}
   highlightBox: {fileID: 1943160819}

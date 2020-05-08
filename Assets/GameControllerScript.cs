@@ -13,6 +13,7 @@ public class GameControllerScript : MonoBehaviour
     public Camera mainCamera;
 
     public GameObject[,] terrainGrid;
+    public GameObject[,] featureGrid;
     public GameObject[,] unitGrid;
 
     // Prefabs
@@ -23,7 +24,8 @@ public class GameControllerScript : MonoBehaviour
     public GameObject dirtTile;
     public GameObject stoneTile;
     public GameObject waterTile;
-    public GameObject treeTile;
+
+    public GameObject treeFeature;
 
     public int[] tileWeights;
 
@@ -248,57 +250,11 @@ public class GameControllerScript : MonoBehaviour
 
     void GenerateMap(int w, int h)
     {
-        /* int wOffset = w / 2;
-        int hOffset = h / 2;
-
-        for (int i = 0; i < w; i++)
-        {
-            for (int j = 0; j < h; j++)
-            {
-                GameObject newTile;
-
-                if (i == 0 || i == w-1 || j == 0 || j == h-1)
-                {
-                    newTile = Instantiate(waterTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
-                }
-                else
-                {
-                    int x = Random.Range(1, 4);
-                    if (x == 1)
-                    {
-                        newTile = Instantiate(grassTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
-                    }
-                    else if (x == 2)
-                    {
-                        newTile = Instantiate(sandTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
-                    }
-                    else if (x == 3)
-                    {
-                        newTile = Instantiate(dirtTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
-                    }
-                    else
-                    {
-                        newTile = Instantiate(stoneTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
-                    }
-                }
-
-                newTile.GetComponent<TileScript>().mapX = i;
-                newTile.GetComponent<TileScript>().mapY = j;
-
-                terrainGrid[i, j] = newTile;
-            }
-        }
-
-        GameObject playerTown = SpawnStronghold(wOffset - 3, hOffset, 0);
-        playerControllers[0].setMainTown(playerTown);
-        GameObject enemyTown = SpawnStronghold(wOffset + 3, hOffset, 1);
-        playerControllers[1].setMainTown(enemyTown); */
+        
 
         Debug.Log("Generating terrain");
 
-        // int mapsize = 31;
-        // int mapcenter = mapsize / 2;
-        int landsize = 500;
+        int landsize = 550;
 
         int wOffset = w / 2;
         int hOffset = h / 2;
@@ -314,6 +270,8 @@ public class GameControllerScript : MonoBehaviour
         int[] landStart = { mapWidth / 2, mapHeight / 2 };
 
         land.Add(landStart);
+
+        int maxElevation = 0;
 
         while(land.Count < landsize)
         {
@@ -345,13 +303,23 @@ public class GameControllerScript : MonoBehaviour
 
             if(map[newLand[0]][newLand[1]] == 0)
             {
-                map[newLand[0]][newLand[1]] = 1;
+                // change from water to land
                 land.Add(newLand);
+                map[newLand[0]][newLand[1]] = 1;
+            } else {
+                // increase elevation by 1
+                map[newLand[0]][newLand[1]] += 1;
+                if(map[newLand[0]][newLand[1]] > maxElevation)
+                {
+                    maxElevation = map[newLand[0]][newLand[1]];
+                }
             }
         }
 
+        Debug.Log(maxElevation);
         Debug.Log("Terrain completed");
 
+        /*
         string s = "";
 
         for(int i = 0; i < mapWidth; i++)
@@ -363,30 +331,28 @@ public class GameControllerScript : MonoBehaviour
         }
 
         Debug.Log(s);
+        */
 
         terrainGrid = new GameObject[mapWidth, mapHeight];
+        featureGrid = new GameObject[mapWidth, mapHeight];
 
-        for(int i = 0; i < mapWidth; i++)
+        for (int i = 0; i < mapWidth; i++)
         {
-            for(int j = 0; j < mapHeight; j++)
+            for (int j = 0; j < mapHeight; j++)
             {
-
-                int r = UnityEngine.Random.Range(1, 6);
-
-                GameObject newTile;
-                if(map[i][j] == 0)
-                {
-                    newTile = Instantiate(waterTile, new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
-                    terrainGrid[i,j] = newTile;
-                } else
-                {
-                    newTile = Instantiate(getTerrainByID(r), new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
-                }
+                GameObject newTile = Instantiate(getTerrainByElevation(map[i][j]), new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
 
                 newTile.GetComponent<TileScript>().mapX = i;
                 newTile.GetComponent<TileScript>().mapY = j;
 
                 terrainGrid[i, j] = newTile;
+
+                if (map[i][j] != 0 && UnityEngine.Random.Range(0, 10) == 0)
+                {
+                    GameObject newFeature = Instantiate(treeFeature, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
+
+                    featureGrid[i, j] = newFeature;
+                }
             }
         }
 
@@ -411,6 +377,17 @@ public class GameControllerScript : MonoBehaviour
         return new int[] { x - mapWidth / 2, -y + mapHeight / 2};
     }
 
+    public bool Walkable(int x, int y)
+    {
+        if(featureGrid[x, y] == null)
+        {
+            return (terrainGrid[x, y].GetComponent<TileScript>().walkable);
+        } else { 
+            return (terrainGrid[x, y].GetComponent<TileScript>().walkable && featureGrid[x, y].GetComponent<MapFeatureScript>().walkable);
+        }
+        // also should check if unit is in tile
+    }
+
     public GameObject getTerrainByID(int id)
     {
         switch (id)
@@ -425,10 +402,25 @@ public class GameControllerScript : MonoBehaviour
                 return dirtTile;
             case 4:
                 return stoneTile;
-            case 5:
-                return treeTile;
             default:
                 return waterTile;
+        }
+    }
+
+    public GameObject getTerrainByElevation(int e)
+    {
+        if(e == 0)
+        {
+            return waterTile;
+        } else if(e < 5)
+        {
+            return sandTile;
+        } else if(e < 20)
+        {
+            return grassTile;
+        } else
+        {
+            return stoneTile;
         }
     }
 

@@ -65,7 +65,6 @@ public class TownScript : MonoBehaviour
     public void TurnStart()
     {
         gold += goldPerTurn;
-        Debug.Log("goldadd");
     }
 
     public bool CanBuy()
