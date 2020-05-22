@@ -58,6 +58,8 @@ public class GameControllerScript : MonoBehaviour
 
     bool startGame;
 
+    public bool gameOver;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -90,6 +92,8 @@ public class GameControllerScript : MonoBehaviour
         uiController.SetCurrPlayer(currPlayer);
 
         endTurnPressed = false;
+
+        gameOver = false;
 
         startGame = true;
     }
@@ -153,30 +157,30 @@ public class GameControllerScript : MonoBehaviour
         }
     }
 
-    public GameObject SpawnStronghold(int x, int y, int p)
+    public GameObject SpawnTown(int x, int y, int p)
     {
         if (unitGrid[x, y] == null)
         {
             int[] screencoords = MapToScreenCoordinates(x, y);
 
-            GameObject newStronghold = Instantiate(strongholdPrefab, new Vector3(screencoords[0], screencoords[1], -1), Quaternion.identity);
+            GameObject newTown = Instantiate(strongholdPrefab, new Vector3(screencoords[0], screencoords[1], -1), Quaternion.identity);
 
-            TownScript townScript = newStronghold.GetComponent<TownScript>();
+            TownScript townScript = newTown.GetComponent<TownScript>();
 
             townScript.gameControllerObject = this.transform.gameObject;
             townScript.playerControllerObject = playerControllerObjects[p];
             townScript.uiControllerObject = UIControllerObject;
 
-            townList.Add(newStronghold);
+            townList.Add(newTown);
 
-            unitGrid[x, y] = newStronghold;
+            unitGrid[x, y] = newTown;
             townScript.mapX = x;
             townScript.mapY = y;
             townScript.player = p;
 
-            playerControllers[p].addUnit(newStronghold);
+            playerControllers[p].addTown(newTown);
 
-            return newStronghold;
+            return newTown;
         }
         else
         {
@@ -254,11 +258,13 @@ public class GameControllerScript : MonoBehaviour
 
         Debug.Log("Generating terrain");
 
-        int landsize = 550;
+        int landsize = 650;
+        // int landsize = 50;
 
         int wOffset = w / 2;
         int hOffset = h / 2;
 
+        //Syl Note : Why are you using C style code here? Why not Use a 2d vector or list?
         int[][] map = new int[mapWidth][];
         for (int i = 0; i < mapWidth; i++)
         {
@@ -360,12 +366,12 @@ public class GameControllerScript : MonoBehaviour
 
         int r2 = UnityEngine.Random.Range(0, land.Count());
         int[] playerTownLocation = { land[r2][0], land[r2][1] };
-        GameObject playerTown = SpawnStronghold(playerTownLocation[0], playerTownLocation[1], 0);
+        GameObject playerTown = SpawnTown(playerTownLocation[0], playerTownLocation[1], 0);
         playerControllers[0].setMainTown(playerTown);
 
         r2 = UnityEngine.Random.Range(0, land.Count());
         int[] enemyTownLocation = { land[r2][0], land[r2][1] };
-        GameObject enemyTown = SpawnStronghold(enemyTownLocation[0], enemyTownLocation[1], 1);
+        GameObject enemyTown = SpawnTown(enemyTownLocation[0], enemyTownLocation[1], 1);
         playerControllers[1].setMainTown(enemyTown);
     }
 
@@ -390,6 +396,7 @@ public class GameControllerScript : MonoBehaviour
 
     public GameObject getTerrainByID(int id)
     {
+        // Syl Note : Consider using an Enum, also possibly have tile rendiering be done by a single object or shader.
         switch (id)
         {
             case 0:
@@ -489,5 +496,34 @@ public class GameControllerScript : MonoBehaviour
     public int[] GetMapDimensions()
     {
         return new int[] {mapHeight, mapWidth };
+    }
+
+    public PlayerControllerScript CheckForWinner()
+    {
+        PlayerControllerScript lastActive = null;
+
+        foreach(PlayerControllerScript p in playerControllers)
+        {
+            if(p.playerActive)
+            {
+                if(lastActive == null)
+                {
+                    lastActive = p;
+                } else
+                {
+                    return null;
+                }
+            }
+
+
+        }
+
+        if(lastActive != null)
+        {
+            gameOver = true;
+            uiController.SetWinner(lastActive.playerNumber);
+        }
+
+        return null;
     }
 }

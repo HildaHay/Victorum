@@ -11,16 +11,20 @@ public class PlayerControllerScript : MonoBehaviour
     UIControllerScript uiController;
 
     List<GameObject> playerUnitList;
+    List<GameObject> playerTownList;
+
     GameObject mainTown;
 
-    int playerNumber;
+    public int playerNumber;
 
     Camera mainCamera;
+
+    public bool playerActive;
 
     // Start is called before the first frame update
     void Start()
     {
-        mainCamera = Camera.main;
+        mainCamera = Camera.main; //y tho?
     }
 
     // Update is called once per frame
@@ -35,7 +39,10 @@ public class PlayerControllerScript : MonoBehaviour
         gameController = gC;
         uiController = uiC;
 
+        playerActive = true;
+
         playerUnitList = new List<GameObject>();
+        playerTownList = new List<GameObject>();
     }
 
     GameObject selectUnit(GameObject u)
@@ -104,7 +111,7 @@ public class PlayerControllerScript : MonoBehaviour
     {
         GameObject selected = s;    // Necessary?
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && gameController.gameOver == false)
         {
 
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector3(0, 0, 1));
@@ -234,14 +241,11 @@ public class PlayerControllerScript : MonoBehaviour
 
         foreach (GameObject u in playerUnitList)
         {
-            if (u.tag == "Unit")
-            {
-                u.GetComponent<UnitScript>().ResetMovePoints();
-            }
-            if (u.tag == "Town")
-            {
-                u.GetComponent<TownScript>().TurnStart();
-            }
+            u.GetComponent<UnitScript>().ResetMovePoints();
+        }
+        foreach(GameObject t in playerTownList)
+        {
+            t.GetComponent<TownScript>().TurnStart();
         }
     }
 
@@ -267,6 +271,13 @@ public class PlayerControllerScript : MonoBehaviour
         return newUnit;
     }
 
+    public GameObject addTown(GameObject newTown)
+    {
+        playerTownList.Add(newTown);
+
+        return newTown;
+    }
+
     public GameObject setMainTown(GameObject t)
     {
         mainTown = t;
@@ -282,7 +293,14 @@ public class PlayerControllerScript : MonoBehaviour
 
     public bool deleteTown(GameObject t)    // could possibly be combined with deleteUnit
     {
-        playerUnitList.Remove(t);
+
+        playerTownList.Remove(t);
+        
+        if(playerTownList.Count <= 0)
+        {
+            playerActive = false;
+            gameController.CheckForWinner();
+        }
 
         return true;
     }

@@ -11,7 +11,13 @@ public class UIControllerScript : MonoBehaviour
     public GameObject currPlayerTextObject;
     Text currPlayerText;
 
+    public GameObject winnerTextObject;
+    Text winnerText;
+
+    public GameObject endTurnButton;
+
     int currPlayer;
+
     GameObject selectedObject;
 
     public GameObject townMenu;
@@ -24,6 +30,9 @@ public class UIControllerScript : MonoBehaviour
 
         currPlayerText = currPlayerTextObject.GetComponent<Text>();
         currPlayerText.text = "";
+
+        winnerText = winnerTextObject.GetComponent<Text>();
+        winnerText.text = "";
 
         townMenu.SetActive(false);
     }
@@ -49,7 +58,12 @@ public class UIControllerScript : MonoBehaviour
             }
         }
 
-        currPlayerText.text = "Player " + currPlayer.ToString();
+        if(currPlayer >= 0) { 
+            currPlayerText.text = "Player " + currPlayer.ToString();
+        } else
+        {
+            currPlayerText.text = "";
+        }
     }
 
     public void SetSelectedObject(GameObject s)
@@ -106,5 +120,17 @@ public class UIControllerScript : MonoBehaviour
     public void CloseTownMenu()
     {
         townMenu.SetActive(false);
+    }
+
+    public void SetWinner(int p)
+    {
+        winnerText.text = "Player " + p.ToString() + " wins!";
+        selectedObject = null;
+        currPlayer = -1;
+
+        selectionTextObject.SetActive(false);
+        currPlayerTextObject.SetActive(false);
+        endTurnButton.SetActive(false);
+
     }
 }
