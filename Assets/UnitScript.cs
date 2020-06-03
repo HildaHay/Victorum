@@ -7,6 +7,8 @@ public class UnitScript : MonoBehaviour
 {
     // Start is called before the first frame update
 
+    public int cost;
+
     public int maxMovement;
     int movementPoints;
 

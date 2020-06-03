@@ -14,7 +14,10 @@ public class TownScript : MonoBehaviour
     public int goldPerTurn;
     int gold;
 
-    public GameObject unitPrefab;
+    public GameObject knightPrefab;
+    public GameObject scoutPrefab;
+
+    public GameObject[] recruitableUnits;
 
     public Sprite playerTownSprite;
     public Sprite enemyTownSprite;
@@ -41,7 +44,9 @@ public class TownScript : MonoBehaviour
 
         uiController = uiControllerObject.GetComponent<UIControllerScript>();
 
-        gold = 0;
+        recruitableUnits = new GameObject[] { knightPrefab, scoutPrefab };
+
+        gold = 10;
 
         HP = maxHP;
 
@@ -84,21 +89,21 @@ public class TownScript : MonoBehaviour
 
     public void OpenMenu()
     {
-        uiController.OpenTownMenu();
+        uiController.OpenTownMenu(recruitableUnits);
     }
 
-    public void OrderBuildUnit()
+    public void OrderBuildUnit(GameObject unitToBuild)
     {
-        playerController.TownRecruit(this.gameObject);
+        playerController.TownRecruit(this.gameObject, unitToBuild);
     }
 
-    public GameObject BuildUnit()
+    public GameObject BuildUnit(GameObject unitPrefab)
     {
         // actual unit spawning handled by GameControllerScript
 
-        if (gold >= 1)
+        if(gold >= unitPrefab.GetComponent<UnitScript>().cost)
         {
-            gold -= 1;
+            gold -= unitPrefab.GetComponent<UnitScript>().cost;
 
             return gameController.SpawnUnit(unitPrefab, player);
         }

@@ -63,7 +63,7 @@ public class PlayerControllerScript : MonoBehaviour
         return t;
     }
 
-    public GameObject TownRecruit(GameObject t)
+    public GameObject TownRecruit(GameObject t, GameObject unitToBuild)
     {
         TownScript townScript = t.GetComponent<TownScript>();
 
@@ -76,7 +76,7 @@ public class PlayerControllerScript : MonoBehaviour
 
         if (gameController.unitGrid[x, y] == null)
         {
-            newUnit = townScript.BuildUnit();
+            newUnit = townScript.BuildUnit(unitToBuild);
             if (newUnit != null)
             {
                 gameController.unitList.Add(newUnit);

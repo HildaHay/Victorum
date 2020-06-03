@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,11 +17,15 @@ public class UIControllerScript : MonoBehaviour
 
     public GameObject endTurnButton;
 
+    public GameObject recruitButtonPrefab;  
+
     int currPlayer;
 
     GameObject selectedObject;
 
     public GameObject townMenu;
+    List<GameObject> recruitButtons;
+    GameObject[] availableUnits;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +40,8 @@ public class UIControllerScript : MonoBehaviour
         winnerText.text = "";
 
         townMenu.SetActive(false);
+
+        recruitButtons = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -107,18 +114,43 @@ public class UIControllerScript : MonoBehaviour
 
     }
 
-    public void OpenTownMenu()
+    public void OpenTownMenu(GameObject[] townAvailableUnits)
     {
+        availableUnits = townAvailableUnits;
+
         townMenu.SetActive(true);
+        for (int i = 0; i < availableUnits.Length; i++)
+        {
+            print(i);
+            GameObject newButton = Instantiate(recruitButtonPrefab, new Vector3(Screen.width / 2, Screen.height / 2, 0), Quaternion.identity, townMenu.transform);
+
+            newButton.transform.position += new Vector3(0, (-35 * (availableUnits.Length - 1)) + (70 * i));
+            newButton.GetComponentInChildren<Text>().text = availableUnits[i].GetComponent<UnitScript>().name;
+
+            int unitIndex = i;
+            newButton.GetComponent<Button>().onClick.AddListener(() => { OrderBuildUnit(unitIndex); });
+
+            recruitButtons.Add(newButton);
+        }
+
     }
 
-    public void OrderBuildUnit()
+    public void OrderBuildUnit(int unitIndex)
     {
-        selectedObject.GetComponent<TownScript>().OrderBuildUnit();
+        Debug.Log(unitIndex);
+        GameObject unitToBuild = availableUnits[unitIndex];
+        selectedObject.GetComponent<TownScript>().OrderBuildUnit(unitToBuild);
     }
 
     public void CloseTownMenu()
     {
+        foreach(GameObject b in recruitButtons)
+        {
+            Destroy(b);
+        }
+        recruitButtons.Clear();
+        availableUnits = null;
+
         townMenu.SetActive(false);
     }
 

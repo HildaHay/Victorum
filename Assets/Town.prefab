@@ -49,8 +49,11 @@ MonoBehaviour:
   mapX: 0
   mapY: 0
   goldPerTurn: 1
-  unitPrefab: {fileID: 6200691036465997887, guid: 17659d733adfab740b264288c2b6b39b,
+  knightPrefab: {fileID: 6200691036465997887, guid: 17659d733adfab740b264288c2b6b39b,
     type: 3}
+  scoutPrefab: {fileID: 6268014236401909299, guid: 1d38584d8000d4f468e450436d2f8136,
+    type: 3}
+  recruitableUnits: []
   playerTownSprite: {fileID: -2228487531470528590, guid: 9edad0c31a717be45a321c11da7f7597,
     type: 3}
   enemyTownSprite: {fileID: -5263330345866281169, guid: 9edad0c31a717be45a321c11da7f7597,
