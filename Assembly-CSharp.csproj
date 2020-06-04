@@ -66,6 +66,7 @@
     <Compile Include="Assets\GameControllerScript.cs" />
     <Compile Include="Assets\MapFeatureScript.cs" />
     <Compile Include="Assets\MapGenScript.cs" />
+    <Compile Include="Assets\MapObjectiveScript.cs" />
     <Compile Include="Assets\PlayerControllerScript.cs" />
     <Compile Include="Assets\RecruitButtonScript.cs" />
     <Compile Include="Assets\TileScript.cs" />

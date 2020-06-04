@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -26,6 +27,8 @@ public class GameControllerScript : MonoBehaviour
     public GameObject waterTile;
 
     public GameObject treeFeature;
+
+    public GameObject shrinePrefab;
 
     public int[] tileWeights;
 
@@ -359,6 +362,14 @@ public class GameControllerScript : MonoBehaviour
 
                     featureGrid[i, j] = newFeature;
                 }
+                
+                if (map[i][j] != 0 && UnityEngine.Random.Range(0, 100) == 0 && featureGrid[i, j] == null)
+                {
+                    GameObject newObjective = Instantiate(shrinePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
+
+                    featureGrid[i, j] = newObjective;
+                }
+
             }
         }
 
@@ -388,8 +399,14 @@ public class GameControllerScript : MonoBehaviour
         if(featureGrid[x, y] == null)
         {
             return (terrainGrid[x, y].GetComponent<TileScript>().walkable);
-        } else { 
-            return (terrainGrid[x, y].GetComponent<TileScript>().walkable && featureGrid[x, y].GetComponent<MapFeatureScript>().walkable);
+        } else {
+            if (featureGrid[x, y].tag == "Feature")
+            {
+                return (terrainGrid[x, y].GetComponent<TileScript>().walkable && featureGrid[x, y].GetComponent<MapFeatureScript>().walkable);
+            } else
+            {
+                return (terrainGrid[x, y].GetComponent<TileScript>().walkable);
+            }
         }
         // also should check if unit is in tile
     }
@@ -458,6 +475,16 @@ public class GameControllerScript : MonoBehaviour
                 unit.transform.position = new Vector3(newScreenCords[0], newScreenCords[1], -1);
 
                 // uiController.ShowUnitInfo(unit);
+
+                if(featureGrid[x, y] != null)
+                {
+                    print("XXXXX");
+                    if (featureGrid[x, y].tag == "MapObjective")
+                    {
+                        print("XXXXX");
+                        featureGrid[x, y].GetComponent<MapObjectiveScript>().Claim(unitScript.GetPlayer());
+                    }
+                }
 
                 return true;
             }

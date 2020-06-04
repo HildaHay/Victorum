@@ -1,0 +1,8 @@
+Idea:
+Players can create new towns, by recruiting a special unit at an existing town. However, there is a limitation on how many of these units can be created. The limit starts at 0 and is increased by 1 after a certain number of turns, with that number doubling(?) each time.
+
+E.g. 
+1 on turn 2
+2 on turn 4
+3 on turn 8
+...

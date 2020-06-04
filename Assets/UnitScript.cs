@@ -144,10 +144,10 @@ public class UnitScript : MonoBehaviour
         return player;
     }
 
-    public bool CanMove()
+    /*public bool CanMove()
     {
         return movementPoints > 0;
-    }
+    }*/
 
     public int GetMovePoints()
     {

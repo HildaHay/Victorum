@@ -54,9 +54,9 @@ MonoBehaviour:
   scoutPrefab: {fileID: 6268014236401909299, guid: 1d38584d8000d4f468e450436d2f8136,
     type: 3}
   recruitableUnits: []
-  playerTownSprite: {fileID: -2228487531470528590, guid: 9edad0c31a717be45a321c11da7f7597,
+  playerTownSprite: {fileID: -3998287259488125869, guid: 9edad0c31a717be45a321c11da7f7597,
     type: 3}
-  enemyTownSprite: {fileID: -5263330345866281169, guid: 9edad0c31a717be45a321c11da7f7597,
+  enemyTownSprite: {fileID: -731060209076279946, guid: 9edad0c31a717be45a321c11da7f7597,
     type: 3}
   sRenderer: {fileID: 0}
   player: 0

@@ -8,6 +8,7 @@ TagManager:
   - Terrain
   - Town
   - MapFeature
+  - MapObjective
   layers:
   - Default
   - TransparentFX
