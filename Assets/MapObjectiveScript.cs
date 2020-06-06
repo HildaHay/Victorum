@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class MapObjectiveScript : MonoBehaviour
 {
-    public int x;
-    public int y;
+    public int mapX;
+    public int mapY;
 
     public string objectiveName;
 

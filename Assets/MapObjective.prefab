@@ -94,9 +94,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255213bd42ed7bc4eb046998f10ff09a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  x: 0
-  y: 0
-  objectiveName: 
+  mapX: 0
+  mapY: 0
+  objectiveName: Strength Shrine
   player: 0
   objectiveType: 0
   playerObjectiveSprite: {fileID: 0}

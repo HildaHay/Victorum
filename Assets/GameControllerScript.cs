@@ -325,7 +325,7 @@ public class GameControllerScript : MonoBehaviour
             }
         }
 
-        Debug.Log(maxElevation);
+        // Debug.Log(maxElevation);
         Debug.Log("Terrain completed");
 
         /*
@@ -361,6 +361,9 @@ public class GameControllerScript : MonoBehaviour
                     GameObject newFeature = Instantiate(treeFeature, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 
                     featureGrid[i, j] = newFeature;
+
+                    newFeature.GetComponent<MapFeatureScript>().mapX = i;
+                    newFeature.GetComponent<MapFeatureScript>().mapY = j;
                 }
                 
                 if (map[i][j] != 0 && UnityEngine.Random.Range(0, 100) == 0 && featureGrid[i, j] == null)
@@ -368,6 +371,9 @@ public class GameControllerScript : MonoBehaviour
                     GameObject newObjective = Instantiate(shrinePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 
                     featureGrid[i, j] = newObjective;
+
+                    newObjective.GetComponent<MapObjectiveScript>().mapX = i;
+                    newObjective.GetComponent<MapObjectiveScript>().mapY = j;
                 }
 
             }
@@ -400,7 +406,7 @@ public class GameControllerScript : MonoBehaviour
         {
             return (terrainGrid[x, y].GetComponent<TileScript>().walkable);
         } else {
-            if (featureGrid[x, y].tag == "Feature")
+            if (featureGrid[x, y].tag == "MapFeature")
             {
                 return (terrainGrid[x, y].GetComponent<TileScript>().walkable && featureGrid[x, y].GetComponent<MapFeatureScript>().walkable);
             } else
@@ -478,10 +484,8 @@ public class GameControllerScript : MonoBehaviour
 
                 if(featureGrid[x, y] != null)
                 {
-                    print("XXXXX");
                     if (featureGrid[x, y].tag == "MapObjective")
                     {
-                        print("XXXXX");
                         featureGrid[x, y].GetComponent<MapObjectiveScript>().Claim(unitScript.GetPlayer());
                     }
                 }

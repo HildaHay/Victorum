@@ -59,6 +59,14 @@ public class UIControllerScript : MonoBehaviour
             {
                 ShowTownInfo(selectedObject);
             }
+            else if(selectedObject.tag == "MapFeature")
+            {
+                ShowFeatureInfo(selectedObject);
+            }
+            else if (selectedObject.tag == "MapObjective")
+            {
+                ShowObjectiveInfo(selectedObject);
+            }
             else
             {
                 selectionText.text = "";
@@ -96,8 +104,9 @@ public class UIControllerScript : MonoBehaviour
 
         UnitScript script = selectedObject.GetComponent<UnitScript>();
 
-        selectionText.text = script.GetName() + "\n" + "Player: " + script.GetPlayer().ToString() + "\n"
-            + "Movement: " + script.GetMovePoints().ToString();
+        selectionText.text = script.GetName() + "\n" + "Player " + script.GetPlayer().ToString() + "\n"
+            + "Movement: " + script.GetMovePoints().ToString() + "\n"
+            + "Health:" + script.HP.ToString();
     }
 
     void ShowTownInfo(GameObject town)
@@ -108,6 +117,24 @@ public class UIControllerScript : MonoBehaviour
 
         selectionText.text = "Town" + "\n" + "Player: " + script.GetPlayer().ToString() + "\n"
             + "Gold: " + script.GetGold();
+    }
+
+    void ShowFeatureInfo(GameObject feature)
+    {
+        selectedObject = feature;
+
+        MapFeatureScript script = selectedObject.GetComponent<MapFeatureScript>();
+
+        selectionText.text = script.featureName;
+    }
+
+    void ShowObjectiveInfo(GameObject objective)
+    {
+        selectedObject = objective;
+
+        MapObjectiveScript script = selectedObject.GetComponent<MapObjectiveScript>();
+
+        selectionText.text = script.objectiveName;
     }
 
     void ShowCurrPlayer() {
@@ -121,7 +148,6 @@ public class UIControllerScript : MonoBehaviour
         townMenu.SetActive(true);
         for (int i = 0; i < availableUnits.Length; i++)
         {
-            print(i);
             GameObject newButton = Instantiate(recruitButtonPrefab, new Vector3(Screen.width / 2, Screen.height / 2, 0), Quaternion.identity, townMenu.transform);
 
             newButton.transform.position += new Vector3(0, (-35 * (availableUnits.Length - 1)) + (70 * i));
@@ -137,7 +163,6 @@ public class UIControllerScript : MonoBehaviour
 
     public void OrderBuildUnit(int unitIndex)
     {
-        Debug.Log(unitIndex);
         GameObject unitToBuild = availableUnits[unitIndex];
         selectedObject.GetComponent<TownScript>().OrderBuildUnit(unitToBuild);
     }

@@ -45,7 +45,7 @@ public class PlayerControllerScript : MonoBehaviour
         playerTownList = new List<GameObject>();
     }
 
-    GameObject selectUnit(GameObject u)
+    GameObject SelectUnit(GameObject u)
     {
 
         if(u.GetComponent<UnitScript>().GetPlayer() == playerNumber)
@@ -57,10 +57,23 @@ public class PlayerControllerScript : MonoBehaviour
             return null;
         }
     }
-    GameObject selectTown(GameObject t)
+
+    GameObject SelectTown(GameObject t)
     {
         uiController.SetSelectedObject(t);
         return t;
+    }
+
+    GameObject SelectFeature(GameObject f)
+    {
+        uiController.SetSelectedObject(f);
+        return f;
+    }
+
+    GameObject SelectObjective(GameObject o)
+    {
+        uiController.SetSelectedObject(o);
+        return o;
     }
 
     public GameObject TownRecruit(GameObject t, GameObject unitToBuild)
@@ -69,9 +82,7 @@ public class PlayerControllerScript : MonoBehaviour
 
         int x = townScript.mapX;
         int y = townScript.mapY + 1;
-
-        print(x + ", " + y);
-
+        
         GameObject newUnit = null;
 
         if (gameController.unitGrid[x, y] == null)
@@ -111,6 +122,12 @@ public class PlayerControllerScript : MonoBehaviour
     {
         GameObject selected = s;    // Necessary?
 
+        if(Input.GetMouseButton(1) && gameController.gameOver == false)
+        {
+            selected = null;
+            uiController.SetSelectedObject(null);
+        }
+
         if (Input.GetMouseButtonDown(0) && gameController.gameOver == false)
         {
 
@@ -138,18 +155,18 @@ public class PlayerControllerScript : MonoBehaviour
                             else
                             {
                                 // select the unit
-                                selected = selectUnit(hit.transform.gameObject);
+                                selected = SelectUnit(hit.transform.gameObject);
                             }
                         }
                         else
                         {
                             // select the unit
-                            selected = selectUnit(hit.transform.gameObject);
+                            selected = SelectUnit(hit.transform.gameObject);
                         }
                     }
                     else
                     {
-                        selected = selectUnit(hit.transform.gameObject);
+                        selected = SelectUnit(hit.transform.gameObject);
                     }
                 }
                 else if (hit.transform.gameObject.tag == "Town")
@@ -171,7 +188,7 @@ public class PlayerControllerScript : MonoBehaviour
                             else
                             {
 
-                                selected = selectTown(hit.transform.gameObject);
+                                selected = SelectTown(hit.transform.gameObject);
                                 if (selected.GetComponent<TownScript>().player == playerNumber)
                                 {
                                     selected.GetComponent<TownScript>().OpenMenu();
@@ -180,7 +197,7 @@ public class PlayerControllerScript : MonoBehaviour
                         } else
                         {
 
-                            selected = selectTown(hit.transform.gameObject);
+                            selected = SelectTown(hit.transform.gameObject);
                             if (selected.GetComponent<TownScript>().player == playerNumber)
                             {
                                 selected.GetComponent<TownScript>().OpenMenu();
@@ -190,7 +207,7 @@ public class PlayerControllerScript : MonoBehaviour
                     else
                     {
 
-                        selected = selectTown(hit.transform.gameObject);
+                        selected = SelectTown(hit.transform.gameObject);
                         if (selected.GetComponent<TownScript>().player == playerNumber)
                         {
                             selected.GetComponent<TownScript>().OpenMenu();
@@ -202,7 +219,20 @@ public class PlayerControllerScript : MonoBehaviour
                 {
                     if(selected == null)
                     {
-
+                        int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
+                        int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
+                        
+                        if (gameController.featureGrid[x, y] != null)
+                        {
+                            if (gameController.featureGrid[x, y].tag == "MapFeature")
+                            {
+                                SelectFeature(gameController.featureGrid[x, y]);
+                            }
+                            else if (gameController.featureGrid[x, y].tag == "MapObjective")
+                            {
+                                SelectObjective(gameController.featureGrid[x, y]);
+                            }
+                        }
                     }
                     else if (selected.tag == "Unit")
                     {
@@ -217,6 +247,15 @@ public class PlayerControllerScript : MonoBehaviour
                     {
                         int x = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapX;
                         int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
+                        if (gameController.Walkable(x, y))
+                        {
+                            gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                        }
+                    }
+                    else if (selected.tag == "MapObjective")
+                    {
+                        int x = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapX;
+                        int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
                         if (gameController.Walkable(x, y))
                         {
                             gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);

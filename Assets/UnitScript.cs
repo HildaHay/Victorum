@@ -13,7 +13,7 @@ public class UnitScript : MonoBehaviour
     int movementPoints;
 
     public int maxHP;
-    int HP;
+    public int HP;
 
     public int baseDamage;
     public int defense;
