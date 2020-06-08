@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,6 +15,8 @@ public class PlayerControllerScript : MonoBehaviour
     List<GameObject> playerUnitList;
     List<GameObject> playerTownList;
 
+    bool[,] tilesExplored;
+
     GameObject mainTown;
 
     public int playerNumber;
@@ -20,6 +24,9 @@ public class PlayerControllerScript : MonoBehaviour
     Camera mainCamera;
 
     public bool playerActive;
+
+    int unitVisionDistance = 3;
+    int townVisionDistance = 6;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +50,27 @@ public class PlayerControllerScript : MonoBehaviour
 
         playerUnitList = new List<GameObject>();
         playerTownList = new List<GameObject>();
+
+        tilesExplored = new bool[gameController.getMapDimensions()[0], gameController.getMapDimensions()[1]];
+    }
+
+    public void CheckVision(int x, int y, int visionRange)
+    {
+        int xmin = Math.Max(0, x - visionRange);
+        int xmax = Math.Min(tilesExplored.Length, x + visionRange);
+        int ymin = Math.Max(0, y - visionRange);
+        int ymax = Math.Min(tilesExplored.Length, y + visionRange);
+
+        for (int i = xmin; i < xmax; i++)
+        {
+            for (int j = ymin; j < ymax; j++)
+            {
+                if (Math.Abs(x - i) + Math.Abs(y - j) < unitVisionDistance)
+                {
+                    tilesExplored[i, j] = true;
+                }
+            }
+        }
     }
 
     GameObject SelectUnit(GameObject u)
@@ -284,7 +312,9 @@ public class PlayerControllerScript : MonoBehaviour
         }
         foreach(GameObject t in playerTownList)
         {
-            t.GetComponent<TownScript>().TurnStart();
+            TownScript s = t.GetComponent<TownScript>();
+            s.TurnStart();
+            CheckVision(s.mapX, s.mapY, townVisionDistance);
         }
     }
 

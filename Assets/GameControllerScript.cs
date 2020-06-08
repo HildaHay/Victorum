@@ -480,6 +480,8 @@ public class GameControllerScript : MonoBehaviour
                 int[] newScreenCords = MapToScreenCoordinates(x, y);
                 unit.transform.position = new Vector3(newScreenCords[0], newScreenCords[1], -1);
 
+                playerControllers[unitScript.GetPlayer()].CheckVision(x, y, 3); // Remember: Replace the 3 with a variable!!!
+
                 // uiController.ShowUnitInfo(unit);
 
                 if(featureGrid[x, y] != null)
@@ -556,5 +558,10 @@ public class GameControllerScript : MonoBehaviour
         }
 
         return null;
+    }
+
+    public int[] getMapDimensions()
+    {
+        return new int[] { mapWidth, mapHeight};
     }
 }
