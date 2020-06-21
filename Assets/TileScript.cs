@@ -9,10 +9,12 @@ public class TileScript : MonoBehaviour
 
     public bool walkable;
 
+    public Renderer tileRenderer;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        tileRenderer = this.GetComponent<Renderer>();
     }
 
     // Update is called once per frame

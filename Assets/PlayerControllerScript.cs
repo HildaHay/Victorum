@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlayerControllerScript : MonoBehaviour
 {
@@ -65,9 +66,10 @@ public class PlayerControllerScript : MonoBehaviour
         {
             for (int j = ymin; j < ymax; j++)
             {
-                if (Math.Abs(x - i) + Math.Abs(y - j) < unitVisionDistance)
+                if (Math.Abs(x - i) + Math.Abs(y - j) < visionRange)
                 {
                     tilesExplored[i, j] = true;
+                    SetTileVisibility(i, j, tilesExplored[i, j]);
                 }
             }
         }
@@ -304,6 +306,7 @@ public class PlayerControllerScript : MonoBehaviour
 
     public void StartTurn()
     {
+
         mainCamera.transform.position = mainTown.transform.position + new Vector3(0, 0, -10);
 
         foreach (GameObject u in playerUnitList)
@@ -316,10 +319,14 @@ public class PlayerControllerScript : MonoBehaviour
             s.TurnStart();
             CheckVision(s.mapX, s.mapY, townVisionDistance);
         }
+
+        ShowExplored();
     }
 
     public void EndTurn()
     {
+        HideAll();
+
         uiController.SetSelectedObject(null);
     }
 
@@ -372,5 +379,62 @@ public class PlayerControllerScript : MonoBehaviour
         }
 
         return true;
+    }
+
+    void HideAll()
+    {
+        GameObject[,] terrainGrid = gameController.terrainGrid;
+
+        for(int i = 0; i < terrainGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < terrainGrid.GetLength(1); j++)
+            {
+                SetTileVisibility(i, j, false);
+            }
+        }
+    }
+    void ShowAll()
+    {
+        for (int i = 0; i < gameController.terrainGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < gameController.terrainGrid.GetLength(1); j++)
+            {
+                SetTileVisibility(i, j, true);
+            }
+        }
+    }
+
+    void ShowExplored()
+    {
+        for (int i = 0; i < gameController.terrainGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < gameController.terrainGrid.GetLength(1); j++)
+            {
+                SetTileVisibility(i, j, tilesExplored[i, j]);
+                /* if(tilesExplored[i, j] == true)
+                {
+                    gameController.terrainGrid[i, j].GetComponent<TileScript>().tileRenderer.enabled = true;
+                }
+                else
+                {
+                    gameController.terrainGrid[i, j].GetComponent<TileScript>().tileRenderer.enabled = false;
+                } */
+            }
+        }
+    }
+
+    void SetTileVisibility(int x, int y, bool visible)
+    {
+        gameController.terrainGrid[x, y].GetComponent<TileScript>().tileRenderer.enabled = visible;
+
+        if (gameController.unitGrid[x, y] != null)
+        {
+            gameController.unitGrid[x, y].GetComponent<Renderer>().enabled = visible;
+        }
+
+        if (gameController.featureGrid[x, y] != null)
+        {
+            gameController.featureGrid[x, y].GetComponent<Renderer>().enabled = visible;
+        }
     }
 }

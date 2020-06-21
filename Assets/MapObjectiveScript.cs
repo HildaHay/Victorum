@@ -25,13 +25,13 @@ public class MapObjectiveScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void Claim(int p)
     {
         player = p;
-        
+
         SpriteRenderer sRenderer = gameObject.GetComponent<SpriteRenderer>();
         if (player == 0)
         {
