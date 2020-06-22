@@ -15,6 +15,7 @@ public class PlayerControllerScript : MonoBehaviour
 
     List<GameObject> playerUnitList;
     List<GameObject> playerTownList;
+    List<GameObject> playerShrineList;
 
     bool[,] tilesExplored;
 
@@ -33,6 +34,7 @@ public class PlayerControllerScript : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main; //y tho?
+        playerShrineList = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -328,6 +330,8 @@ public class PlayerControllerScript : MonoBehaviour
         HideAll();
 
         uiController.SetSelectedObject(null);
+
+        Debug.Log("Player " + playerNumber + " Shrines: " + playerShrineList.Count);
     }
 
     public int[] mapToScreenCoordinates(int x, int y)
@@ -436,5 +440,22 @@ public class PlayerControllerScript : MonoBehaviour
         {
             gameController.featureGrid[x, y].GetComponent<Renderer>().enabled = visible;
         }
+    }
+
+    int GetPlayerShrineCount()
+    {
+        return playerShrineList.Count;
+    }
+
+    public void ClaimShrine(GameObject s)
+    {
+        playerShrineList.Add(s);
+        s.GetComponent<MapObjectiveScript>().Claim(this.playerNumber);
+        Debug.Log("Shrine Claimed");
+    }
+
+    public bool RemoveShrine(GameObject s)
+    {
+        return playerShrineList.Remove(s);
     }
 }

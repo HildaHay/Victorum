@@ -134,7 +134,16 @@ public class UIControllerScript : MonoBehaviour
 
         MapObjectiveScript script = selectedObject.GetComponent<MapObjectiveScript>();
 
-        selectionText.text = script.objectiveName;
+        if (script.player == -1)
+        {
+            selectionText.text = script.objectiveName + "\n"
+                + "Unclaimed";
+        }
+        else
+        {
+            selectionText.text = script.objectiveName + "\n"
+                + "Player " + script.player;
+        }
     }
 
     void ShowCurrPlayer() {

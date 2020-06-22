@@ -261,8 +261,8 @@ public class GameControllerScript : MonoBehaviour
 
         Debug.Log("Generating terrain");
 
-        int landsize = 650;
-        // int landsize = 50;
+        // int landsize = 650;
+        int landsize = 100;
 
         int wOffset = w / 2;
         int hOffset = h / 2;
@@ -484,11 +484,25 @@ public class GameControllerScript : MonoBehaviour
 
                 // uiController.ShowUnitInfo(unit);
 
-                if(featureGrid[x, y] != null)
+                GameObject f = featureGrid[x, y];
+
+                if (f != null)
                 {
-                    if (featureGrid[x, y].tag == "MapObjective")
+                    if (f.tag == "MapObjective")
                     {
-                        featureGrid[x, y].GetComponent<MapObjectiveScript>().Claim(unitScript.GetPlayer());
+                        for(int i = 0; i < playerControllers.Length; i++)
+                        {
+                            if(i == unitScript.GetPlayer())
+                            {
+                                playerControllers[i].ClaimShrine(f);
+                            }
+                            else
+                            {
+                                playerControllers[i].RemoveShrine(f);
+                            }
+                        }
+
+                        // playerControllers[unitScript.GetPlayer()].ClaimShrine(featureGrid[x, y]);
                     }
                 }
 
