@@ -19,7 +19,7 @@ public class UIControllerScript : MonoBehaviour
 
     public GameObject recruitButtonPrefab;  
 
-    int currPlayer;
+    PlayerControllerScript currPlayer;
 
     GameObject selectedObject;
 
@@ -73,8 +73,9 @@ public class UIControllerScript : MonoBehaviour
             }
         }
 
-        if(currPlayer >= 0) { 
-            currPlayerText.text = "Player " + currPlayer.ToString();
+        if(currPlayer != null) { 
+            currPlayerText.text = "Player " + currPlayer.playerNumber.ToString() + "\n"
+                + "Shrines: " + currPlayer.ShrineBonus();
         } else
         {
             currPlayerText.text = "";
@@ -86,7 +87,7 @@ public class UIControllerScript : MonoBehaviour
         selectedObject = s;
     }
 
-    public int SetCurrPlayer(int p)
+    public PlayerControllerScript SetCurrPlayer(PlayerControllerScript p)
     {
         currPlayer = p;
 
@@ -192,7 +193,7 @@ public class UIControllerScript : MonoBehaviour
     {
         winnerText.text = "Player " + p.ToString() + " wins!";
         selectedObject = null;
-        currPlayer = -1;
+        currPlayer = null;
 
         selectionTextObject.SetActive(false);
         currPlayerTextObject.SetActive(false);

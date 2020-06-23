@@ -92,7 +92,7 @@ public class GameControllerScript : MonoBehaviour
         GenerateMap(mapWidth, mapHeight);
 
         currPlayer = 0;
-        uiController.SetCurrPlayer(currPlayer);
+        uiController.SetCurrPlayer(playerControllers[currPlayer]);
 
         endTurnPressed = false;
 
@@ -192,14 +192,14 @@ public class GameControllerScript : MonoBehaviour
         }
     }
 
-    public GameObject SpawnUnit(GameObject unitPrefab, int p)
+    public GameObject SpawnUnit(GameObject unitPrefab, PlayerControllerScript p)
     {
         GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
         newUnit.GetComponent<UnitScript>().Initialize(p, this);
 
         unitList.Add(newUnit);
 
-        playerControllers[p].addUnit(newUnit);
+        p.addUnit(newUnit);
 
         return newUnit;
     }
@@ -525,7 +525,7 @@ public class GameControllerScript : MonoBehaviour
 
     public void StartTurn()
     {
-        uiController.SetCurrPlayer(currPlayer);
+        uiController.SetCurrPlayer(playerControllers[currPlayer]);
 
         playerControllers[currPlayer].StartTurn();
     }

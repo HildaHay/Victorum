@@ -458,4 +458,9 @@ public class PlayerControllerScript : MonoBehaviour
     {
         return playerShrineList.Remove(s);
     }
+
+    public int ShrineBonus()
+    {
+        return playerShrineList.Count;
+    }
 }

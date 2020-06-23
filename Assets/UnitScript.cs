@@ -20,7 +20,7 @@ public class UnitScript : MonoBehaviour
 
     public int range;
 
-    int player;
+    int playerNumber;
 
     public string unitName = "";
 
@@ -28,6 +28,7 @@ public class UnitScript : MonoBehaviour
     public int mapY;
 
     GameControllerScript gameController;
+    PlayerControllerScript player;
 
     void Start()
     {
@@ -37,9 +38,10 @@ public class UnitScript : MonoBehaviour
         HP = maxHP;
     }
 
-    public void Initialize(int p, GameControllerScript gC)
+    public void Initialize(PlayerControllerScript p, GameControllerScript gC)
     {
         player = p;
+        playerNumber = p.playerNumber;
         gameController = gC;
     }
 
@@ -93,7 +95,7 @@ public class UnitScript : MonoBehaviour
 
     public int attackDamage()
     {
-        return baseDamage;
+        return baseDamage + player.ShrineBonus();
     }
 
     public bool receiveDamage(int d) {
@@ -135,13 +137,15 @@ public class UnitScript : MonoBehaviour
 
     public int GetPlayer()
     {
-        return player;
+        return playerNumber;
     }
 
-    public int SetPlayer(int p)
+    public int SetPlayer(PlayerControllerScript p)
     {
         player = p;
-        return player;
+
+        playerNumber = p.playerNumber;
+        return playerNumber;
     }
 
     /*public bool CanMove()
