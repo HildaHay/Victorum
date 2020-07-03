@@ -15,8 +15,10 @@ public class UnitScript : MonoBehaviour
     public int maxHP;
     public int HP;
 
-    public int baseDamage;
-    public int defense;
+    public int minDamage;
+    public int maxDamage;
+
+    public int armor;
 
     public int range;
 
@@ -93,17 +95,28 @@ public class UnitScript : MonoBehaviour
         return true;
     }
 
-    public int attackDamage()
+    public float AttackDamage()
     {
-        return baseDamage + player.ShrineBonus();
+        float baseDamage = UnityEngine.Random.Range((float)minDamage - 0.49f, (float)maxDamage + 0.49f);
+        // the 0.49 should make the damage outputs be randomly distributed over the range after being rounded
+        // Otherwise, the distribution will be biased against the min and max values
+
+        return baseDamage * player.ShrineDamageBonus();
     }
 
-    public bool receiveDamage(int d) {
-        HP -= System.Math.Max(d - defense, 0);
+    public bool ReceiveDamage(float d) {
+        float rawDamage = d / player.ShrineDefenseBonus() - armor;
+
+        print(rawDamage);
+
+        int roundedDamage = Mathf.RoundToInt(rawDamage);
+
+
+        HP -= System.Math.Max(roundedDamage, 0);
 
         if(HP <= 0)
         {
-            die();
+            Die();
             return true;
         } else
         {
@@ -111,7 +124,7 @@ public class UnitScript : MonoBehaviour
         }
     }
 
-    bool die()
+    bool Die()
     {
         gameController.DeleteUnit(this.gameObject);
         return true;

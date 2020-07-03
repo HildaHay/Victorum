@@ -16,6 +16,9 @@ public class MapObjectiveScript : MonoBehaviour
     public Sprite playerObjectiveSprite;
     public Sprite enemyObjectiveSprite;
 
+    public float damageMultiplerBonus;
+    public float defenseMultiplierBonus;
+
     // Start is called before the first frame update
     void Start()
     {

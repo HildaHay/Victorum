@@ -255,14 +255,14 @@ public class GameControllerScript : MonoBehaviour
         return true;
     }
 
-    void GenerateMap(int w, int h)
+    bool GenerateMap(int w, int h)
+        // returns true on successful map generation, false on failure
     {
         
 
         Debug.Log("Generating terrain");
 
-        // int landsize = 650;
-        int landsize = 100;
+        int landsize = 650;
 
         int wOffset = w / 2;
         int hOffset = h / 2;
@@ -345,6 +345,48 @@ public class GameControllerScript : MonoBehaviour
         terrainGrid = new GameObject[mapWidth, mapHeight];
         featureGrid = new GameObject[mapWidth, mapHeight];
 
+        // create starting towns
+
+        bool townsSuccessfullyPlaced = false;
+
+        int[] playerTownLocation;
+        int[] enemyTownLocation;
+
+        for (int i = 0; i < 100; i++)
+        {
+
+            int r2 = UnityEngine.Random.Range(0, land.Count());
+            playerTownLocation = new int[] { land[r2][0], land[r2][1] };
+
+            r2 = UnityEngine.Random.Range(0, land.Count());
+            enemyTownLocation = new int[] { land[r2][0], land[r2][1] };
+
+            int distance = Math.Abs(playerTownLocation[0] - enemyTownLocation[0]) + Math.Abs(playerTownLocation[1] - enemyTownLocation[1]);
+
+            if(distance >= 25)
+            {
+                GameObject playerTown = SpawnTown(playerTownLocation[0], playerTownLocation[1], 0);
+                playerControllers[0].setMainTown(playerTown);
+
+                GameObject enemyTown = SpawnTown(enemyTownLocation[0], enemyTownLocation[1], 1);
+                playerControllers[1].setMainTown(enemyTown);
+
+                townsSuccessfullyPlaced = true;
+                break;
+            }
+        }
+
+        if(townsSuccessfullyPlaced)
+        {
+
+        } else
+        {
+            print("Could not find valid places for towns");
+            return false;
+        }
+
+        // create map tiles, features, and shrines
+
         for (int i = 0; i < mapWidth; i++)
         {
             for (int j = 0; j < mapHeight; j++)
@@ -356,7 +398,7 @@ public class GameControllerScript : MonoBehaviour
 
                 terrainGrid[i, j] = newTile;
 
-                if (map[i][j] != 0 && UnityEngine.Random.Range(0, 10) == 0)
+                if (map[i][j] != 0 && unitGrid[i,j] == null && UnityEngine.Random.Range(0, 10) == 0)
                 {
                     GameObject newFeature = Instantiate(treeFeature, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 
@@ -366,7 +408,7 @@ public class GameControllerScript : MonoBehaviour
                     newFeature.GetComponent<MapFeatureScript>().mapY = j;
                 }
                 
-                if (map[i][j] != 0 && UnityEngine.Random.Range(0, 100) == 0 && featureGrid[i, j] == null)
+                if (map[i][j] != 0 && unitGrid[i,j] == null && UnityEngine.Random.Range(0, 100) == 0 && featureGrid[i, j] == null)
                 {
                     GameObject newObjective = Instantiate(shrinePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 
@@ -379,17 +421,7 @@ public class GameControllerScript : MonoBehaviour
             }
         }
 
-        // create starting towns
-
-        int r2 = UnityEngine.Random.Range(0, land.Count());
-        int[] playerTownLocation = { land[r2][0], land[r2][1] };
-        GameObject playerTown = SpawnTown(playerTownLocation[0], playerTownLocation[1], 0);
-        playerControllers[0].setMainTown(playerTown);
-
-        r2 = UnityEngine.Random.Range(0, land.Count());
-        int[] enemyTownLocation = { land[r2][0], land[r2][1] };
-        GameObject enemyTown = SpawnTown(enemyTownLocation[0], enemyTownLocation[1], 1);
-        playerControllers[1].setMainTown(enemyTown);
+        return true;
     }
 
     public int[] MapToScreenCoordinates(int x, int y)

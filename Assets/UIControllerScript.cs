@@ -75,7 +75,7 @@ public class UIControllerScript : MonoBehaviour
 
         if(currPlayer != null) { 
             currPlayerText.text = "Player " + currPlayer.playerNumber.ToString() + "\n"
-                + "Shrines: " + currPlayer.ShrineBonus();
+                + "Shrines: " + currPlayer.ShrineCount();
         } else
         {
             currPlayerText.text = "";

@@ -25,6 +25,8 @@ public class PlayerControllerScript : MonoBehaviour
 
     Camera mainCamera;
 
+    Vector3 playerCameraPosition;
+
     public bool playerActive;
 
     int unitVisionDistance = 3;
@@ -34,6 +36,9 @@ public class PlayerControllerScript : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main; //y tho?
+
+        playerCameraPosition = mainTown.transform.position + new Vector3(0, 0, -10);
+
         playerShrineList = new List<GameObject>();
     }
 
@@ -181,7 +186,7 @@ public class PlayerControllerScript : MonoBehaviour
                             {
                                 if (attacker.TryAttack(target))
                                 {
-                                    target.receiveDamage(attacker.attackDamage());
+                                    target.ReceiveDamage(attacker.AttackDamage());
                                 }
                             }
                             else
@@ -214,7 +219,7 @@ public class PlayerControllerScript : MonoBehaviour
                             {
                                 if (attacker.TryAttackTown(target))
                                 {
-                                    target.receiveDamage(attacker.attackDamage());
+                                    target.ReceiveDamage(attacker.AttackDamage());
                                 }
                             }
                             else
@@ -309,7 +314,8 @@ public class PlayerControllerScript : MonoBehaviour
     public void StartTurn()
     {
 
-        mainCamera.transform.position = mainTown.transform.position + new Vector3(0, 0, -10);
+        // mainCamera.transform.position = mainTown.transform.position + new Vector3(0, 0, -10);
+        mainCamera.transform.position = playerCameraPosition;
 
         foreach (GameObject u in playerUnitList)
         {
@@ -328,6 +334,8 @@ public class PlayerControllerScript : MonoBehaviour
     public void EndTurn()
     {
         HideAll();
+
+        playerCameraPosition = mainCamera.transform.position;
 
         uiController.SetSelectedObject(null);
 
@@ -459,7 +467,17 @@ public class PlayerControllerScript : MonoBehaviour
         return playerShrineList.Remove(s);
     }
 
-    public int ShrineBonus()
+    public float ShrineDamageBonus()
+    {
+        return 1.0f + (0.1f * playerShrineList.Count);
+    }
+
+    public float ShrineDefenseBonus()
+    {
+        return 1.0f + (0.1f * playerShrineList.Count);
+    }
+
+    public int ShrineCount()
     {
         return playerShrineList.Count;
     }

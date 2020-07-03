@@ -114,13 +114,17 @@ public class TownScript : MonoBehaviour
         }
     }
 
-    public bool receiveDamage(int d)
+    public bool ReceiveDamage(float d)
     {
-        HP -= System.Math.Max(d /* - defense*/, 0);
+        float rawDamage = d / playerController.ShrineDefenseBonus();
+
+        int roundedDamage = Mathf.RoundToInt(rawDamage);
+
+        HP -= System.Math.Max(roundedDamage, 0);
 
         if (HP <= 0)
         {
-            die();
+            Die();
             return true;
         }
         else
@@ -129,7 +133,7 @@ public class TownScript : MonoBehaviour
         }
     }
 
-    bool die()
+    bool Die()
     {
         gameController.DeleteTown(this.gameObject);
         return true;
