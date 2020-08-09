@@ -215,7 +215,7 @@ public class GameControllerScript : MonoBehaviour
         }
     }
 
-    public GameObject SpawnUnit(GameObject unitPrefab, PlayerControllerScript p)
+    public GameObject SpawnPlayerUnit(GameObject unitPrefab, PlayerControllerScript p)
     {
         GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
         newUnit.GetComponent<UnitScript>().Initialize(p, this);
@@ -227,15 +227,36 @@ public class GameControllerScript : MonoBehaviour
         return newUnit;
     }
 
-    public GameObject SpawnNeutralUnit(GameObject unitPrefab)
+    public GameObject SpawnUnit(GameObject unitPrefab, int x, int y)
     {
         GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
-        newUnit.GetComponent<UnitScript>().Initialize(null, this);
+        newUnit.GetComponent<UnitScript>().Initialize(this);
 
         unitList.Add(newUnit);
+        
+        if (newUnit != null)
+        {
+            unitList.Add(newUnit);
+            unitGrid[x, y] = newUnit;
+            newUnit.GetComponent<UnitScript>().mapX = x;
+            newUnit.GetComponent<UnitScript>().mapY = y;
+
+            int[] screenCoords = mapToScreenCoordinates(x, y);
+            newUnit.transform.position = new Vector3(screenCoords[0], screenCoords[1], -1);
+        }
 
         return newUnit;
     }
+
+    //public GameObject SpawnNeutralUnit(GameObject unitPrefab)
+    //{
+    //    GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
+    //    newUnit.GetComponent<UnitScript>().Initialize(null, this);
+
+    //    unitList.Add(newUnit);
+
+    //    return newUnit;
+    //}
 
     public bool DeleteUnit(GameObject u)
     {
@@ -473,5 +494,15 @@ public class GameControllerScript : MonoBehaviour
     public int[] getMapDimensions()
     {
         return new int[] { mapWidth, mapHeight};
+    }
+
+    public int[] mapToScreenCoordinates(int x, int y)
+    {
+        int[] mapDimensions = GetMapDimensions();
+
+        int a = x - mapDimensions[1] / 2;
+        int b = -y + mapDimensions[0] / 2;
+
+        return new int[] { a, b };
     }
 }

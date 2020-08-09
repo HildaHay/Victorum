@@ -127,7 +127,7 @@ public class PlayerControllerScript : MonoBehaviour
             newUnit = townScript.BuildUnit(unitToBuild);
             if (newUnit != null)
             {
-                gameController.unitList.Add(newUnit);
+                // gameController.unitList.Add(newUnit);
                 gameController.unitGrid[x, y] = newUnit;
                 newUnit.GetComponent<UnitScript>().mapX = x;
                 newUnit.GetComponent<UnitScript>().mapY = y;

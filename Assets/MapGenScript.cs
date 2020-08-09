@@ -19,6 +19,8 @@ public class MapGenScript : MonoBehaviour
 
     public GameObject shrinePrefab;
 
+    public GameObject neutralUnitPrefab;
+
     List<GameObject> units;
 
     // Start is called before the first frame update
@@ -158,18 +160,25 @@ public class MapGenScript : MonoBehaviour
                 newTile.GetComponent<TileScript>().mapX = i;
                 newTile.GetComponent<TileScript>().mapY = j;
 
-                print(gameController.terrainGrid);
-
                 gameController.terrainGrid[i, j] = newTile;
 
-                if (map[i][j] != 0 && gameController.unitGrid[i, j] == null && UnityEngine.Random.Range(0, 10) == 0)
+                if (map[i][j] != 0 && gameController.unitGrid[i, j] == null)
                 {
-                    GameObject newFeature = Instantiate(treePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
+                    int r = UnityEngine.Random.Range(0, 100);
 
-                    gameController.featureGrid[i, j] = newFeature;
+                    if (r >= 0 && r < 10)
+                    {
+                        GameObject newFeature = Instantiate(treePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 
-                    newFeature.GetComponent<MapFeatureScript>().mapX = i;
-                    newFeature.GetComponent<MapFeatureScript>().mapY = j;
+                        gameController.featureGrid[i, j] = newFeature;
+
+                        newFeature.GetComponent<MapFeatureScript>().mapX = i;
+                        newFeature.GetComponent<MapFeatureScript>().mapY = j;
+                    }
+                    if (r >= 10 && r < 90)
+                    {
+                        gameController.SpawnUnit(neutralUnitPrefab, i, j);
+                    }
                 }
 
                 if (map[i][j] != 0 && gameController.unitGrid[i, j] == null && UnityEngine.Random.Range(0, 100) == 0 && gameController.featureGrid[i, j] == null)

@@ -105,7 +105,7 @@ public class TownScript : MonoBehaviour
         {
             gold -= unitPrefab.GetComponent<UnitScript>().cost;
 
-            return gameController.SpawnUnit(unitPrefab, gameController.playerControllerObjects[player].GetComponent<PlayerControllerScript>());
+            return gameController.SpawnPlayerUnit(unitPrefab, gameController.playerControllerObjects[player].GetComponent<PlayerControllerScript>());
         }
         else
         {
