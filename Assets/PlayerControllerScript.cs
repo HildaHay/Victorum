@@ -172,7 +172,114 @@ public class PlayerControllerScript : MonoBehaviour
 
             if (hit)
             {
-                if (hit.transform.gameObject.tag == "Unit")
+                string hitTag = hit.transform.gameObject.tag;
+
+                switch(hitTag)
+                {
+                    case "Unit":
+                        if (selected)
+                        {
+                            // check if we can attack the unit
+                            if (selected.tag == "Unit")
+                            {
+                                UnitScript attacker = selected.GetComponent<UnitScript>();
+                                UnitScript target = hit.transform.gameObject.GetComponent<UnitScript>();
+                                AttackUnit(attacker, target);
+                            }
+                            else
+                            {
+                                // select the unit
+                                selected = SelectUnit(hit.transform.gameObject);
+                            }
+                        }
+                        else
+                        {
+                            selected = SelectUnit(hit.transform.gameObject);
+                        }
+                        break;
+                    case "Town":
+                        if (selected)
+                        {
+                            if (selected.tag == "Unit")
+                            {
+                                UnitScript attacker = selected.GetComponent<UnitScript>();
+                                TownScript target = hit.transform.gameObject.GetComponent<TownScript>();
+                                AttackTown(attacker, target);
+                            }
+                            else
+                            {
+
+                                selected = SelectTown(hit.transform.gameObject);
+                                if (selected.GetComponent<TownScript>().player == playerNumber)
+                                {
+                                    selected.GetComponent<TownScript>().OpenMenu();
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                            selected = SelectTown(hit.transform.gameObject);
+                            if (selected.GetComponent<TownScript>().player == playerNumber)
+                            {
+                                selected.GetComponent<TownScript>().OpenMenu();
+                            }
+                        }
+                        break;
+                    case "Terrain":
+                        if (selected == null)
+                        {
+                            int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
+                            int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
+
+                            if (gameController.featureGrid[x, y] != null)
+                            {
+                                if (gameController.featureGrid[x, y].tag == "MapFeature")
+                                {
+                                    SelectFeature(gameController.featureGrid[x, y]);
+                                }
+                                else if (gameController.featureGrid[x, y].tag == "MapObjective")
+                                {
+                                    SelectObjective(gameController.featureGrid[x, y]);
+                                }
+                            }
+                        }
+                        else if (selected.tag == "Unit")
+                        {
+                            int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
+                            int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
+                            if (gameController.Walkable(x, y))
+                            {
+                                gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                            }
+                        }
+                        else if (selected.tag == "MapFeature")
+                        {
+                            int x = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapX;
+                            int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
+                            if (gameController.Walkable(x, y))
+                            {
+                                gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                            }
+                        }
+                        else if (selected.tag == "MapObjective")
+                        {
+                            int x = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapX;
+                            int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
+                            if (gameController.Walkable(x, y))
+                            {
+                                gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                            }
+                        }
+                        else
+                        {
+                            // selected = null;
+                        }
+                        break;
+
+                }
+
+                /* if (hit.transform.gameObject.tag == "Unit")
                 {
                     if (selected)
                     {
@@ -181,19 +288,7 @@ public class PlayerControllerScript : MonoBehaviour
                         {
                             UnitScript attacker = selected.GetComponent<UnitScript>();
                             UnitScript target = hit.transform.gameObject.GetComponent<UnitScript>();
-                            if (attacker.GetComponent<UnitScript>().GetPlayer() == playerNumber
-                                && target.GetComponent<UnitScript>().GetPlayer() != playerNumber)
-                            {
-                                if (attacker.TryAttack(target))
-                                {
-                                    target.ReceiveDamage(attacker.AttackDamage());
-                                }
-                            }
-                            else
-                            {
-                                // select the unit
-                                selected = SelectUnit(hit.transform.gameObject);
-                            }
+                            AttackUnit(attacker, target);
                         }
                         else
                         {
@@ -214,23 +309,7 @@ public class PlayerControllerScript : MonoBehaviour
                         {
                             UnitScript attacker = selected.GetComponent<UnitScript>();
                             TownScript target = hit.transform.gameObject.GetComponent<TownScript>();
-                            if (attacker.GetComponent<UnitScript>().GetPlayer() == playerNumber
-                                && target.GetComponent<TownScript>().GetPlayer() != playerNumber)
-                            {
-                                if (attacker.TryAttackTown(target))
-                                {
-                                    target.ReceiveDamage(attacker.AttackDamage());
-                                }
-                            }
-                            else
-                            {
-
-                                selected = SelectTown(hit.transform.gameObject);
-                                if (selected.GetComponent<TownScript>().player == playerNumber)
-                                {
-                                    selected.GetComponent<TownScript>().OpenMenu();
-                                }
-                            }
+                            AttackTown(attacker, target);
                         } else
                         {
 
@@ -302,13 +381,42 @@ public class PlayerControllerScript : MonoBehaviour
                     {
                         // selected = null;
                     }
-                }
-
+                }*/
+ 
                 // Do something with the object that was hit by the raycast.
             }
         }
 
         return selected;
+    }
+
+    public void AttackTown(UnitScript attacker, TownScript target)
+    {
+        if (attacker.GetComponent<UnitScript>().GetPlayer() == playerNumber
+            && target.GetComponent<TownScript>().GetPlayer() != playerNumber)
+        {
+            if (attacker.TryAttackTown(target))
+            {
+                target.ReceiveDamage(attacker.AttackDamage());
+            }
+        } else
+        {
+            SelectTown(target.gameObject);
+        }
+    }
+    public void AttackUnit(UnitScript attacker, UnitScript target)
+    {
+        if (attacker.GetComponent<UnitScript>().GetPlayer() == playerNumber
+            && target.GetComponent<UnitScript>().GetPlayer() != playerNumber)
+        {
+            if (attacker.TryAttack(target))
+            {
+                target.ReceiveDamage(attacker.AttackDamage());
+            }
+        } else
+        {
+            SelectUnit(target.gameObject);
+        }
     }
 
     public void StartTurn()

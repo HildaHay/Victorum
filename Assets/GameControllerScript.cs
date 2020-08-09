@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Build;
 using UnityEngine;
-using UnityEngine.EventSystems;
+// using UnityEngine.EventSystems;
 
 public class GameControllerScript : MonoBehaviour
 {
@@ -49,7 +49,11 @@ public class GameControllerScript : MonoBehaviour
     public GameObject UIControllerObject;
     UIControllerScript uiController;
 
-    public GameObject highlightBox;
+    public GameObject mapGeneratorObject;
+    MapGenScript mapGenerator;
+
+    public GameObject cursorBox;
+    public GameObject selectionBox;
 
     int mapWidth;
     int mapHeight;
@@ -79,6 +83,8 @@ public class GameControllerScript : MonoBehaviour
 
         uiController = UIControllerObject.GetComponent<UIControllerScript>();
 
+        mapGenerator = mapGeneratorObject.GetComponent<MapGenScript>();
+
         playerControllerObjects = new GameObject[2];
         playerControllers = new PlayerControllerScript[2];
 
@@ -89,7 +95,9 @@ public class GameControllerScript : MonoBehaviour
             playerControllers[i].Initialize(i, this, uiController);
         }
 
-        GenerateMap(mapWidth, mapHeight);
+        terrainGrid = new GameObject[mapWidth, mapHeight];
+        featureGrid = new GameObject[mapWidth, mapHeight];
+        mapGenerator.GenerateMap(mapWidth, mapHeight);
 
         currPlayer = 0;
         uiController.SetCurrPlayer(playerControllers[currPlayer]);
@@ -149,15 +157,30 @@ public class GameControllerScript : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector3(0, 0, 1));
 
         if (hit) {
-            highlightBox.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, -1);
+            cursorBox.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, -1);
         }
 
         selected = playerControllers[currPlayer].getPlayerSelection(selected);
+        if (selected != null)
+        {
+            selectionBox.SetActive(true);
+            selectionBox.transform.position = new Vector3(selected.transform.position.x, selected.transform.position.y, -1.01f);
+        } else
+        {
+            selectionBox.SetActive(false);
+        }
 
         if(endTurnPressed)
         {
             EndTurn();
         }
+    }
+
+    public GameObject CreateStartingTown(int x, int y, int p)
+    {
+        GameObject t = SpawnTown(x, y, p);
+        playerControllers[p].setMainTown(t);
+        return t;
     }
 
     public GameObject SpawnTown(int x, int y, int p)
@@ -200,6 +223,16 @@ public class GameControllerScript : MonoBehaviour
         unitList.Add(newUnit);
 
         p.addUnit(newUnit);
+
+        return newUnit;
+    }
+
+    public GameObject SpawnNeutralUnit(GameObject unitPrefab)
+    {
+        GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
+        newUnit.GetComponent<UnitScript>().Initialize(null, this);
+
+        unitList.Add(newUnit);
 
         return newUnit;
     }
@@ -251,175 +284,6 @@ public class GameControllerScript : MonoBehaviour
         playerControllers[t.GetComponent<TownScript>().GetPlayer()].deleteTown(t);
 
         Destroy(t);
-
-        return true;
-    }
-
-    bool GenerateMap(int w, int h)
-        // returns true on successful map generation, false on failure
-    {
-        
-
-        Debug.Log("Generating terrain");
-
-        int landsize = 650;
-
-        int wOffset = w / 2;
-        int hOffset = h / 2;
-
-        //Syl Note : Why are you using C style code here? Why not Use a 2d vector or list?
-        int[][] map = new int[mapWidth][];
-        for (int i = 0; i < mapWidth; i++)
-        {
-            map[i] = new int[mapHeight];
-        }
-
-        List<int[]> land = new List<int[]>();
-
-        int[] landStart = { mapWidth / 2, mapHeight / 2 };
-
-        land.Add(landStart);
-
-        int maxElevation = 0;
-
-        while(land.Count < landsize)
-        {
-
-            // Pick a random tile to start at
-
-            int r = UnityEngine.Random.Range(0, land.Count());
-            int[] newLand = { land[r][0], land[r][1] };
-
-            // Move one tile in a random direction
-            // WARNING: there is nothing to stop this from going off the map!
-            // This will be fixed later but for now just hope it doesn't happen
-            int dir = UnityEngine.Random.Range(0, 4);
-            switch (dir)
-            {
-                case 0: // shift up
-                    newLand[0] -= 1;
-                    break;
-                case 1: // shift down
-                    newLand[0] += 1;
-                    break;
-                case 2: // shift left
-                    newLand[1] -= 1;
-                    break;
-                default: // shift right
-                    newLand[1] += 1;
-                    break;
-            }
-
-            if(map[newLand[0]][newLand[1]] == 0)
-            {
-                // change from water to land
-                land.Add(newLand);
-                map[newLand[0]][newLand[1]] = 1;
-            } else {
-                // increase elevation by 1
-                map[newLand[0]][newLand[1]] += 1;
-                if(map[newLand[0]][newLand[1]] > maxElevation)
-                {
-                    maxElevation = map[newLand[0]][newLand[1]];
-                }
-            }
-        }
-
-        // Debug.Log(maxElevation);
-        Debug.Log("Terrain completed");
-
-        /*
-        string s = "";
-
-        for(int i = 0; i < mapWidth; i++)
-        {
-            for(int j = 0; j < mapHeight; j++) {
-                s = s + map[i][j].ToString();
-            }
-            s = s + "\n";
-        }
-
-        Debug.Log(s);
-        */
-
-        terrainGrid = new GameObject[mapWidth, mapHeight];
-        featureGrid = new GameObject[mapWidth, mapHeight];
-
-        // create starting towns
-
-        bool townsSuccessfullyPlaced = false;
-
-        int[] playerTownLocation;
-        int[] enemyTownLocation;
-
-        for (int i = 0; i < 100; i++)
-        {
-
-            int r2 = UnityEngine.Random.Range(0, land.Count());
-            playerTownLocation = new int[] { land[r2][0], land[r2][1] };
-
-            r2 = UnityEngine.Random.Range(0, land.Count());
-            enemyTownLocation = new int[] { land[r2][0], land[r2][1] };
-
-            int distance = Math.Abs(playerTownLocation[0] - enemyTownLocation[0]) + Math.Abs(playerTownLocation[1] - enemyTownLocation[1]);
-
-            if(distance >= 25)
-            {
-                GameObject playerTown = SpawnTown(playerTownLocation[0], playerTownLocation[1], 0);
-                playerControllers[0].setMainTown(playerTown);
-
-                GameObject enemyTown = SpawnTown(enemyTownLocation[0], enemyTownLocation[1], 1);
-                playerControllers[1].setMainTown(enemyTown);
-
-                townsSuccessfullyPlaced = true;
-                break;
-            }
-        }
-
-        if(townsSuccessfullyPlaced)
-        {
-
-        } else
-        {
-            print("Could not find valid places for towns");
-            return false;
-        }
-
-        // create map tiles, features, and shrines
-
-        for (int i = 0; i < mapWidth; i++)
-        {
-            for (int j = 0; j < mapHeight; j++)
-            {
-                GameObject newTile = Instantiate(getTerrainByElevation(map[i][j]), new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
-
-                newTile.GetComponent<TileScript>().mapX = i;
-                newTile.GetComponent<TileScript>().mapY = j;
-
-                terrainGrid[i, j] = newTile;
-
-                if (map[i][j] != 0 && unitGrid[i,j] == null && UnityEngine.Random.Range(0, 10) == 0)
-                {
-                    GameObject newFeature = Instantiate(treeFeature, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
-
-                    featureGrid[i, j] = newFeature;
-
-                    newFeature.GetComponent<MapFeatureScript>().mapX = i;
-                    newFeature.GetComponent<MapFeatureScript>().mapY = j;
-                }
-                
-                if (map[i][j] != 0 && unitGrid[i,j] == null && UnityEngine.Random.Range(0, 100) == 0 && featureGrid[i, j] == null)
-                {
-                    GameObject newObjective = Instantiate(shrinePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
-
-                    featureGrid[i, j] = newObjective;
-
-                    newObjective.GetComponent<MapObjectiveScript>().mapX = i;
-                    newObjective.GetComponent<MapObjectiveScript>().mapY = j;
-                }
-
-            }
-        }
 
         return true;
     }

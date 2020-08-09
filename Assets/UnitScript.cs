@@ -29,15 +29,21 @@ public class UnitScript : MonoBehaviour
     public int mapX;
     public int mapY;
 
-    GameControllerScript gameController;
-    PlayerControllerScript player;
+    protected GameControllerScript gameController;
+    private PlayerControllerScript player;
 
-    void Start()
+    protected void Start()
     {
         // maxMovement = 3;
         movementPoints = maxMovement;
 
         HP = maxHP;
+    }
+
+    public void Initialize(GameControllerScript gC)
+    {
+        playerNumber = -1;
+        gameController = gC;
     }
 
     public void Initialize(PlayerControllerScript p, GameControllerScript gC)
@@ -50,10 +56,7 @@ public class UnitScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown("r"))
-        {
-            movementPoints = maxMovement;
-        }
+
     }
 
     public bool TryAttack(UnitScript target)
@@ -101,11 +104,13 @@ public class UnitScript : MonoBehaviour
         // the 0.49 should make the damage outputs be randomly distributed over the range after being rounded
         // Otherwise, the distribution will be biased against the min and max values
 
+        // return baseDamage * player.ShrineDamageBonus();
         return baseDamage * player.ShrineDamageBonus();
     }
 
     public bool ReceiveDamage(float d) {
-        float rawDamage = d / player.ShrineDefenseBonus() - armor;
+        // float rawDamage = d / player.ShrineDefenseBonus() - armor;
+        float rawDamage = d - armor;
 
         print(rawDamage);
 
@@ -124,10 +129,9 @@ public class UnitScript : MonoBehaviour
         }
     }
 
-    bool Die()
+    protected void Die()
     {
         gameController.DeleteUnit(this.gameObject);
-        return true;
     }
 
     public bool TryMove(int x)
@@ -179,5 +183,10 @@ public class UnitScript : MonoBehaviour
     public int[] xy()
     {
         return new int[] { mapX, mapY };
+    }
+
+    public int MapDistance(int[] start, int[] end)
+    {
+        return Math.Abs(start[0] - end[0]) + Math.Abs(start[1] - end[1]);
     }
 }

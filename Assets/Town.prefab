@@ -49,7 +49,7 @@ MonoBehaviour:
   mapX: 0
   mapY: 0
   goldPerTurn: 1
-  knightPrefab: {fileID: 6200691036465997887, guid: 17659d733adfab740b264288c2b6b39b,
+  knightPrefab: {fileID: 1507525689734398081, guid: ded301b72f7a743449d76c4e6f1dab31,
     type: 3}
   scoutPrefab: {fileID: 6268014236401909299, guid: 1d38584d8000d4f468e450436d2f8136,
     type: 3}
