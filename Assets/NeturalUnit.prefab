@@ -12,6 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 012a21f0e5c43d94aa51a96e9c8b2ede, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cost: 0
+  maxMovement: 2
+  maxHP: 100
+  HP: 0
+  minDamage: 15
+  maxDamage: 15
+  armor: 0
+  range: 1
+  unitName: Skeleton
+  mapX: 0
+  mapY: 0
 --- !u!1001 &4451876572028135249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -90,7 +101,8 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4756081786176530146, guid: 230c58fe595551b4e9d282bd81bc6a95, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 230c58fe595551b4e9d282bd81bc6a95, type: 3}
 --- !u!1 &9207821679074410927 stripped
 GameObject:

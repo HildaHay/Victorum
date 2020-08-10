@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-5515155979237968041
+--- !u!114 &4862019263442298094
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,9 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 8946815707187762005}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 012a21f0e5c43d94aa51a96e9c8b2ede, type: 3}
+  m_Script: {fileID: 11500000, guid: 81558a8497aaa424392d6fb91ca1a3dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cost: 0
+  maxMovement: 0
+  maxHP: 0
+  HP: 0
+  minDamage: 0
+  maxDamage: 0
+  armor: 0
+  range: 0
+  unitName: 
+  mapX: 0
+  mapY: 0
 --- !u!1001 &4479259000974489003
 PrefabInstance:
   m_ObjectHideFlags: 0

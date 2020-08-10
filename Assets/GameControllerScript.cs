@@ -172,6 +172,7 @@ public class GameControllerScript : MonoBehaviour
 
         if(endTurnPressed)
         {
+            moveNeutralUnits();
             EndTurn();
         }
     }
@@ -265,18 +266,21 @@ public class GameControllerScript : MonoBehaviour
             return false;
         }
 
-        int[] unitCoords = u.GetComponent<UnitScript>().xy();
+        UnitScript uScript = u.GetComponent<UnitScript>();
+
+        int[] unitCoords = uScript.xy();
 
         print(unitCoords[0]);
         print(unitCoords[1]);
 
         print(unitGrid[unitCoords[0], unitCoords[1]]);
 
-        UnitScript unitScript = u.GetComponent<UnitScript>();
+        unitGrid[uScript.mapX, uScript.mapY] = null;
 
-        unitGrid[unitScript.mapX, unitScript.mapY] = null;
-
-        playerControllers[u.GetComponent<UnitScript>().GetPlayer()].deleteUnit(u);
+        if (uScript.GetPlayer() >= 0)
+        {
+            playerControllers[uScript.GetPlayer()].deleteUnit(u);
+        }
 
         Destroy(u);
 
@@ -504,5 +508,17 @@ public class GameControllerScript : MonoBehaviour
         int b = -y + mapDimensions[0] / 2;
 
         return new int[] { a, b };
+    }
+
+    void moveNeutralUnits()
+    {
+        foreach(GameObject u  in unitList)
+        {
+            NeutralUnitScript s = u.GetComponent<NeutralUnitScript>();
+            if(s != null)
+            {
+                s.AutoMove();
+            }
+        }
     }
 }

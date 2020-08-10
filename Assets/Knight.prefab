@@ -7,37 +7,37 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+    - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: cost
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+    - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: maxMovement
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+    - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: maxHP
       value: 100
       objectReference: {fileID: 0}
-    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+    - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: minDamage
       value: 20
       objectReference: {fileID: 0}
-    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+    - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: maxDamage
       value: 20
       objectReference: {fileID: 0}
-    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+    - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: range
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+    - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: unitName
       value: Knight
@@ -45,7 +45,18 @@ PrefabInstance:
     - target: {fileID: 8946815707187762005, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: m_Name
-      value: Knight2
+      value: Knight
+      objectReference: {fileID: 0}
+    - target: {fileID: 8946815707187762004, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f7eb6cd469837f147ba255fb41edd34f,
+        type: 3}
+    - target: {fileID: 8946815707187762004, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8946815707187761995, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
@@ -102,16 +113,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8946815707187762004, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: f7eb6cd469837f147ba255fb41edd34f,
+      propertyPath: cost
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
-    - target: {fileID: 8946815707187762004, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+      propertyPath: maxMovement
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
-      propertyPath: m_WasSpriteAssigned
+      propertyPath: maxHP
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+        type: 3}
+      propertyPath: minDamage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+        type: 3}
+      propertyPath: maxDamage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+        type: 3}
+      propertyPath: range
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+        type: 3}
+      propertyPath: unitName
+      value: Knight
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: bb3c0c0726db9e3448c655e8848cdbd8, type: 3}

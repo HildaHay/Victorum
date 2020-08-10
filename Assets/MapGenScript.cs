@@ -175,7 +175,7 @@ public class MapGenScript : MonoBehaviour
                         newFeature.GetComponent<MapFeatureScript>().mapX = i;
                         newFeature.GetComponent<MapFeatureScript>().mapY = j;
                     }
-                    if (r >= 10 && r < 90)
+                    if (r >= 10 && r < 15)
                     {
                         gameController.SpawnUnit(neutralUnitPrefab, i, j);
                     }

@@ -41,5 +41,9 @@ public class NeutralUnitScript : UnitScript
         return true;
     }
 
+    public void AutoMove()
+    {
+        Debug.Log("Neutral unit moving - not implemented yet");
+    }
 
 }
