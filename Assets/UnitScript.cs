@@ -10,7 +10,7 @@ public class UnitScript : MonoBehaviour
     public int cost;
 
     public int maxMovement;
-    int movementPoints;
+    protected int movementPoints;
 
     public int maxHP;
     public int HP;
@@ -22,7 +22,7 @@ public class UnitScript : MonoBehaviour
 
     public int range;
 
-    int playerNumber;
+    protected int playerNumber;
 
     public string unitName = "";
 
@@ -30,7 +30,7 @@ public class UnitScript : MonoBehaviour
     public int mapY;
 
     protected GameControllerScript gameController;
-    private PlayerControllerScript player;
+    protected PlayerControllerScript player;
 
     protected void Start()
     {

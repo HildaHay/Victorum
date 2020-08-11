@@ -404,7 +404,7 @@ public class PlayerControllerScript : MonoBehaviour
             SelectTown(target.gameObject);
         }
     }
-    public void AttackUnit(UnitScript attacker, UnitScript target)
+    public void AttackUnit(UnitScript attacker, UnitScript target)  // should be moved to unit script! or something
     {
         if (attacker.GetComponent<UnitScript>().GetPlayer() == playerNumber
             && target.GetComponent<UnitScript>().GetPlayer() != playerNumber)
