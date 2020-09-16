@@ -63,18 +63,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\GameControllerScript.cs" />
-    <Compile Include="Assets\MapFeatureScript.cs" />
-    <Compile Include="Assets\MapGenScript.cs" />
-    <Compile Include="Assets\MapObjectiveScript.cs" />
-    <Compile Include="Assets\NeutralUnitScript.cs" />
-    <Compile Include="Assets\PlayerControllerScript.cs" />
-    <Compile Include="Assets\PlayerUnitScript.cs" />
-    <Compile Include="Assets\RecruitButtonScript.cs" />
-    <Compile Include="Assets\TileScript.cs" />
-    <Compile Include="Assets\TownScript.cs" />
-    <Compile Include="Assets\UIControllerScript.cs" />
-    <Compile Include="Assets\UnitScript.cs" />
+    <Compile Include="Assets\Scripts\MapFeatureScript.cs" />
+    <Compile Include="Assets\Scripts\MapGenScript.cs" />
+    <Compile Include="Assets\Scripts\MapObjectiveScript.cs" />
+    <Compile Include="Assets\Scripts\NeutralUnitScript.cs" />
+    <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\PlayerUnit.cs" />
+    <Compile Include="Assets\Scripts\RecruitButtonScript.cs" />
+    <Compile Include="Assets\Scripts\TileScript.cs" />
+    <Compile Include="Assets\Scripts\TownScript.cs" />
+    <Compile Include="Assets\Scripts\UIControllerScript.cs" />
+    <Compile Include="Assets\Scripts\UnitScript.cs" />
+    <Compile Include="Assets\Scripts\WorldManager.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/eskar/OneDrive/Desktop/Development/4x/fourecks/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

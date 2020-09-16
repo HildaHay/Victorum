@@ -53,14 +53,17 @@ MonoBehaviour:
     type: 3}
   scoutPrefab: {fileID: 6268014236401909299, guid: 1d38584d8000d4f468e450436d2f8136,
     type: 3}
-  recruitableUnits: []
+  recruitableUnits:
+  - {fileID: 1507525689734398081, guid: ded301b72f7a743449d76c4e6f1dab31, type: 3}
+  - {fileID: 6268014236401909299, guid: 1d38584d8000d4f468e450436d2f8136, type: 3}
+  - {fileID: 6268014236401909299, guid: 29fdb8a9c8d1777458f327faabe6c87d, type: 3}
   playerTownSprite: {fileID: -3998287259488125869, guid: 9edad0c31a717be45a321c11da7f7597,
     type: 3}
   enemyTownSprite: {fileID: -731060209076279946, guid: 9edad0c31a717be45a321c11da7f7597,
     type: 3}
   sRenderer: {fileID: 0}
   player: 0
-  gameControllerObject: {fileID: 0}
+  worldManagerObject: {fileID: 0}
   playerControllerObject: {fileID: 0}
   uiControllerObject: {fileID: 0}
 --- !u!212 &5734647812586531818

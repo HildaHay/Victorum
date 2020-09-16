@@ -7,13 +7,7 @@ public class NeutralUnitScript : UnitScript
 {
     GameObject target;
 
-    int chaseRange;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        base.Start();
-    }
+    int chaseRange = 5;
 
     // Update is called once per frame
     void Update()
@@ -51,7 +45,7 @@ public class NeutralUnitScript : UnitScript
 
             int r = UnityEngine.Random.Range(0, 4);
 
-            int[] targetSquare = this.xy();
+            Vector2Int targetSquare = this.xy();
 
             switch (directions[r]) {
                 case "up":
@@ -71,15 +65,16 @@ public class NeutralUnitScript : UnitScript
                     break;
             }
 
-            if (gameController.unitGrid[targetSquare[0], targetSquare[1]] != null)
+            if (worldManager.Walkable(targetSquare[0], targetSquare[1]) && worldManager.unitGrid[targetSquare[0], targetSquare[1]] == null)
             {
-
+                if (!worldManager.MoveUnit(this.gameObject, targetSquare[0], targetSquare[1]))
+                {
+                    this.movementPoints = 0;
+                }
             }
             else
             {
-                if(!gameController.MoveUnit(this.gameObject, targetSquare[0], targetSquare[1])){
-                    this.movementPoints = 0;
-                }
+                this.movementPoints = 0;
             }
         }
 

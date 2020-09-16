@@ -6,7 +6,7 @@ using UnityEditor.Build;
 using UnityEngine;
 // using UnityEngine.EventSystems;
 
-public class GameControllerScript : MonoBehaviour
+public class WorldManager : MonoBehaviour
 {
 
     GameObject selected;
@@ -42,9 +42,9 @@ public class GameControllerScript : MonoBehaviour
 
     // Game Mechanics Objects
     // public GameObject PlayerController;
-    // PlayerControllerScript playerControllerScript;
+    // Player Player;
     public GameObject[] playerControllerObjects;
-    PlayerControllerScript[] playerControllers;
+    Player[] playerControllers;
 
     public GameObject UIControllerObject;
     UIControllerScript uiController;
@@ -55,11 +55,15 @@ public class GameControllerScript : MonoBehaviour
     public GameObject cursorBox;
     public GameObject selectionBox;
 
+    public int minTownDistance;
+
     int mapWidth;
     int mapHeight;
     
     int currPlayer;
     int numPlayers = 2;
+
+    int turnNumber;
 
     bool endTurnPressed;
 
@@ -86,12 +90,12 @@ public class GameControllerScript : MonoBehaviour
         mapGenerator = mapGeneratorObject.GetComponent<MapGenScript>();
 
         playerControllerObjects = new GameObject[2];
-        playerControllers = new PlayerControllerScript[2];
+        playerControllers = new Player[2];
 
         for (int i = 0; i < numPlayers; i++)
         {
             playerControllerObjects[i] = Instantiate(playerControllerPrefab);
-            playerControllers[i] = playerControllerObjects[i].GetComponent<PlayerControllerScript>();
+            playerControllers[i] = playerControllerObjects[i].GetComponent<Player>();
             playerControllers[i].Initialize(i, this, uiController);
         }
 
@@ -101,6 +105,8 @@ public class GameControllerScript : MonoBehaviour
 
         currPlayer = 0;
         uiController.SetCurrPlayer(playerControllers[currPlayer]);
+
+        turnNumber = 0;
 
         endTurnPressed = false;
 
@@ -184,6 +190,55 @@ public class GameControllerScript : MonoBehaviour
         return t;
     }
 
+    public bool CanBuildTown(Vector2Int location)
+    {
+        // since towns are built by units, location will always be occupied by a unit before building
+        //if(unitGrid[location[0], location[1]] != null)
+        //{
+        //    Debug.Log("Space occupied by unit");
+        //    return false;
+        //}
+
+        if (featureGrid[location[0], location[1]] != null)
+        {
+            Debug.Log("Space occupied by map feature");
+            return false;
+        }
+
+        foreach (GameObject t in townList)
+        {
+            TownScript s = t.GetComponent<TownScript>();
+            int distance = (Math.Abs(location[0] - s.xy()[0]) + Math.Abs(location[1] - s.xy()[1]));
+            if (distance < minTownDistance)
+            {
+                Debug.Log("Too close to another town");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void BuildTown()
+    {
+        // Causes the currently selected unit to build a town
+
+        UnitScript s = selected.GetComponent<UnitScript>();
+
+        int p = s.GetPlayer();
+        Vector2Int xy = s.xy();
+
+        if (s.isTownBuilder && CanBuildTown(xy))
+        {
+            DeleteUnit(selected);
+            SpawnTown(xy.x, xy.y, p);
+            // return SpawnTown(xy.x, xy.y, p);
+        } else
+        {
+            // return null;
+        }
+    }
+
     public GameObject SpawnTown(int x, int y, int p)
     {
         if (unitGrid[x, y] == null)
@@ -194,7 +249,7 @@ public class GameControllerScript : MonoBehaviour
 
             TownScript townScript = newTown.GetComponent<TownScript>();
 
-            townScript.gameControllerObject = this.transform.gameObject;
+            townScript.worldManagerObject = this.transform.gameObject;
             townScript.playerControllerObject = playerControllerObjects[p];
             townScript.uiControllerObject = UIControllerObject;
 
@@ -203,7 +258,7 @@ public class GameControllerScript : MonoBehaviour
             unitGrid[x, y] = newTown;
             townScript.mapX = x;
             townScript.mapY = y;
-            townScript.player = p;
+            townScript.playerNumber = p;
 
             playerControllers[p].addTown(newTown);
 
@@ -216,7 +271,7 @@ public class GameControllerScript : MonoBehaviour
         }
     }
 
-    public GameObject SpawnPlayerUnit(GameObject unitPrefab, PlayerControllerScript p)
+    public GameObject SpawnPlayerUnit(GameObject unitPrefab, Player p)
     {
         GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
         newUnit.GetComponent<UnitScript>().Initialize(p, this);
@@ -268,12 +323,7 @@ public class GameControllerScript : MonoBehaviour
 
         UnitScript uScript = u.GetComponent<UnitScript>();
 
-        int[] unitCoords = uScript.xy();
-
-        print(unitCoords[0]);
-        print(unitCoords[1]);
-
-        print(unitGrid[unitCoords[0], unitCoords[1]]);
+        Vector2Int unitCoords = uScript.xy();
 
         unitGrid[uScript.mapX, uScript.mapY] = null;
 
@@ -358,7 +408,7 @@ public class GameControllerScript : MonoBehaviour
         }
     }
 
-    public GameObject getTerrainByElevation(int e)
+    public GameObject GetTerrainByElevation(int e)
     {
         if(e == 0)
         {
@@ -373,6 +423,11 @@ public class GameControllerScript : MonoBehaviour
         {
             return stoneTile;
         }
+    }
+
+    public int TownLimit()
+    {
+        return (int)Math.Floor(Math.Log(turnNumber, 3)) + 1;
     }
 
     public bool MoveUnit(GameObject unit, int x, int y)
@@ -451,6 +506,13 @@ public class GameControllerScript : MonoBehaviour
     {
         uiController.SetCurrPlayer(playerControllers[currPlayer]);
 
+        if(currPlayer == 0)
+        {
+            turnNumber += 1;
+        }
+
+        Debug.Log(turnNumber + ", " + TownLimit());
+
         playerControllers[currPlayer].StartTurn();
     }
 
@@ -469,11 +531,11 @@ public class GameControllerScript : MonoBehaviour
         return new int[] {mapHeight, mapWidth };
     }
 
-    public PlayerControllerScript CheckForWinner()
+    public Player CheckForWinner()
     {
-        PlayerControllerScript lastActive = null;
+        Player lastActive = null;
 
-        foreach(PlayerControllerScript p in playerControllers)
+        foreach(Player p in playerControllers)
         {
             if(p.playerActive)
             {

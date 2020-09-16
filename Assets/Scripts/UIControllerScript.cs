@@ -19,7 +19,7 @@ public class UIControllerScript : MonoBehaviour
 
     public GameObject recruitButtonPrefab;  
 
-    PlayerControllerScript currPlayer;
+    Player currPlayer;
 
     GameObject selectedObject;
 
@@ -87,7 +87,7 @@ public class UIControllerScript : MonoBehaviour
         selectedObject = s;
     }
 
-    public PlayerControllerScript SetCurrPlayer(PlayerControllerScript p)
+    public Player SetCurrPlayer(Player p)
     {
         currPlayer = p;
 

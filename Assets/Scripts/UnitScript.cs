@@ -29,8 +29,10 @@ public class UnitScript : MonoBehaviour
     public int mapX;
     public int mapY;
 
-    protected GameControllerScript gameController;
-    protected PlayerControllerScript player;
+    public bool isTownBuilder;
+
+    protected WorldManager worldManager;
+    protected Player player;
 
     protected void Start()
     {
@@ -40,17 +42,17 @@ public class UnitScript : MonoBehaviour
         HP = maxHP;
     }
 
-    public void Initialize(GameControllerScript gC)
+    public void Initialize(WorldManager wm)
     {
         playerNumber = -1;
-        gameController = gC;
+        worldManager = wm;
     }
 
-    public void Initialize(PlayerControllerScript p, GameControllerScript gC)
+    public void Initialize(Player p, WorldManager wm)
     {
         player = p;
         playerNumber = p.playerNumber;
-        gameController = gC;
+        worldManager = wm;
     }
 
     // Update is called once per frame
@@ -62,7 +64,6 @@ public class UnitScript : MonoBehaviour
     public bool TryAttack(UnitScript target)
     {
         int distance = (Math.Abs(mapX - target.mapX) + Math.Abs(mapY - target.mapY));
-        print(distance);
 
         if(distance > range) {
             Debug.Log("Out of range");
@@ -109,8 +110,8 @@ public class UnitScript : MonoBehaviour
     }
 
     public bool ReceiveDamage(float d) {
-        // float rawDamage = d / player.ShrineDefenseBonus() - armor;
-        float rawDamage = d - armor;
+        float rawDamage = d / player.ShrineDefenseBonus() - armor;
+        // float rawDamage = d - armor;
 
         print(rawDamage);
 
@@ -131,7 +132,7 @@ public class UnitScript : MonoBehaviour
 
     protected void Die()
     {
-        gameController.DeleteUnit(this.gameObject);
+        worldManager.DeleteUnit(this.gameObject);
     }
 
     public bool TryMove(int x)
@@ -157,7 +158,7 @@ public class UnitScript : MonoBehaviour
         return playerNumber;
     }
 
-    public int SetPlayer(PlayerControllerScript p)
+    public int SetPlayer(Player p)
     {
         player = p;
 
@@ -180,12 +181,12 @@ public class UnitScript : MonoBehaviour
         movementPoints = maxMovement;
     }
 
-    public int[] xy()
+    public Vector2Int xy()
     {
-        return new int[] { mapX, mapY };
+        return new Vector2Int (mapX, mapY );
     }
 
-    public int MapDistance(int[] start, int[] end)
+    public int MapDistance(Vector2Int start, Vector2Int end)
     {
         return Math.Abs(start[0] - end[0]) + Math.Abs(start[1] - end[1]);
     }

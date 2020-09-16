@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class MapGenScript : MonoBehaviour
 {
-    public GameControllerScript gameController;
+    public WorldManager worldManager;
 
     public GameObject grassTile;
     public GameObject sandTile;
@@ -17,7 +17,7 @@ public class MapGenScript : MonoBehaviour
 
     public GameObject treePrefab;
 
-    public GameObject shrinePrefab;
+    public GameObject[] objectivePrefabs;
 
     public GameObject neutralUnitPrefab;
 
@@ -131,8 +131,8 @@ public class MapGenScript : MonoBehaviour
 
             if (distance >= 25)
             {
-                gameController.CreateStartingTown(playerTownLocation[0], playerTownLocation[1], 0);
-                gameController.CreateStartingTown(enemyTownLocation[0], enemyTownLocation[1], 1);
+                worldManager.CreateStartingTown(playerTownLocation[0], playerTownLocation[1], 0);
+                worldManager.CreateStartingTown(enemyTownLocation[0], enemyTownLocation[1], 1);
 
                 townsSuccessfullyPlaced = true;
                 break;
@@ -160,9 +160,9 @@ public class MapGenScript : MonoBehaviour
                 newTile.GetComponent<TileScript>().mapX = i;
                 newTile.GetComponent<TileScript>().mapY = j;
 
-                gameController.terrainGrid[i, j] = newTile;
+                worldManager.terrainGrid[i, j] = newTile;
 
-                if (map[i][j] != 0 && gameController.unitGrid[i, j] == null)
+                if (map[i][j] != 0 && worldManager.unitGrid[i, j] == null)
                 {
                     int r = UnityEngine.Random.Range(0, 100);
 
@@ -170,22 +170,22 @@ public class MapGenScript : MonoBehaviour
                     {
                         GameObject newFeature = Instantiate(treePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 
-                        gameController.featureGrid[i, j] = newFeature;
+                        worldManager.featureGrid[i, j] = newFeature;
 
                         newFeature.GetComponent<MapFeatureScript>().mapX = i;
                         newFeature.GetComponent<MapFeatureScript>().mapY = j;
                     }
                     if (r >= 10 && r < 15)
                     {
-                        gameController.SpawnUnit(neutralUnitPrefab, i, j);
+                        worldManager.SpawnUnit(neutralUnitPrefab, i, j);
                     }
                 }
 
-                if (map[i][j] != 0 && gameController.unitGrid[i, j] == null && UnityEngine.Random.Range(0, 100) == 0 && gameController.featureGrid[i, j] == null)
+                if (map[i][j] != 0 && worldManager.unitGrid[i, j] == null && UnityEngine.Random.Range(0, 100) == 0 && worldManager.featureGrid[i, j] == null)
                 {
-                    GameObject newObjective = Instantiate(shrinePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
+                    GameObject newObjective = Instantiate(objectivePrefabs[UnityEngine.Random.Range(0, objectivePrefabs.Length)], new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 
-                    gameController.featureGrid[i, j] = newObjective;
+                    worldManager.featureGrid[i, j] = newObjective;
 
                     newObjective.GetComponent<MapObjectiveScript>().mapX = i;
                     newObjective.GetComponent<MapObjectiveScript>().mapY = j;

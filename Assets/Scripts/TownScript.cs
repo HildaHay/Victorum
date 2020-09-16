@@ -11,11 +11,11 @@ public class TownScript : MonoBehaviour
     public int mapX;
     public int mapY;
 
-    public int goldPerTurn;
-    int gold;
+    // public int goldPerTurn;
+    // int gold;
 
-    public GameObject knightPrefab;
-    public GameObject scoutPrefab;
+    // public GameObject knightPrefab;
+    // public GameObject scoutPrefab;
 
     public GameObject[] recruitableUnits;
 
@@ -24,13 +24,13 @@ public class TownScript : MonoBehaviour
     public SpriteRenderer sRenderer;
 
     // public bool isPlayer;
-    public int player;
+    public int playerNumber;
 
-    public GameObject gameControllerObject;
-    GameControllerScript gameController;
+    public GameObject worldManagerObject;
+    WorldManager worldManager;
 
     public GameObject playerControllerObject;
-    PlayerControllerScript playerController;
+    Player player;
 
     public GameObject uiControllerObject;
     UIControllerScript uiController;
@@ -38,21 +38,21 @@ public class TownScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gameController = gameControllerObject.GetComponent<GameControllerScript>();
+        worldManager = worldManagerObject.GetComponent<WorldManager>();
 
-        playerController = playerControllerObject.GetComponent<PlayerControllerScript>();
+        player = playerControllerObject.GetComponent<Player>();
 
         uiController = uiControllerObject.GetComponent<UIControllerScript>();
 
-        recruitableUnits = new GameObject[] { knightPrefab, scoutPrefab };
+        // recruitableUnits = new GameObject[] { knightPrefab, scoutPrefab };
 
-        gold = 10;
+        // gold = 10;
 
         HP = maxHP;
 
         sRenderer = gameObject.GetComponent<SpriteRenderer>();
 
-        if(player == 0)
+        if(playerNumber == 0)
         {
             sRenderer.sprite = playerTownSprite;
         } else
@@ -69,22 +69,22 @@ public class TownScript : MonoBehaviour
 
     public void TurnStart()
     {
-        gold += goldPerTurn;
+        // gold += goldPerTurn;
     }
 
     public bool CanBuy()
     {
-        return gold > 0;
+        return player.gold > 0;
     }
 
     public int GetGold()
     {
-        return gold;
+        return player.gold;
     }
 
     public int GetPlayer()
     {
-        return player;
+        return playerNumber;
     }
 
     public void OpenMenu()
@@ -94,18 +94,18 @@ public class TownScript : MonoBehaviour
 
     public void OrderBuildUnit(GameObject unitToBuild)
     {
-        playerController.TownRecruit(this.gameObject, unitToBuild);
+        player.TownRecruit(this.gameObject, unitToBuild);
     }
 
     public GameObject BuildUnit(GameObject unitPrefab)
     {
-        // actual unit spawning handled by GameControllerScript
+        // actual unit spawning handled by worldManagerScript
 
-        if(gold >= unitPrefab.GetComponent<UnitScript>().cost)
+        if(player.gold >= unitPrefab.GetComponent<UnitScript>().cost)
         {
-            gold -= unitPrefab.GetComponent<UnitScript>().cost;
+            player.gold -= unitPrefab.GetComponent<UnitScript>().cost;
 
-            return gameController.SpawnPlayerUnit(unitPrefab, gameController.playerControllerObjects[player].GetComponent<PlayerControllerScript>());
+            return worldManager.SpawnPlayerUnit(unitPrefab, worldManager.playerControllerObjects[playerNumber].GetComponent<Player>());
         }
         else
         {
@@ -116,7 +116,7 @@ public class TownScript : MonoBehaviour
 
     public bool ReceiveDamage(float d)
     {
-        float rawDamage = d / playerController.ShrineDefenseBonus();
+        float rawDamage = d / player.ShrineDefenseBonus();
 
         int roundedDamage = Mathf.RoundToInt(rawDamage);
 
@@ -135,7 +135,7 @@ public class TownScript : MonoBehaviour
 
     bool Die()
     {
-        gameController.DeleteTown(this.gameObject);
+        worldManager.DeleteTown(this.gameObject);
         return true;
     }
 

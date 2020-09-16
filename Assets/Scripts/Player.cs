@@ -6,16 +6,16 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class PlayerControllerScript : MonoBehaviour
+public class Player : MonoBehaviour
 {
     // GameObject selected;
 
-    GameControllerScript gameController;
+    WorldManager worldManager;
     UIControllerScript uiController;
 
     List<GameObject> playerUnitList;
     List<GameObject> playerTownList;
-    List<GameObject> playerShrineList;
+    List<GameObject> playerObjectiveList;
 
     bool[,] tilesExplored;
 
@@ -29,8 +29,13 @@ public class PlayerControllerScript : MonoBehaviour
 
     public bool playerActive;
 
-    int unitVisionDistance = 3;
+    // int unitVisionDistance = 3;
     int townVisionDistance = 6;
+
+    public int gold;
+    public int baseGPT; // base gold per turn
+    public int townGPT; // additional gold per turn for each town constructed
+    public int mineGPT; // additional gold per turn for each mine controlled
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +44,7 @@ public class PlayerControllerScript : MonoBehaviour
 
         playerCameraPosition = mainTown.transform.position + new Vector3(0, 0, -10);
 
-        playerShrineList = new List<GameObject>();
+        playerObjectiveList = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -48,10 +53,10 @@ public class PlayerControllerScript : MonoBehaviour
 
     }
 
-    public void Initialize(int p, GameControllerScript gC, UIControllerScript uiC)
+    public void Initialize(int p, WorldManager wm, UIControllerScript uiC)
     {
         playerNumber = p;
-        gameController = gC;
+        worldManager = wm;
         uiController = uiC;
 
         playerActive = true;
@@ -59,7 +64,12 @@ public class PlayerControllerScript : MonoBehaviour
         playerUnitList = new List<GameObject>();
         playerTownList = new List<GameObject>();
 
-        tilesExplored = new bool[gameController.getMapDimensions()[0], gameController.getMapDimensions()[1]];
+        tilesExplored = new bool[worldManager.getMapDimensions()[0], worldManager.getMapDimensions()[1]];
+
+        gold = 10;
+        baseGPT = 2;
+        townGPT = 0;
+        mineGPT = 1;
     }
 
     public void CheckVision(int x, int y, int visionRange)
@@ -122,13 +132,13 @@ public class PlayerControllerScript : MonoBehaviour
         
         GameObject newUnit = null;
 
-        if (gameController.unitGrid[x, y] == null)
+        if (worldManager.unitGrid[x, y] == null)
         {
             newUnit = townScript.BuildUnit(unitToBuild);
             if (newUnit != null)
             {
-                // gameController.unitList.Add(newUnit);
-                gameController.unitGrid[x, y] = newUnit;
+                // worldManager.unitList.Add(newUnit);
+                worldManager.unitGrid[x, y] = newUnit;
                 newUnit.GetComponent<UnitScript>().mapX = x;
                 newUnit.GetComponent<UnitScript>().mapY = y;
 
@@ -159,13 +169,13 @@ public class PlayerControllerScript : MonoBehaviour
     {
         GameObject selected = s;    // Necessary?
 
-        if(Input.GetMouseButton(1) && gameController.gameOver == false)
+        if(Input.GetMouseButton(1) && worldManager.gameOver == false)
         {
             selected = null;
             uiController.SetSelectedObject(null);
         }
 
-        if (Input.GetMouseButtonDown(0) && gameController.gameOver == false)
+        if (Input.GetMouseButtonDown(0) && worldManager.gameOver == false)
         {
 
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector3(0, 0, 1));
@@ -210,7 +220,7 @@ public class PlayerControllerScript : MonoBehaviour
                             {
 
                                 selected = SelectTown(hit.transform.gameObject);
-                                if (selected.GetComponent<TownScript>().player == playerNumber)
+                                if (selected.GetComponent<TownScript>().playerNumber == playerNumber)
                                 {
                                     selected.GetComponent<TownScript>().OpenMenu();
                                 }
@@ -220,7 +230,7 @@ public class PlayerControllerScript : MonoBehaviour
                         {
 
                             selected = SelectTown(hit.transform.gameObject);
-                            if (selected.GetComponent<TownScript>().player == playerNumber)
+                            if (selected.GetComponent<TownScript>().playerNumber == playerNumber)
                             {
                                 selected.GetComponent<TownScript>().OpenMenu();
                             }
@@ -232,15 +242,15 @@ public class PlayerControllerScript : MonoBehaviour
                             int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
                             int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
 
-                            if (gameController.featureGrid[x, y] != null)
+                            if (worldManager.featureGrid[x, y] != null)
                             {
-                                if (gameController.featureGrid[x, y].tag == "MapFeature")
+                                if (worldManager.featureGrid[x, y].tag == "MapFeature")
                                 {
-                                    SelectFeature(gameController.featureGrid[x, y]);
+                                    SelectFeature(worldManager.featureGrid[x, y]);
                                 }
-                                else if (gameController.featureGrid[x, y].tag == "MapObjective")
+                                else if (worldManager.featureGrid[x, y].tag == "MapObjective")
                                 {
-                                    SelectObjective(gameController.featureGrid[x, y]);
+                                    SelectObjective(worldManager.featureGrid[x, y]);
                                 }
                             }
                         }
@@ -248,27 +258,27 @@ public class PlayerControllerScript : MonoBehaviour
                         {
                             int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
                             int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
-                            if (gameController.Walkable(x, y))
+                            if (worldManager.Walkable(x, y))
                             {
-                                gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else if (selected.tag == "MapFeature")
                         {
                             int x = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapX;
                             int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
-                            if (gameController.Walkable(x, y))
+                            if (worldManager.Walkable(x, y))
                             {
-                                gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else if (selected.tag == "MapObjective")
                         {
                             int x = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapX;
                             int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
-                            if (gameController.Walkable(x, y))
+                            if (worldManager.Walkable(x, y))
                             {
-                                gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else
@@ -338,15 +348,15 @@ public class PlayerControllerScript : MonoBehaviour
                         int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
                         int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
                         
-                        if (gameController.featureGrid[x, y] != null)
+                        if (worldManager.featureGrid[x, y] != null)
                         {
-                            if (gameController.featureGrid[x, y].tag == "MapFeature")
+                            if (worldManager.featureGrid[x, y].tag == "MapFeature")
                             {
-                                SelectFeature(gameController.featureGrid[x, y]);
+                                SelectFeature(worldManager.featureGrid[x, y]);
                             }
-                            else if (gameController.featureGrid[x, y].tag == "MapObjective")
+                            else if (worldManager.featureGrid[x, y].tag == "MapObjective")
                             {
-                                SelectObjective(gameController.featureGrid[x, y]);
+                                SelectObjective(worldManager.featureGrid[x, y]);
                             }
                         }
                     }
@@ -354,27 +364,27 @@ public class PlayerControllerScript : MonoBehaviour
                     {
                         int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
                         int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
-                        if (gameController.Walkable(x, y))
+                        if (worldManager.Walkable(x, y))
                         {
-                            gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                            worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                         }
                     }
                     else if (selected.tag == "MapFeature")
                     {
                         int x = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapX;
                         int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
-                        if (gameController.Walkable(x, y))
+                        if (worldManager.Walkable(x, y))
                         {
-                            gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                            worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                         }
                     }
                     else if (selected.tag == "MapObjective")
                     {
                         int x = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapX;
                         int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
-                        if (gameController.Walkable(x, y))
+                        if (worldManager.Walkable(x, y))
                         {
-                            gameController.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                            worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                         }
                     }
                     else
@@ -436,6 +446,8 @@ public class PlayerControllerScript : MonoBehaviour
             CheckVision(s.mapX, s.mapY, townVisionDistance);
         }
 
+        AddGPT();
+
         ShowExplored();
     }
 
@@ -447,12 +459,17 @@ public class PlayerControllerScript : MonoBehaviour
 
         uiController.SetSelectedObject(null);
 
-        Debug.Log("Player " + playerNumber + " Shrines: " + playerShrineList.Count);
+        Debug.Log("Player " + playerNumber + " Shrines: " + playerObjectiveList.Count);
+    }
+
+    public void AddGPT()
+    {
+        gold += baseGPT + townGPT * playerTownList.Count + mineGPT * GetPlayerMineCount();
     }
 
     public int[] mapToScreenCoordinates(int x, int y)
     {
-        int[] mapDimensions = gameController.GetMapDimensions();
+        int[] mapDimensions = worldManager.GetMapDimensions();
 
         int a = x - mapDimensions[1] / 2;
         int b = -y + mapDimensions[0] / 2;
@@ -495,7 +512,7 @@ public class PlayerControllerScript : MonoBehaviour
         if(playerTownList.Count <= 0)
         {
             playerActive = false;
-            gameController.CheckForWinner();
+            worldManager.CheckForWinner();
         }
 
         return true;
@@ -503,7 +520,7 @@ public class PlayerControllerScript : MonoBehaviour
 
     void HideAll()
     {
-        GameObject[,] terrainGrid = gameController.terrainGrid;
+        GameObject[,] terrainGrid = worldManager.terrainGrid;
 
         for(int i = 0; i < terrainGrid.GetLength(0); i++)
         {
@@ -515,9 +532,9 @@ public class PlayerControllerScript : MonoBehaviour
     }
     void ShowAll()
     {
-        for (int i = 0; i < gameController.terrainGrid.GetLength(0); i++)
+        for (int i = 0; i < worldManager.terrainGrid.GetLength(0); i++)
         {
-            for (int j = 0; j < gameController.terrainGrid.GetLength(1); j++)
+            for (int j = 0; j < worldManager.terrainGrid.GetLength(1); j++)
             {
                 SetTileVisibility(i, j, true);
             }
@@ -526,18 +543,18 @@ public class PlayerControllerScript : MonoBehaviour
 
     void ShowExplored()
     {
-        for (int i = 0; i < gameController.terrainGrid.GetLength(0); i++)
+        for (int i = 0; i < worldManager.terrainGrid.GetLength(0); i++)
         {
-            for (int j = 0; j < gameController.terrainGrid.GetLength(1); j++)
+            for (int j = 0; j < worldManager.terrainGrid.GetLength(1); j++)
             {
                 SetTileVisibility(i, j, tilesExplored[i, j]);
                 /* if(tilesExplored[i, j] == true)
                 {
-                    gameController.terrainGrid[i, j].GetComponent<TileScript>().tileRenderer.enabled = true;
+                    worldManager.terrainGrid[i, j].GetComponent<TileScript>().tileRenderer.enabled = true;
                 }
                 else
                 {
-                    gameController.terrainGrid[i, j].GetComponent<TileScript>().tileRenderer.enabled = false;
+                    worldManager.terrainGrid[i, j].GetComponent<TileScript>().tileRenderer.enabled = false;
                 } */
             }
         }
@@ -545,48 +562,87 @@ public class PlayerControllerScript : MonoBehaviour
 
     void SetTileVisibility(int x, int y, bool visible)
     {
-        gameController.terrainGrid[x, y].GetComponent<TileScript>().tileRenderer.enabled = visible;
+        worldManager.terrainGrid[x, y].GetComponent<TileScript>().tileRenderer.enabled = visible;
 
-        if (gameController.unitGrid[x, y] != null)
+        if (worldManager.unitGrid[x, y] != null)
         {
-            gameController.unitGrid[x, y].GetComponent<Renderer>().enabled = visible;
+            worldManager.unitGrid[x, y].GetComponent<Renderer>().enabled = visible;
         }
 
-        if (gameController.featureGrid[x, y] != null)
+        if (worldManager.featureGrid[x, y] != null)
         {
-            gameController.featureGrid[x, y].GetComponent<Renderer>().enabled = visible;
+            worldManager.featureGrid[x, y].GetComponent<Renderer>().enabled = visible;
         }
     }
 
     int GetPlayerShrineCount()
     {
-        return playerShrineList.Count;
+        return playerObjectiveList.Count;
+    }
+
+    int GetStrengthShrineCount()
+    {
+        int c = 0;
+        foreach (GameObject o in playerObjectiveList)
+        {
+            if (o.GetComponent<MapObjectiveScript>().objectiveType == 1)
+            {
+                c++;
+            }
+        }
+        return c;
+    }
+
+    int GetDefenseShrineCount()
+    {
+        int c = 0;
+        foreach (GameObject o in playerObjectiveList)
+        {
+            if (o.GetComponent<MapObjectiveScript>().objectiveType == 2)
+            {
+                c++;
+            }
+        }
+        return c;
+    }
+
+    int GetPlayerMineCount()
+    {
+        int c = 0;
+        foreach(GameObject o in playerObjectiveList)
+        {
+            if(o.GetComponent<MapObjectiveScript>().objectiveType == 0)
+            {
+                c++;
+            }
+        }
+        return c;
     }
 
     public void ClaimShrine(GameObject s)
     {
-        playerShrineList.Add(s);
+        playerObjectiveList.Add(s);
         s.GetComponent<MapObjectiveScript>().Claim(this.playerNumber);
         Debug.Log("Shrine Claimed");
     }
 
     public bool RemoveShrine(GameObject s)
     {
-        return playerShrineList.Remove(s);
+        return playerObjectiveList.Remove(s);
     }
 
     public float ShrineDamageBonus()
     {
-        return 1.0f + (0.1f * playerShrineList.Count);
+        return 1.0f + (0.1f * GetStrengthShrineCount());
     }
 
     public float ShrineDefenseBonus()
     {
-        return 1.0f + (0.1f * playerShrineList.Count);
+        return 1.0f + (0.1f * GetDefenseShrineCount());
     }
 
     public int ShrineCount()
     {
-        return playerShrineList.Count;
+        return playerObjectiveList.Count;
     }
 }
