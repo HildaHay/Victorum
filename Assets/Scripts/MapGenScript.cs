@@ -113,35 +113,51 @@ public class MapGenScript : MonoBehaviour
 
         // create starting towns
 
+        int playerCount = 2;
+
         bool townsSuccessfullyPlaced = false;
 
-        int[] playerTownLocation;
-        int[] enemyTownLocation;
+        int[][] townLocations = new int[playerCount][];
 
-        for (int i = 0; i < 100; i++)
+        for (int tries = 0; tries < 100; tries++)
         {
+            bool placementValid = true;
 
-            int r2 = UnityEngine.Random.Range(0, land.Count());
-            playerTownLocation = new int[] { land[r2][0], land[r2][1] };
-
-            r2 = UnityEngine.Random.Range(0, land.Count());
-            enemyTownLocation = new int[] { land[r2][0], land[r2][1] };
-
-            int distance = Math.Abs(playerTownLocation[0] - enemyTownLocation[0]) + Math.Abs(playerTownLocation[1] - enemyTownLocation[1]);
-
-            if (distance >= 25)
+            for (int i = 0; i < playerCount; i++)
             {
-                worldManager.CreateStartingTown(playerTownLocation[0], playerTownLocation[1], 0);
-                worldManager.CreateStartingTown(enemyTownLocation[0], enemyTownLocation[1], 1);
+                int r = UnityEngine.Random.Range(0, land.Count());
+                townLocations[i] = new int[] { land[r][0], land[r][1] };
 
+
+                for (int j = 0; j < i; j++)
+                {
+
+                    // int distance = Math.Abs(townLocations[i][0] - townLocations[j][0]) + Math.Abs(townLocations[i][1] - townLocations[j][1]);
+
+                    int distance = GetDistance(new Vector2Int(townLocations[i][0], townLocations[i][1]), new Vector2Int(townLocations[j][0], townLocations[j][1]));
+
+                    if (distance < 25)
+                    {
+                        placementValid = false;
+                    }
+                }
+            }
+
+            if (placementValid)
+            {
                 townsSuccessfullyPlaced = true;
                 break;
             }
         }
 
+
+
         if (townsSuccessfullyPlaced)
         {
-
+            for(int i = 0; i < playerCount; i++)
+            {
+                worldManager.CreateStartingTown(townLocations[i][0], townLocations[i][1], i);
+            }
         }
         else
         {
@@ -175,9 +191,21 @@ public class MapGenScript : MonoBehaviour
                         newFeature.GetComponent<MapFeatureScript>().mapX = i;
                         newFeature.GetComponent<MapFeatureScript>().mapY = j;
                     }
-                    if (r >= 10 && r < 15)
+                    if (r >= 10 && r < 12)
                     {
-                        worldManager.SpawnUnit(neutralUnitPrefab, i, j);
+                        bool validSpawn = true;
+                        for(int k = 0; k < playerCount; k++)
+                        {
+
+                            if (GetDistance(new Vector2Int(i, j), new Vector2Int(townLocations[k][0], townLocations[k][1])) < 10)
+                            {
+                                validSpawn = false;
+                            }
+                        }
+                        if(validSpawn)
+                        {
+                            worldManager.SpawnUnit(neutralUnitPrefab, i, j);
+                        }
                     }
                 }
 
@@ -195,6 +223,11 @@ public class MapGenScript : MonoBehaviour
         }
 
         return true;
+    }
+    
+    int GetDistance(Vector2Int a, Vector2Int b)
+    {
+        return Math.Abs(a[0] - b[0]) + Math.Abs(a[1] - b[1]);
     }
 
     public GameObject getTerrainByElevation(int e)

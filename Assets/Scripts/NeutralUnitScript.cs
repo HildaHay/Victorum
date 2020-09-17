@@ -9,12 +9,6 @@ public class NeutralUnitScript : UnitScript
 
     int chaseRange = 5;
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     bool FindTarget(UnitScript[] unitList)
     {
         GameObject newTarget = null;
@@ -38,14 +32,14 @@ public class NeutralUnitScript : UnitScript
 
     public void AutoMove()
     {
-        while (movementPoints > 0) {
+        while (this.movementPoints > 0) {
             // 0 = up, 1 = down, 2 = left, 3 = right
 
             string[] directions = { "up", "down", "left", "right" };
 
             int r = UnityEngine.Random.Range(0, 4);
 
-            Vector2Int targetSquare = this.xy();
+            Vector2Int targetSquare = new Vector2Int(this.xy()[0], this.xy()[1]);
 
             switch (directions[r]) {
                 case "up":
@@ -65,20 +59,20 @@ public class NeutralUnitScript : UnitScript
                     break;
             }
 
-            if (worldManager.Walkable(targetSquare[0], targetSquare[1]) && worldManager.unitGrid[targetSquare[0], targetSquare[1]] == null)
+            Debug.Log(this.xy());
+
+            if (worldManager.MoveUnit(this.gameObject, targetSquare[0], targetSquare[1]))
             {
-                if (!worldManager.MoveUnit(this.gameObject, targetSquare[0], targetSquare[1]))
-                {
-                    this.movementPoints = 0;
-                }
+
             }
             else
             {
                 this.movementPoints = 0;
             }
-        }
 
-        // Debug.Log("Neutral unit moving - not implemented yet");
+            Debug.Log(this.xy());
+        }
+        Debug.Log("-----------------");
     }
     public void NeutralAttackUnit(UnitScript target)   // This is a mess
     {

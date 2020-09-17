@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cost: 0
-  maxMovement: 2
+  maxMovement: 1
   maxHP: 100
   HP: 0
   minDamage: 15
@@ -23,6 +23,7 @@ MonoBehaviour:
   unitName: Skeleton
   mapX: 0
   mapY: 0
+  isTownBuilder: 0
 --- !u!1001 &4451876572028135249
 PrefabInstance:
   m_ObjectHideFlags: 0

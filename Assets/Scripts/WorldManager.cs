@@ -178,7 +178,6 @@ public class WorldManager : MonoBehaviour
 
         if(endTurnPressed)
         {
-            moveNeutralUnits();
             EndTurn();
         }
     }
@@ -287,8 +286,6 @@ public class WorldManager : MonoBehaviour
     {
         GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
         newUnit.GetComponent<UnitScript>().Initialize(this);
-
-        unitList.Add(newUnit);
         
         if (newUnit != null)
         {
@@ -432,6 +429,11 @@ public class WorldManager : MonoBehaviour
 
     public bool MoveUnit(GameObject unit, int x, int y)
     {
+        if(!Walkable(x, y))
+        {
+            Debug.Log("Space not walkable");
+            return false;
+        }
         if (unitGrid[x, y] != null)
         {
             Debug.Log("Space occupied");
@@ -511,8 +513,6 @@ public class WorldManager : MonoBehaviour
             turnNumber += 1;
         }
 
-        Debug.Log(turnNumber + ", " + TownLimit());
-
         playerControllers[currPlayer].StartTurn();
     }
 
@@ -522,6 +522,11 @@ public class WorldManager : MonoBehaviour
         selected = null;
         playerControllers[currPlayer].EndTurn();
         currPlayer = (currPlayer + 1) % numPlayers;
+
+        if(currPlayer == 0)
+        {
+            MoveNeutralUnits();
+        }
 
         StartTurn();
     }
@@ -575,9 +580,9 @@ public class WorldManager : MonoBehaviour
         return new int[] { a, b };
     }
 
-    void moveNeutralUnits()
+    void MoveNeutralUnits()
     {
-        foreach(GameObject u  in unitList)
+        foreach(GameObject u in unitList)
         {
             NeutralUnitScript s = u.GetComponent<NeutralUnitScript>();
             if(s != null)

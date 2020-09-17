@@ -458,8 +458,6 @@ public class Player : MonoBehaviour
         playerCameraPosition = mainCamera.transform.position;
 
         uiController.SetSelectedObject(null);
-
-        Debug.Log("Player " + playerNumber + " Shrines: " + playerObjectiveList.Count);
     }
 
     public void AddGPT()
