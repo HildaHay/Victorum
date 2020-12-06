@@ -16,6 +16,8 @@ public class UIControllerScript : MonoBehaviour
     Text winnerText;
 
     public GameObject endTurnButton;
+    public GameObject buildTownButton;
+    public GameObject nextUnitButton;
 
     public GameObject recruitButtonPrefab;  
 
@@ -47,6 +49,7 @@ public class UIControllerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        buildTownButton.SetActive(false);
         if(selectedObject == null)
         {
             selectionText.text = "";
@@ -54,6 +57,10 @@ public class UIControllerScript : MonoBehaviour
             if(selectedObject.tag == "Unit")
             {
                 ShowUnitInfo(selectedObject);
+                if(selectedObject.GetComponent<UnitScript>().isTownBuilder)
+                {
+                    buildTownButton.SetActive(true);
+                }
             }
             else if (selectedObject.tag == "Town")
             {
@@ -73,8 +80,9 @@ public class UIControllerScript : MonoBehaviour
             }
         }
 
-        if(currPlayer != null) { 
+        if(currPlayer != null) {
             currPlayerText.text = "Player " + currPlayer.playerNumber.ToString() + "\n"
+                + "Gold: " + currPlayer.gold + " (+" + currPlayer.goldPerTurn() + " per turn)" + "\n"
                 + "Shrines: " + currPlayer.ShrineCount();
         } else
         {

@@ -105,6 +105,21 @@ public class Player : MonoBehaviour
         }
     }
 
+    public GameObject SelectFirstUnitWithMoves()
+    {
+        Debug.Log(playerUnitList.Count);
+        foreach (GameObject u in playerUnitList) { 
+            if(u.GetComponent<UnitScript>().GetMovePoints() > 0)
+            {
+                mainCamera.transform.position = new Vector3(u.transform.position.x, u.transform.position.y, mainCamera.transform.position.z);
+                worldManager.Select(u);
+
+                return u;
+            }
+        }
+        return null;
+    }
+
     GameObject SelectTown(GameObject t)
     {
         uiController.SetSelectedObject(t);
@@ -288,112 +303,6 @@ public class Player : MonoBehaviour
                         break;
 
                 }
-
-                /* if (hit.transform.gameObject.tag == "Unit")
-                {
-                    if (selected)
-                    {
-                        // check if we can attack the unit
-                        if (selected.tag == "Unit")
-                        {
-                            UnitScript attacker = selected.GetComponent<UnitScript>();
-                            UnitScript target = hit.transform.gameObject.GetComponent<UnitScript>();
-                            AttackUnit(attacker, target);
-                        }
-                        else
-                        {
-                            // select the unit
-                            selected = SelectUnit(hit.transform.gameObject);
-                        }
-                    }
-                    else
-                    {
-                        selected = SelectUnit(hit.transform.gameObject);
-                    }
-                }
-                else if (hit.transform.gameObject.tag == "Town")
-                {
-                    if (selected)
-                    {
-                        if (selected.tag == "Unit")
-                        {
-                            UnitScript attacker = selected.GetComponent<UnitScript>();
-                            TownScript target = hit.transform.gameObject.GetComponent<TownScript>();
-                            AttackTown(attacker, target);
-                        } else
-                        {
-
-                            selected = SelectTown(hit.transform.gameObject);
-                            if (selected.GetComponent<TownScript>().player == playerNumber)
-                            {
-                                selected.GetComponent<TownScript>().OpenMenu();
-                            }
-                        }
-                    }
-                    else
-                    {
-
-                        selected = SelectTown(hit.transform.gameObject);
-                        if (selected.GetComponent<TownScript>().player == playerNumber)
-                        {
-                            selected.GetComponent<TownScript>().OpenMenu();
-                        }
-                    }
-
-                }
-                else if (hit.transform.gameObject.tag == "Terrain")
-                {
-                    if(selected == null)
-                    {
-                        int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
-                        int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
-                        
-                        if (worldManager.featureGrid[x, y] != null)
-                        {
-                            if (worldManager.featureGrid[x, y].tag == "MapFeature")
-                            {
-                                SelectFeature(worldManager.featureGrid[x, y]);
-                            }
-                            else if (worldManager.featureGrid[x, y].tag == "MapObjective")
-                            {
-                                SelectObjective(worldManager.featureGrid[x, y]);
-                            }
-                        }
-                    }
-                    else if (selected.tag == "Unit")
-                    {
-                        int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
-                        int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
-                        if (worldManager.Walkable(x, y))
-                        {
-                            worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
-                        }
-                    }
-                    else if (selected.tag == "MapFeature")
-                    {
-                        int x = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapX;
-                        int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
-                        if (worldManager.Walkable(x, y))
-                        {
-                            worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
-                        }
-                    }
-                    else if (selected.tag == "MapObjective")
-                    {
-                        int x = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapX;
-                        int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
-                        if (worldManager.Walkable(x, y))
-                        {
-                            worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
-                        }
-                    }
-                    else
-                    {
-                        // selected = null;
-                    }
-                }*/
- 
-                // Do something with the object that was hit by the raycast.
             }
         }
 
@@ -430,9 +339,7 @@ public class Player : MonoBehaviour
     }
 
     public void StartTurn()
-    {
-
-        // mainCamera.transform.position = mainTown.transform.position + new Vector3(0, 0, -10);
+    {   
         mainCamera.transform.position = playerCameraPosition;
 
         foreach (GameObject u in playerUnitList)
@@ -460,9 +367,14 @@ public class Player : MonoBehaviour
         uiController.SetSelectedObject(null);
     }
 
+    public int goldPerTurn()
+    {
+        return baseGPT + townGPT * playerTownList.Count + mineGPT * GetPlayerMineCount();
+    }
+
     public void AddGPT()
     {
-        gold += baseGPT + townGPT * playerTownList.Count + mineGPT * GetPlayerMineCount();
+        gold += goldPerTurn();
     }
 
     public int[] mapToScreenCoordinates(int x, int y)

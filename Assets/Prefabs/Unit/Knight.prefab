@@ -113,6 +113,11 @@ PrefabInstance:
       propertyPath: unitName
       value: Knight
       objectReference: {fileID: 0}
+    - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
+        type: 3}
+      propertyPath: visionRange
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: -5515155979237968041, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: cost

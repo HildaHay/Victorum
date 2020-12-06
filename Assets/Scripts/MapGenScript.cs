@@ -21,7 +21,7 @@ public class MapGenScript : MonoBehaviour
 
     public GameObject neutralUnitPrefab;
 
-    List<GameObject> units;
+    // List<GameObject> units;
 
     // Start is called before the first frame update
     void Start()
@@ -209,7 +209,8 @@ public class MapGenScript : MonoBehaviour
                     }
                 }
 
-                if (map[i][j] != 0 && worldManager.unitGrid[i, j] == null && UnityEngine.Random.Range(0, 100) == 0 && worldManager.featureGrid[i, j] == null)
+                if (map[i][j] != 0 && worldManager.unitGrid[i, j] == null && worldManager.featureGrid[i, j] == null
+                    && UnityEngine.Random.Range(0, 100) <= 2)
                 {
                     GameObject newObjective = Instantiate(objectivePrefabs[UnityEngine.Random.Range(0, objectivePrefabs.Length)], new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 

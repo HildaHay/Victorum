@@ -166,19 +166,25 @@ public class WorldManager : MonoBehaviour
             cursorBox.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, -1);
         }
 
-        selected = playerControllers[currPlayer].getPlayerSelection(selected);
+        Select(playerControllers[currPlayer].getPlayerSelection(selected));
+
+        if (endTurnPressed)
+        {
+            EndTurn();
+        }
+    }
+
+    public void Select(GameObject target)
+    {
+        selected = target;
         if (selected != null)
         {
             selectionBox.SetActive(true);
             selectionBox.transform.position = new Vector3(selected.transform.position.x, selected.transform.position.y, -1.01f);
-        } else
+        }
+        else
         {
             selectionBox.SetActive(false);
-        }
-
-        if(endTurnPressed)
-        {
-            EndTurn();
         }
     }
 
@@ -460,7 +466,7 @@ public class WorldManager : MonoBehaviour
 
                 if (unitScript.GetPlayer() >= 0)    // hackish bypass for bug w/ neutral untis
                 {
-                    playerControllers[unitScript.GetPlayer()].CheckVision(x, y, 3); // Remember: Replace the 3 with a variable!!!
+                    playerControllers[unitScript.GetPlayer()].CheckVision(x, y, unitScript.visionRange);
                 }
 
                 // uiController.ShowUnitInfo(unit);
@@ -497,6 +503,11 @@ public class WorldManager : MonoBehaviour
                 return false;
             }
         }
+    }
+
+    public void NextUnit()
+    {
+        playerControllers[currPlayer].SelectFirstUnitWithMoves();
     }
 
     public void EndTurnButtonPressed()

@@ -107,6 +107,11 @@ PrefabInstance:
       propertyPath: maxDamage
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 4756081786176530146, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: visionRange
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4756081786176530175, guid: 230c58fe595551b4e9d282bd81bc6a95,
         type: 3}
       propertyPath: m_Sprite

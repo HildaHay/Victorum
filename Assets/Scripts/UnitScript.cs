@@ -22,6 +22,8 @@ public class UnitScript : MonoBehaviour
 
     public int range;
 
+    public int visionRange;
+
     protected int playerNumber;
 
     public string unitName = "";
