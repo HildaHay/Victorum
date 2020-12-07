@@ -112,8 +112,18 @@ public class UnitScript : MonoBehaviour
     }
 
     public bool ReceiveDamage(float d) {
-        float rawDamage = d / player.ShrineDefenseBonus() - armor;
-        // float rawDamage = d - armor;
+        // float rawDamage = d / player.ShrineDefenseBonus() - armor;
+        float rawDamage = 0;
+
+        if (playerNumber == -1)
+        {
+            // Neutral units get no shrine bonus
+            rawDamage = d - armor;
+        }
+        else
+        {
+            rawDamage = d / player.ShrineDefenseBonus() - armor;
+        }
 
         print(rawDamage);
 

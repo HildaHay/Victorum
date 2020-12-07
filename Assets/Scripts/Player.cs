@@ -66,7 +66,7 @@ public class Player : MonoBehaviour
 
         tilesExplored = new bool[worldManager.getMapDimensions()[0], worldManager.getMapDimensions()[1]];
 
-        gold = 10;
+        gold = 20;
         baseGPT = 2;
         townGPT = 0;
         mineGPT = 1;
@@ -92,9 +92,25 @@ public class Player : MonoBehaviour
         }
     }
 
+    public GameObject SelectFirstUnitWithMoves()
+    {
+        Debug.Log(playerUnitList.Count);
+        foreach (GameObject u in playerUnitList)
+        {
+            if (u.GetComponent<UnitScript>().GetMovePoints() > 0)
+            {
+                mainCamera.transform.position = new Vector3(u.transform.position.x, u.transform.position.y, mainCamera.transform.position.z);
+                worldManager.Select(u);
+                SelectUnit(u);
+
+                return u;
+            }
+        }
+        return null;
+    }
+
     GameObject SelectUnit(GameObject u)
     {
-
         if(u.GetComponent<UnitScript>().GetPlayer() == playerNumber)
         {
             uiController.SetSelectedObject(u);
@@ -105,24 +121,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    public GameObject SelectFirstUnitWithMoves()
-    {
-        Debug.Log(playerUnitList.Count);
-        foreach (GameObject u in playerUnitList) { 
-            if(u.GetComponent<UnitScript>().GetMovePoints() > 0)
-            {
-                mainCamera.transform.position = new Vector3(u.transform.position.x, u.transform.position.y, mainCamera.transform.position.z);
-                worldManager.Select(u);
-
-                return u;
-            }
-        }
-        return null;
-    }
-
     GameObject SelectTown(GameObject t)
     {
         uiController.SetSelectedObject(t);
+        if (t.GetComponent<TownScript>().playerNumber == playerNumber)
+        {
+            t.GetComponent<TownScript>().OpenMenu();
+        }
         return t;
     }
 
@@ -166,19 +171,10 @@ public class Player : MonoBehaviour
             Debug.Log("Space occupied");
         }
 
-        // uiScript.SetSelectedObject(t);
+        uiController.SetSelectedObject(t);
 
         return newUnit;
     }
-
-    /* public void Combat(UnitScript attacker, UnitScript defender)
-    {
-        int aDmg = attacker.attackDamage();
-        int dDmg = defender.attackDamage();
-
-        defender.receiveDamage(aDmg);
-        attacker.receiveDamage(dDmg);
-    } */
 
     public GameObject getPlayerSelection(GameObject s)
     {
@@ -204,12 +200,20 @@ public class Player : MonoBehaviour
                     case "Unit":
                         if (selected)
                         {
-                            // check if we can attack the unit
                             if (selected.tag == "Unit")
                             {
-                                UnitScript attacker = selected.GetComponent<UnitScript>();
                                 UnitScript target = hit.transform.gameObject.GetComponent<UnitScript>();
-                                AttackUnit(attacker, target);
+
+                                // check if we can attack the unit
+                                if (target.GetPlayer() != playerNumber)
+                                {
+                                    UnitScript attacker = selected.GetComponent<UnitScript>();
+                                    AttackUnit(attacker, target);
+                                } else
+                                {
+                                    // select the unit
+                                    selected = SelectUnit(hit.transform.gameObject);
+                                }
                             }
                             else
                             {
@@ -227,28 +231,29 @@ public class Player : MonoBehaviour
                         {
                             if (selected.tag == "Unit")
                             {
-                                UnitScript attacker = selected.GetComponent<UnitScript>();
                                 TownScript target = hit.transform.gameObject.GetComponent<TownScript>();
-                                AttackTown(attacker, target);
+
+                                // check if we can attack the town
+                                if (target.GetPlayer() != playerNumber)
+                                {
+                                    UnitScript attacker = selected.GetComponent<UnitScript>();
+                                    AttackTown(attacker, target);
+                                } else
+                                {
+                                    selected = SelectTown(hit.transform.gameObject);
+                                }
+
                             }
                             else
                             {
 
                                 selected = SelectTown(hit.transform.gameObject);
-                                if (selected.GetComponent<TownScript>().playerNumber == playerNumber)
-                                {
-                                    selected.GetComponent<TownScript>().OpenMenu();
-                                }
                             }
                         }
                         else
                         {
 
                             selected = SelectTown(hit.transform.gameObject);
-                            if (selected.GetComponent<TownScript>().playerNumber == playerNumber)
-                            {
-                                selected.GetComponent<TownScript>().OpenMenu();
-                            }
                         }
                         break;
                     case "Terrain":

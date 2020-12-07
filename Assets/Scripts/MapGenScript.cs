@@ -41,7 +41,9 @@ public class MapGenScript : MonoBehaviour
 
         Debug.Log("Generating terrain");
 
-        int landsize = 650;
+        // int landsize = 650;
+
+        int landsize = 300;
 
         int wOffset = w / 2;
         int hOffset = h / 2;
@@ -108,9 +110,6 @@ public class MapGenScript : MonoBehaviour
 
         Debug.Log("Terrain completed");
 
-        // terrainGrid = new GameObject[mapWidth, mapHeight];
-        // featureGrid = new GameObject[mapWidth, mapHeight];
-
         // create starting towns
 
         int playerCount = 2;
@@ -131,12 +130,9 @@ public class MapGenScript : MonoBehaviour
 
                 for (int j = 0; j < i; j++)
                 {
-
-                    // int distance = Math.Abs(townLocations[i][0] - townLocations[j][0]) + Math.Abs(townLocations[i][1] - townLocations[j][1]);
-
                     int distance = GetDistance(new Vector2Int(townLocations[i][0], townLocations[i][1]), new Vector2Int(townLocations[j][0], townLocations[j][1]));
 
-                    if (distance < 25)
+                    if (distance < 20)
                     {
                         placementValid = false;
                     }

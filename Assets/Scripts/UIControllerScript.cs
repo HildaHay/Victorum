@@ -49,34 +49,47 @@ public class UIControllerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        buildTownButton.SetActive(false);
+
         if(selectedObject == null)
         {
             selectionText.text = "";
-        } else { 
-            if(selectedObject.tag == "Unit")
+        } else {
+            if (selectedObject.tag == "Unit")
             {
                 ShowUnitInfo(selectedObject);
-                if(selectedObject.GetComponent<UnitScript>().isTownBuilder)
+                if (selectedObject.GetComponent<UnitScript>().isTownBuilder)
                 {
                     buildTownButton.SetActive(true);
+                } else
+                {
+                    buildTownButton.SetActive(false);
                 }
-            }
-            else if (selectedObject.tag == "Town")
-            {
-                ShowTownInfo(selectedObject);
-            }
-            else if(selectedObject.tag == "MapFeature")
-            {
-                ShowFeatureInfo(selectedObject);
-            }
-            else if (selectedObject.tag == "MapObjective")
-            {
-                ShowObjectiveInfo(selectedObject);
             }
             else
             {
-                selectionText.text = "";
+                buildTownButton.SetActive(false);
+
+                if (selectedObject.tag == "Town")
+                {
+                    ShowTownInfo(selectedObject);
+                }
+                else if (selectedObject.tag == "MapFeature")
+                {
+                    ShowFeatureInfo(selectedObject);
+                }
+                else if (selectedObject.tag == "MapObjective")
+                {
+                    ShowObjectiveInfo(selectedObject);
+                }
+                else
+                {
+                    selectionText.text = "";
+                }
+            }
+
+            if(selectedObject.tag != "Town")
+            {
+                CloseTownMenu();
             }
         }
 
