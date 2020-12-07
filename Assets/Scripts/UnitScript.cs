@@ -36,6 +36,10 @@ public class UnitScript : MonoBehaviour
     protected WorldManager worldManager;
     protected Player player;
 
+    public GameObject playerIndicatorSprite;
+
+    public Sprite[] sprites;
+
     protected void Start()
     {
         // maxMovement = 3;
@@ -55,6 +59,8 @@ public class UnitScript : MonoBehaviour
         player = p;
         playerNumber = p.playerNumber;
         worldManager = wm;
+
+        playerIndicatorSprite.GetComponent<SpriteRenderer>().sprite = sprites[p.playerNumber];
     }
 
     // Update is called once per frame

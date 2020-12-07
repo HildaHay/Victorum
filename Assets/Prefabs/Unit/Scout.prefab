@@ -67,6 +67,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4756081786176530144, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756081786176530144, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4756081786176530146, guid: 230c58fe595551b4e9d282bd81bc6a95,
         type: 3}
       propertyPath: cost
@@ -121,6 +131,21 @@ PrefabInstance:
     - target: {fileID: 4756081786176530175, guid: 230c58fe595551b4e9d282bd81bc6a95,
         type: 3}
       propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5998751766354732841, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5998751766354732841, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5998751766354732841, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

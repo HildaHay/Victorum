@@ -20,9 +20,13 @@ MonoBehaviour:
   maxDamage: 0
   armor: 0
   range: 0
+  visionRange: 0
   unitName: 
   mapX: 0
   mapY: 0
+  isTownBuilder: 0
+  playerIndicatorSprite: {fileID: 1187280729647234588}
+  sprites: []
 --- !u!1001 &4479259000974489003
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -90,6 +94,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4756081786176530144, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756081786176530144, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756081786176530144, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4756081786176530146, guid: 230c58fe595551b4e9d282bd81bc6a95,
         type: 3}
       propertyPath: unitName
@@ -100,12 +119,33 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5998751766354732841, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5998751766354732841, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5998751766354732841, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4756081786176530146, guid: 230c58fe595551b4e9d282bd81bc6a95, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 230c58fe595551b4e9d282bd81bc6a95, type: 3}
 --- !u!1 &8946815707187762005 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4756081786176530174, guid: 230c58fe595551b4e9d282bd81bc6a95,
+    type: 3}
+  m_PrefabInstance: {fileID: 4479259000974489003}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1187280729647234588 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3338178720786811831, guid: 230c58fe595551b4e9d282bd81bc6a95,
     type: 3}
   m_PrefabInstance: {fileID: 4479259000974489003}
   m_PrefabAsset: {fileID: 0}

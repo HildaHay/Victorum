@@ -463,14 +463,6 @@ public class Player : MonoBehaviour
             for (int j = 0; j < worldManager.terrainGrid.GetLength(1); j++)
             {
                 SetTileVisibility(i, j, tilesExplored[i, j]);
-                /* if(tilesExplored[i, j] == true)
-                {
-                    worldManager.terrainGrid[i, j].GetComponent<TileScript>().tileRenderer.enabled = true;
-                }
-                else
-                {
-                    worldManager.terrainGrid[i, j].GetComponent<TileScript>().tileRenderer.enabled = false;
-                } */
             }
         }
     }
@@ -481,7 +473,12 @@ public class Player : MonoBehaviour
 
         if (worldManager.unitGrid[x, y] != null)
         {
-            worldManager.unitGrid[x, y].GetComponent<Renderer>().enabled = visible;
+            // worldManager.unitGrid[x, y].GetComponent<Renderer>().enabled = visible;
+            Renderer[] renderers = worldManager.unitGrid[x, y].GetComponentsInChildren<Renderer>();
+            foreach (Renderer r in renderers)
+            {
+                r.enabled = visible;
+            }
         }
 
         if (worldManager.featureGrid[x, y] != null)
