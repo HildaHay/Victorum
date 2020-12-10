@@ -134,8 +134,16 @@ public class MapGenScript : MonoBehaviour
 
                     if (distance < 20)
                     {
+                        // make sure the towns are far enough apart
                         placementValid = false;
                     }
+                    
+                }
+
+                if (map[townLocations[i][0]][townLocations[i][1] + 1] == 0)
+                {
+                    // make sure the tile below the town (where units spawn) is land
+                    placementValid = false;
                 }
             }
 
@@ -180,12 +188,25 @@ public class MapGenScript : MonoBehaviour
 
                     if (r >= 0 && r < 10)
                     {
-                        GameObject newFeature = Instantiate(treePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
+                        bool validSpawn = true;
+                        for (int k = 0; k < playerCount; k++)
+                        {
 
-                        worldManager.featureGrid[i, j] = newFeature;
+                            // don't spawn trees next to a town
+                            if (GetDistance(new Vector2Int(i, j), new Vector2Int(townLocations[k][0], townLocations[k][1])) < 3)
+                            {
+                                validSpawn = false;
+                            }
+                        }
+                        if (validSpawn)
+                        {
+                            GameObject newFeature = Instantiate(treePrefab, new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
 
-                        newFeature.GetComponent<MapFeatureScript>().mapX = i;
-                        newFeature.GetComponent<MapFeatureScript>().mapY = j;
+                            worldManager.featureGrid[i, j] = newFeature;
+
+                            newFeature.GetComponent<MapFeatureScript>().mapX = i;
+                            newFeature.GetComponent<MapFeatureScript>().mapY = j;
+                        }
                     }
                     if (r >= 10 && r < 12)
                     {
@@ -198,6 +219,7 @@ public class MapGenScript : MonoBehaviour
                                 validSpawn = false;
                             }
                         }
+
                         if(validSpawn)
                         {
                             worldManager.SpawnUnit(neutralUnitPrefab, i, j);
@@ -208,12 +230,27 @@ public class MapGenScript : MonoBehaviour
                 if (map[i][j] != 0 && worldManager.unitGrid[i, j] == null && worldManager.featureGrid[i, j] == null
                     && UnityEngine.Random.Range(0, 100) <= 2)
                 {
-                    GameObject newObjective = Instantiate(objectivePrefabs[UnityEngine.Random.Range(0, objectivePrefabs.Length)], new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
+                    // spawn shrines
 
-                    worldManager.featureGrid[i, j] = newObjective;
+                    bool validSpawn = true;
+                    for (int k = 0; k < playerCount; k++)
+                    {
+                        // Don't spawn shrines within 10 units of players' towns
+                        if (GetDistance(new Vector2Int(i, j), new Vector2Int(townLocations[k][0], townLocations[k][1])) < 10)
+                        {
+                            validSpawn = false;
+                        }
+                    }
 
-                    newObjective.GetComponent<MapObjectiveScript>().mapX = i;
-                    newObjective.GetComponent<MapObjectiveScript>().mapY = j;
+                    if (validSpawn)
+                    {
+                        GameObject newObjective = Instantiate(objectivePrefabs[UnityEngine.Random.Range(0, objectivePrefabs.Length)], new Vector3(i - wOffset, -j + hOffset, -1), Quaternion.identity);
+
+                        worldManager.featureGrid[i, j] = newObjective;
+
+                        newObjective.GetComponent<MapObjectiveScript>().mapX = i;
+                        newObjective.GetComponent<MapObjectiveScript>().mapY = j;
+                    }
                 }
 
             }
