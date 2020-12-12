@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIControllerScript : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
     public GameObject selectionTextObject;
     Text selectionText;
@@ -52,6 +52,7 @@ public class UIControllerScript : MonoBehaviour
 
         if(selectedObject == null)
         {
+            buildTownButton.SetActive(false);
             selectionText.text = "";
         } else {
             if (selectedObject.tag == "Unit")

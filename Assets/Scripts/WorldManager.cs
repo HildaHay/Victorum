@@ -32,9 +32,9 @@ public class WorldManager : MonoBehaviour
 
     public int[] tileWeights;
 
-    // Units
-    public GameObject playerControllerPrefab;
+    public GameObject playerPrefab;
     public GameObject strongholdPrefab;
+    public GameObject playerControllerPrefab;
 
     public List<GameObject> unitList;
     public List<GameObject> townList;   // could possibly be combined with unitList
@@ -43,11 +43,11 @@ public class WorldManager : MonoBehaviour
     // Game Mechanics Objects
     // public GameObject PlayerController;
     // Player Player;
-    public GameObject[] playerControllerObjects;
-    Player[] playerControllers;
+    public GameObject[] playerObjects;
+    Player[] players;
 
     public GameObject UIControllerObject;
-    UIControllerScript uiController;
+    UIManager uiController;
 
     public GameObject mapGeneratorObject;
     MapGenScript mapGenerator;
@@ -85,18 +85,18 @@ public class WorldManager : MonoBehaviour
         // terrainGrid = new GameObject[mapWidth, mapHeight];
         unitGrid = new GameObject[mapWidth, mapHeight];
 
-        uiController = UIControllerObject.GetComponent<UIControllerScript>();
+        uiController = UIControllerObject.GetComponent<UIManager>();
 
         mapGenerator = mapGeneratorObject.GetComponent<MapGenScript>();
 
-        playerControllerObjects = new GameObject[2];
-        playerControllers = new Player[2];
+        playerObjects = new GameObject[2];
+        players = new Player[2];
 
         for (int i = 0; i < numPlayers; i++)
         {
-            playerControllerObjects[i] = Instantiate(playerControllerPrefab);
-            playerControllers[i] = playerControllerObjects[i].GetComponent<Player>();
-            playerControllers[i].Initialize(i, this, uiController);
+            playerObjects[i] = Instantiate(playerPrefab);
+            players[i] = playerObjects[i].GetComponent<Player>();
+            players[i].Initialize(i, this, uiController);
         }
 
         terrainGrid = new GameObject[mapWidth, mapHeight];
@@ -104,7 +104,7 @@ public class WorldManager : MonoBehaviour
         mapGenerator.GenerateMap(mapWidth, mapHeight);
 
         currPlayer = 0;
-        uiController.SetCurrPlayer(playerControllers[currPlayer]);
+        uiController.SetCurrPlayer(players[currPlayer]);
 
         turnNumber = 0;
 
@@ -166,7 +166,7 @@ public class WorldManager : MonoBehaviour
             cursorBox.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, -1);
         }
 
-        Select(playerControllers[currPlayer].getPlayerSelection(selected));
+        Select(players[currPlayer].controller.getPlayerSelection(selected));
 
         if (endTurnPressed)
         {
@@ -191,7 +191,7 @@ public class WorldManager : MonoBehaviour
     public GameObject CreateStartingTown(int x, int y, int p)
     {
         GameObject t = SpawnTown(x, y, p);
-        playerControllers[p].setMainTown(t);
+        players[p].setMainTown(t);
         return t;
     }
 
@@ -255,7 +255,7 @@ public class WorldManager : MonoBehaviour
             TownScript townScript = newTown.GetComponent<TownScript>();
 
             townScript.worldManagerObject = this.transform.gameObject;
-            townScript.playerControllerObject = playerControllerObjects[p];
+            townScript.playerControllerObject = playerObjects[p];
             townScript.uiControllerObject = UIControllerObject;
 
             townList.Add(newTown);
@@ -265,7 +265,7 @@ public class WorldManager : MonoBehaviour
             townScript.mapY = y;
             townScript.playerNumber = p;
 
-            playerControllers[p].addTown(newTown);
+            players[p].addTown(newTown);
 
             return newTown;
         }
@@ -332,7 +332,7 @@ public class WorldManager : MonoBehaviour
 
         if (uScript.GetPlayer() >= 0)
         {
-            playerControllers[uScript.GetPlayer()].deleteUnit(u);
+            players[uScript.GetPlayer()].deleteUnit(u);
         }
 
         Destroy(u);
@@ -359,7 +359,7 @@ public class WorldManager : MonoBehaviour
 
         unitGrid[unitScript.mapX, unitScript.mapY] = null;
 
-        playerControllers[t.GetComponent<TownScript>().GetPlayer()].deleteTown(t);
+        players[t.GetComponent<TownScript>().GetPlayer()].deleteTown(t);
 
         Destroy(t);
 
@@ -466,7 +466,7 @@ public class WorldManager : MonoBehaviour
 
                 if (unitScript.GetPlayer() >= 0)    // hackish bypass for bug w/ neutral untis
                 {
-                    playerControllers[unitScript.GetPlayer()].CheckVision(x, y, unitScript.visionRange);
+                    players[unitScript.GetPlayer()].CheckVision(x, y, unitScript.visionRange);
                 }
 
                 // uiController.ShowUnitInfo(unit);
@@ -477,19 +477,19 @@ public class WorldManager : MonoBehaviour
                 {
                     if (f.tag == "MapObjective")
                     {
-                        for(int i = 0; i < playerControllers.Length; i++)
+                        for(int i = 0; i < players.Length; i++)
                         {
                             if(i == unitScript.GetPlayer())
                             {
-                                playerControllers[i].ClaimShrine(f);
+                                players[i].ClaimShrine(f);
                             }
                             else
                             {
-                                playerControllers[i].RemoveShrine(f);
+                                players[i].RemoveShrine(f);
                             }
                         }
 
-                        // playerControllers[unitScript.GetPlayer()].ClaimShrine(featureGrid[x, y]);
+                        // players[unitScript.GetPlayer()].ClaimShrine(featureGrid[x, y]);
                     }
                 }
 
@@ -507,7 +507,7 @@ public class WorldManager : MonoBehaviour
 
     public void NextUnit()
     {
-        playerControllers[currPlayer].SelectFirstUnitWithMoves();
+        players[currPlayer].SelectFirstUnitWithMoves();
     }
 
     public void EndTurnButtonPressed()
@@ -517,21 +517,21 @@ public class WorldManager : MonoBehaviour
 
     public void StartTurn()
     {
-        uiController.SetCurrPlayer(playerControllers[currPlayer]);
+        uiController.SetCurrPlayer(players[currPlayer]);
 
         if(currPlayer == 0)
         {
             turnNumber += 1;
         }
 
-        playerControllers[currPlayer].StartTurn();
+        players[currPlayer].StartTurn();
     }
 
     public void EndTurn()
     {
         endTurnPressed = false;
         selected = null;
-        playerControllers[currPlayer].EndTurn();
+        players[currPlayer].EndTurn();
         currPlayer = (currPlayer + 1) % numPlayers;
 
         if(currPlayer == 0)
@@ -551,7 +551,7 @@ public class WorldManager : MonoBehaviour
     {
         Player lastActive = null;
 
-        foreach(Player p in playerControllers)
+        foreach(Player p in players)
         {
             if(p.playerActive)
             {

@@ -11,7 +11,10 @@ public class Player : MonoBehaviour
     // GameObject selected;
 
     WorldManager worldManager;
-    UIControllerScript uiController;
+    UIManager uiController;
+
+    GameObject controllerObject;
+    public PlayerController controller; // shouldn't be public
 
     List<GameObject> playerUnitList;
     List<GameObject> playerTownList;
@@ -45,6 +48,11 @@ public class Player : MonoBehaviour
         playerCameraPosition = mainTown.transform.position + new Vector3(0, 0, -10);
 
         playerObjectiveList = new List<GameObject>();
+
+        controllerObject = Instantiate(worldManager.playerControllerPrefab, this.gameObject.transform);
+        controller = controllerObject.GetComponent<PlayerController>();
+        controller.player = this;
+        controller.uiManager = uiController;
     }
 
     // Update is called once per frame
@@ -53,7 +61,7 @@ public class Player : MonoBehaviour
 
     }
 
-    public void Initialize(int p, WorldManager wm, UIControllerScript uiC)
+    public void Initialize(int p, WorldManager wm, UIManager uiC)
     {
         playerNumber = p;
         worldManager = wm;
@@ -101,7 +109,7 @@ public class Player : MonoBehaviour
             {
                 mainCamera.transform.position = new Vector3(u.transform.position.x, u.transform.position.y, mainCamera.transform.position.z);
                 worldManager.Select(u);
-                SelectUnit(u);
+                controller.SelectUnit(u);
 
                 return u;
             }
@@ -109,7 +117,7 @@ public class Player : MonoBehaviour
         return null;
     }
 
-    GameObject SelectUnit(GameObject u)
+    /* GameObject SelectUnit(GameObject u)
     {
         if(u.GetComponent<UnitScript>().GetPlayer() == playerNumber)
         {
@@ -141,7 +149,7 @@ public class Player : MonoBehaviour
     {
         uiController.SetSelectedObject(o);
         return o;
-    }
+    } */
 
     public GameObject TownRecruit(GameObject t, GameObject unitToBuild)
     {
@@ -176,7 +184,7 @@ public class Player : MonoBehaviour
         return newUnit;
     }
 
-    public GameObject getPlayerSelection(GameObject s)
+    /* public GameObject getPlayerSelection(GameObject s)
     {
         GameObject selected = s;    // Necessary?
 
@@ -312,7 +320,7 @@ public class Player : MonoBehaviour
         }
 
         return selected;
-    }
+    } */
 
     public void AttackTown(UnitScript attacker, TownScript target)
     {
@@ -325,7 +333,7 @@ public class Player : MonoBehaviour
             }
         } else
         {
-            SelectTown(target.gameObject);
+            controller.SelectTown(target.gameObject); // should be changed
         }
     }
     public void AttackUnit(UnitScript attacker, UnitScript target)  // should be moved to unit script! or something
@@ -339,7 +347,7 @@ public class Player : MonoBehaviour
             }
         } else
         {
-            SelectUnit(target.gameObject);
+            controller.SelectUnit(target.gameObject);   // should be changed
         }
     }
 

@@ -33,7 +33,7 @@ public class TownScript : MonoBehaviour
     Player player;
 
     public GameObject uiControllerObject;
-    UIControllerScript uiController;
+    UIManager uiController;
 
     // Start is called before the first frame update
     void Start()
@@ -42,7 +42,7 @@ public class TownScript : MonoBehaviour
 
         player = playerControllerObject.GetComponent<Player>();
 
-        uiController = uiControllerObject.GetComponent<UIControllerScript>();
+        uiController = uiControllerObject.GetComponent<UIManager>();
 
         // recruitableUnits = new GameObject[] { knightPrefab, scoutPrefab };
 
@@ -105,7 +105,7 @@ public class TownScript : MonoBehaviour
         {
             player.gold -= unitPrefab.GetComponent<UnitScript>().cost;
 
-            return worldManager.SpawnPlayerUnit(unitPrefab, worldManager.playerControllerObjects[playerNumber].GetComponent<Player>());
+            return worldManager.SpawnPlayerUnit(unitPrefab, worldManager.playerObjects[playerNumber].GetComponent<Player>());
         }
         else
         {

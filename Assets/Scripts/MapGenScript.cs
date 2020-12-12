@@ -150,6 +150,7 @@ public class MapGenScript : MonoBehaviour
             if (placementValid)
             {
                 townsSuccessfullyPlaced = true;
+                Debug.Log("Found valid town locations in " + tries +" tries");
                 break;
             }
         }

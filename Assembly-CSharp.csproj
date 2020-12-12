@@ -64,16 +64,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\AIPlayerController.cs" />
+    <Compile Include="Assets\Scripts\InputPlayerController.cs" />
     <Compile Include="Assets\Scripts\MapFeatureScript.cs" />
     <Compile Include="Assets\Scripts\MapGenScript.cs" />
     <Compile Include="Assets\Scripts\MapObjectiveScript.cs" />
     <Compile Include="Assets\Scripts\NeutralUnitScript.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\PlayerUnit.cs" />
     <Compile Include="Assets\Scripts\RecruitButtonScript.cs" />
     <Compile Include="Assets\Scripts\TileScript.cs" />
     <Compile Include="Assets\Scripts\TownScript.cs" />
-    <Compile Include="Assets\Scripts\UIControllerScript.cs" />
+    <Compile Include="Assets\Scripts\UIManager.cs" />
     <Compile Include="Assets\Scripts\UnitScript.cs" />
     <Compile Include="Assets\Scripts\WorldManager.cs" />
     <Reference Include="Unity.Timeline.Editor">

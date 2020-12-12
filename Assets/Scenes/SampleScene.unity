@@ -809,13 +809,15 @@ MonoBehaviour:
   shrinePrefab: {fileID: 1024968172763306872, guid: 082918e84d02cc14cb5e258e353e8d17,
     type: 3}
   tileWeights: 
-  playerControllerPrefab: {fileID: 8423272147467407230, guid: 5d1e1465bc20f574e9838eeee5c2dbfe,
+  playerPrefab: {fileID: 8423272147467407230, guid: 5d1e1465bc20f574e9838eeee5c2dbfe,
     type: 3}
   strongholdPrefab: {fileID: 5734647812586531819, guid: 43b5903c82999a9438af246a15b23aa6,
     type: 3}
+  playerControllerPrefab: {fileID: 6473478090987532208, guid: 002908e0e0b29c546b1278b955f6bf05,
+    type: 3}
   unitList: []
   townList: []
-  playerControllerObjects: []
+  playerObjects: []
   UIControllerObject: {fileID: 616805846}
   mapGeneratorObject: {fileID: 314106943}
   cursorBox: {fileID: 1943160819}
@@ -930,7 +932,7 @@ GameObject:
   - component: {fileID: 616805847}
   - component: {fileID: 616805848}
   m_Layer: 0
-  m_Name: UIController
+  m_Name: UIManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -967,7 +969,7 @@ MonoBehaviour:
   winnerTextObject: {fileID: 1157862455}
   endTurnButton: {fileID: 1012083774}
   buildTownButton: {fileID: 455718272}
-  nextUnitButton: {fileID: 0}
+  nextUnitButton: {fileID: 823988832}
   recruitButtonPrefab: {fileID: 4169627704353239151, guid: c368acfb65c7b7f42872b75811aa363f,
     type: 3}
   townMenu: {fileID: 77556885}
