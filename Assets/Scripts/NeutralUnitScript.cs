@@ -59,8 +59,6 @@ public class NeutralUnitScript : UnitScript
                     break;
             }
 
-            Debug.Log(this.xy());
-
             if (worldManager.MoveUnit(this.gameObject, targetSquare[0], targetSquare[1]))
             {
 
@@ -69,10 +67,7 @@ public class NeutralUnitScript : UnitScript
             {
                 this.movementPoints = 0;
             }
-
-            Debug.Log(this.xy());
         }
-        Debug.Log("-----------------");
     }
     public void NeutralAttackUnit(UnitScript target)   // This is a mess
     {

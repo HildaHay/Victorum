@@ -90,7 +90,6 @@ public class UnitScript : MonoBehaviour
     public bool TryAttackTown(TownScript target)
     {
         int distance = (Math.Abs(mapX - target.mapX) + Math.Abs(mapY - target.mapY));
-        print(distance);
 
         if (distance > range)
         {

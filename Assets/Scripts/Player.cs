@@ -16,9 +16,9 @@ public class Player : MonoBehaviour
     GameObject controllerObject;
     public PlayerController controller; // shouldn't be public
 
-    List<GameObject> playerUnitList;
-    List<GameObject> playerTownList;
-    List<GameObject> playerObjectiveList;
+    protected List<GameObject> playerUnitList;
+    protected List<GameObject> playerTownList;
+    protected List<GameObject> playerObjectiveList;
 
     bool[,] tilesExplored;
 
@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
         controller = controllerObject.GetComponent<PlayerController>();
         controller.player = this;
         controller.uiManager = uiController;
+        controller.worldManager = worldManager;
     }
 
     // Update is called once per frame
@@ -100,64 +101,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    public GameObject SelectFirstUnitWithMoves()
-    {
-        Debug.Log(playerUnitList.Count);
-        foreach (GameObject u in playerUnitList)
-        {
-            if (u.GetComponent<UnitScript>().GetMovePoints() > 0)
-            {
-                mainCamera.transform.position = new Vector3(u.transform.position.x, u.transform.position.y, mainCamera.transform.position.z);
-                worldManager.Select(u);
-                controller.SelectUnit(u);
-
-                return u;
-            }
-        }
-        return null;
-    }
-
-    /* GameObject SelectUnit(GameObject u)
-    {
-        if(u.GetComponent<UnitScript>().GetPlayer() == playerNumber)
-        {
-            uiController.SetSelectedObject(u);
-            return u;
-        } else
-        {
-            return null;
-        }
-    }
-
-    GameObject SelectTown(GameObject t)
-    {
-        uiController.SetSelectedObject(t);
-        if (t.GetComponent<TownScript>().playerNumber == playerNumber)
-        {
-            t.GetComponent<TownScript>().OpenMenu();
-        }
-        return t;
-    }
-
-    GameObject SelectFeature(GameObject f)
-    {
-        uiController.SetSelectedObject(f);
-        return f;
-    }
-
-    GameObject SelectObjective(GameObject o)
-    {
-        uiController.SetSelectedObject(o);
-        return o;
-    } */
-
     public GameObject TownRecruit(GameObject t, GameObject unitToBuild)
     {
         TownScript townScript = t.GetComponent<TownScript>();
 
         int x = townScript.mapX;
         int y = townScript.mapY + 1;
-        
+
         GameObject newUnit = null;
 
         if (worldManager.unitGrid[x, y] == null)
@@ -184,182 +134,32 @@ public class Player : MonoBehaviour
         return newUnit;
     }
 
-    /* public GameObject getPlayerSelection(GameObject s)
-    {
-        GameObject selected = s;    // Necessary?
-
-        if(Input.GetMouseButton(1) && worldManager.gameOver == false)
-        {
-            selected = null;
-            uiController.SetSelectedObject(null);
-        }
-
-        if (Input.GetMouseButtonDown(0) && worldManager.gameOver == false)
-        {
-
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector3(0, 0, 1));
-
-            if (hit)
-            {
-                string hitTag = hit.transform.gameObject.tag;
-
-                switch(hitTag)
-                {
-                    case "Unit":
-                        if (selected)
-                        {
-                            if (selected.tag == "Unit")
-                            {
-                                UnitScript target = hit.transform.gameObject.GetComponent<UnitScript>();
-
-                                // check if we can attack the unit
-                                if (target.GetPlayer() != playerNumber)
-                                {
-                                    UnitScript attacker = selected.GetComponent<UnitScript>();
-                                    AttackUnit(attacker, target);
-                                } else
-                                {
-                                    // select the unit
-                                    selected = SelectUnit(hit.transform.gameObject);
-                                }
-                            }
-                            else
-                            {
-                                // select the unit
-                                selected = SelectUnit(hit.transform.gameObject);
-                            }
-                        }
-                        else
-                        {
-                            selected = SelectUnit(hit.transform.gameObject);
-                        }
-                        break;
-                    case "Town":
-                        if (selected)
-                        {
-                            if (selected.tag == "Unit")
-                            {
-                                TownScript target = hit.transform.gameObject.GetComponent<TownScript>();
-
-                                // check if we can attack the town
-                                if (target.GetPlayer() != playerNumber)
-                                {
-                                    UnitScript attacker = selected.GetComponent<UnitScript>();
-                                    AttackTown(attacker, target);
-                                } else
-                                {
-                                    selected = SelectTown(hit.transform.gameObject);
-                                }
-
-                            }
-                            else
-                            {
-
-                                selected = SelectTown(hit.transform.gameObject);
-                            }
-                        }
-                        else
-                        {
-
-                            selected = SelectTown(hit.transform.gameObject);
-                        }
-                        break;
-                    case "Terrain":
-                        if (selected == null)
-                        {
-                            int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
-                            int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
-
-                            if (worldManager.featureGrid[x, y] != null)
-                            {
-                                if (worldManager.featureGrid[x, y].tag == "MapFeature")
-                                {
-                                    SelectFeature(worldManager.featureGrid[x, y]);
-                                }
-                                else if (worldManager.featureGrid[x, y].tag == "MapObjective")
-                                {
-                                    SelectObjective(worldManager.featureGrid[x, y]);
-                                }
-                            }
-                        }
-                        else if (selected.tag == "Unit")
-                        {
-                            int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
-                            int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
-                            if (worldManager.Walkable(x, y))
-                            {
-                                worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
-                            }
-                        }
-                        else if (selected.tag == "MapFeature")
-                        {
-                            int x = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapX;
-                            int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
-                            if (worldManager.Walkable(x, y))
-                            {
-                                worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
-                            }
-                        }
-                        else if (selected.tag == "MapObjective")
-                        {
-                            int x = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapX;
-                            int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
-                            if (worldManager.Walkable(x, y))
-                            {
-                                worldManager.MoveUnit(selected, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
-                            }
-                        }
-                        else
-                        {
-                            // selected = null;
-                        }
-                        break;
-
-                }
-            }
-        }
-
-        return selected;
-    } */
-
     public void AttackTown(UnitScript attacker, TownScript target)
     {
-        if (attacker.GetComponent<UnitScript>().GetPlayer() == playerNumber
-            && target.GetComponent<TownScript>().GetPlayer() != playerNumber)
+        if (attacker.TryAttackTown(target))
         {
-            if (attacker.TryAttackTown(target))
-            {
-                target.ReceiveDamage(attacker.AttackDamage());
-            }
-        } else
-        {
-            controller.SelectTown(target.gameObject); // should be changed
+            target.ReceiveDamage(attacker.AttackDamage());
         }
+
     }
+
     public void AttackUnit(UnitScript attacker, UnitScript target)  // should be moved to unit script! or something
     {
-        if (attacker.GetComponent<UnitScript>().GetPlayer() == playerNumber
-            && target.GetComponent<UnitScript>().GetPlayer() != playerNumber)
+        if (attacker.TryAttack(target))
         {
-            if (attacker.TryAttack(target))
-            {
-                target.ReceiveDamage(attacker.AttackDamage());
-            }
-        } else
-        {
-            controller.SelectUnit(target.gameObject);   // should be changed
+            target.ReceiveDamage(attacker.AttackDamage());
         }
     }
 
     public void StartTurn()
-    {   
+    {
         mainCamera.transform.position = playerCameraPosition;
 
         foreach (GameObject u in playerUnitList)
         {
             u.GetComponent<UnitScript>().ResetMovePoints();
         }
-        foreach(GameObject t in playerTownList)
+        foreach (GameObject t in playerTownList)
         {
             TownScript s = t.GetComponent<TownScript>();
             s.TurnStart();
@@ -369,6 +169,8 @@ public class Player : MonoBehaviour
         AddGPT();
 
         ShowExplored();
+
+        controller.OnTurnStart();
     }
 
     public void EndTurn()
@@ -418,7 +220,7 @@ public class Player : MonoBehaviour
     {
         mainTown = t;
         return mainTown;
-    } 
+    }
 
     public bool deleteUnit(GameObject u)
     {
@@ -431,8 +233,8 @@ public class Player : MonoBehaviour
     {
 
         playerTownList.Remove(t);
-        
-        if(playerTownList.Count <= 0)
+
+        if (playerTownList.Count <= 0)
         {
             playerActive = false;
             worldManager.CheckForWinner();
@@ -445,7 +247,7 @@ public class Player : MonoBehaviour
     {
         GameObject[,] terrainGrid = worldManager.terrainGrid;
 
-        for(int i = 0; i < terrainGrid.GetLength(0); i++)
+        for (int i = 0; i < terrainGrid.GetLength(0); i++)
         {
             for (int j = 0; j < terrainGrid.GetLength(1); j++)
             {
@@ -529,9 +331,9 @@ public class Player : MonoBehaviour
     int GetPlayerMineCount()
     {
         int c = 0;
-        foreach(GameObject o in playerObjectiveList)
+        foreach (GameObject o in playerObjectiveList)
         {
-            if(o.GetComponent<MapObjectiveScript>().objectiveType == 0)
+            if (o.GetComponent<MapObjectiveScript>().objectiveType == 0)
             {
                 c++;
             }
@@ -564,5 +366,15 @@ public class Player : MonoBehaviour
     public int ShrineCount()
     {
         return playerObjectiveList.Count;
+    }
+
+    public GameObject NextUnit()
+    {
+        return controller.NextUnit();
+    }
+
+    public List<GameObject> UnitList()
+    {
+        return playerUnitList;
     }
 }

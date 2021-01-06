@@ -60,7 +60,7 @@ public class WorldManager : MonoBehaviour
     int mapWidth;
     int mapHeight;
     
-    int currPlayer;
+    public int currPlayer;
     int numPlayers = 2;
 
     int turnNumber;
@@ -74,6 +74,8 @@ public class WorldManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Pathfinder.Path(new Vector2Int(0, 0), new Vector2Int(8, 8));
+
         // mapWidth = 17;
         // mapHeight = 11;
 
@@ -166,7 +168,9 @@ public class WorldManager : MonoBehaviour
             cursorBox.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, -1);
         }
 
-        Select(players[currPlayer].controller.getPlayerSelection(selected));
+        // if (players[currPlayer].controller.IsHuman()) {
+        //     Select(players[currPlayer].controller.getPlayerSelection(selected));
+        // }
 
         if (endTurnPressed)
         {
@@ -437,12 +441,12 @@ public class WorldManager : MonoBehaviour
     {
         if(!Walkable(x, y))
         {
-            Debug.Log("Space not walkable");
+            // Debug.Log("Space not walkable");
             return false;
         }
         if (unitGrid[x, y] != null)
         {
-            Debug.Log("Space occupied");
+            // Debug.Log("Space occupied");
             return false;
         }
         else
@@ -507,7 +511,7 @@ public class WorldManager : MonoBehaviour
 
     public void NextUnit()
     {
-        players[currPlayer].SelectFirstUnitWithMoves();
+        players[currPlayer].NextUnit();
     }
 
     public void EndTurnButtonPressed()

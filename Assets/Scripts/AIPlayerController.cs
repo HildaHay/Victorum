@@ -15,4 +15,21 @@ public class AIPlayerController : PlayerController
     {
         
     }
+
+    public override bool IsHuman()
+    {
+        return false;
+    }
+
+    public override GameObject NextUnit()
+    {
+        // This function is supposed to get the first unmoved unit for human players
+        // For an AI player, it is useless
+        return null;
+    }
+
+    public override void OnTurnStart()
+    {
+        base.OnTurnStart();
+    }
 }
