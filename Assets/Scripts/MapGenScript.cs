@@ -21,24 +21,9 @@ public class MapGenScript : MonoBehaviour
 
     public GameObject neutralUnitPrefab;
 
-    // List<GameObject> units;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public bool GenerateMap(int w, int h)
     // returns true on successful map generation, false on failure
     {
-
-
         Debug.Log("Generating terrain");
 
         // int landsize = 650;

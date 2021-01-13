@@ -74,13 +74,11 @@ public class WorldManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Pathfinder.Path(new Vector2Int(0, 0), new Vector2Int(8, 8));
-
         // mapWidth = 17;
         // mapHeight = 11;
 
-        mapWidth = 51;
-        mapHeight = 51;
+        mapWidth = 41;
+        mapHeight = 41;
 
         mainCamera = Camera.main;
 
@@ -201,13 +199,6 @@ public class WorldManager : MonoBehaviour
 
     public bool CanBuildTown(Vector2Int location)
     {
-        // since towns are built by units, location will always be occupied by a unit before building
-        //if(unitGrid[location[0], location[1]] != null)
-        //{
-        //    Debug.Log("Space occupied by unit");
-        //    return false;
-        //}
-
         if (featureGrid[location[0], location[1]] != null)
         {
             Debug.Log("Space occupied by map feature");
@@ -378,6 +369,7 @@ public class WorldManager : MonoBehaviour
         return new int[] { x - mapWidth / 2, -y + mapHeight / 2};
     }
 
+    // Check if one tile is walkable
     public bool Walkable(int x, int y)
     {
         if(featureGrid[x, y] == null)
@@ -393,6 +385,30 @@ public class WorldManager : MonoBehaviour
             }
         }
         // also should check if unit is in tile
+    }
+
+    // Takes a pair of map coordinates that mark the corners of a box
+    // Returns an array of booleans representing that section of the map, indicating which tiles are walkable
+    // Inclusive
+    public bool[,] Walkable(Vector2Int a, Vector2Int b)
+    {
+        if(a.x > b.x || a.y > b.y)
+        {
+            Debug.Log("Bad coordinates");
+            return null;
+        }
+
+        bool[,] walkMap = new bool[b.x - a.x + 1, b.y - a.y + 1];
+
+        for(int i = 0; i <= b.x - a.x; i++)
+        {
+            for(int j = 0; j <= b.y - a.y; j++)
+            {
+                walkMap[i, j] = Walkable(i + a.x, j + a.y);
+            }
+        }
+
+        return walkMap;
     }
 
     public GameObject getTerrainByID(int id)
@@ -451,13 +467,33 @@ public class WorldManager : MonoBehaviour
         }
         else
         {
-
             UnitScript unitScript = unit.GetComponent<UnitScript>();
 
-            int x_diff = Mathf.Abs(unitScript.mapX - x);
-            int y_diff = Mathf.Abs(unitScript.mapY - y);
+            // Take a subsection of the map, and find the shortest path within that subsection
+            // 
 
-            if (unitScript.TryMove(x_diff + y_diff))
+            Vector2Int currLocation = unitScript.xy();
+            Vector2Int a = new Vector2Int(currLocation.x - unitScript.GetMovePoints(), currLocation.y - unitScript.GetMovePoints());
+            Vector2Int b = new Vector2Int(currLocation.x + unitScript.GetMovePoints(), currLocation.y + unitScript.GetMovePoints());
+
+            bool[,] area = Walkable(a, b);
+
+            Vector2Int destination = new Vector2Int(x, y);
+
+            List<Vector2Int> path = Pathfinder.OffsetPath(currLocation, destination, area, a);
+
+            if(path == null)
+            {
+                Debug.Log("Couldn't find path to destination - either too far or inaccessible");
+
+                return false;
+            }
+
+            // path includes both the starting and ending tiles, so subtract 1 to get the actual move distance
+            int numMoves = path.Count() - 1;
+
+            // Move the unit only if it has enough movement points left 
+            if(unitScript.TryMove(numMoves))
             {
                 unitGrid[unitScript.mapX, unitScript.mapY] = null;
                 unitGrid[x, y] = unit;
