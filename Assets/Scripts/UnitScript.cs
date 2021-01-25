@@ -31,6 +31,10 @@ public class UnitScript : MonoBehaviour
     public int mapX;
     public int mapY;
 
+    public Vector2Int location;
+
+    public List<Vector2Int> savedPath;
+
     public bool isTownBuilder;
 
     protected WorldManager worldManager;
@@ -163,6 +167,68 @@ public class UnitScript : MonoBehaviour
             movementPoints -= x;
             return true;
         }
+    }
+
+    public bool MoveUnit(GameObject unit, int x, int y)
+    {
+        if(!worldManager.Walkable(x, y))
+        {
+            return false;
+        }
+        else
+        {
+            Vector2Int destination = new Vector2Int(x, y);
+
+            bool validPath = CreateMovePath(destination);
+
+            if (!validPath) {
+                return false;
+            }
+
+            while(savedPath.Count > 0 && movementPoints > 0)
+            {
+                Vector2Int nextTile = savedPath[0];
+                savedPath.RemoveAt(0);
+                movementPoints--;
+
+                // move the unit
+                mapX = nextTile.x;
+                mapY = nextTile.y;
+
+                worldManager.unitGrid[mapX, mapY] = null;
+                worldManager.unitGrid[mapX, mapY] = unit;
+
+                int[] newScreenCords = worldManager.MapToScreenCoordinates(mapX, mapY);
+                unit.transform.position = new Vector3(newScreenCords[0], newScreenCords[1], -1);
+
+                if (playerNumber >= 0)    // neutral units don't track vision or capture shrines
+                {
+                    player.CheckVision(mapX, mapY, visionRange);
+                    worldManager.CaptureShrine(nextTile, player.playerNumber);
+                }
+            }
+
+            return true;
+        }
+    }
+
+    public bool CreateMovePath(Vector2Int destination)
+    {
+        List<Vector2Int> newPath = Pathfinder.Path(new Vector2Int(mapX, mapY), destination, worldManager.WalkableMap());
+        
+        if(newPath == null)
+        {
+            return false;
+        } else
+        {
+            savedPath = newPath;
+            return true;
+        }
+    }
+
+    public void DrawPath()
+    {
+        // to do
     }
 
     public string GetName()

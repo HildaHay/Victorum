@@ -372,6 +372,11 @@ public class WorldManager : MonoBehaviour
     // Check if one tile is walkable
     public bool Walkable(int x, int y)
     {
+        if(unitGrid[x, y] != null)
+        {
+            return false;
+        }
+
         if(featureGrid[x, y] == null)
         {
             return (terrainGrid[x, y].GetComponent<TileScript>().walkable);
@@ -384,7 +389,6 @@ public class WorldManager : MonoBehaviour
                 return (terrainGrid[x, y].GetComponent<TileScript>().walkable);
             }
         }
-        // also should check if unit is in tile
     }
 
     // Takes a pair of map coordinates that mark the corners of a box
@@ -409,6 +413,12 @@ public class WorldManager : MonoBehaviour
         }
 
         return walkMap;
+    }
+
+    // Returns walkable status for the entire map
+    public bool[,] WalkableMap()
+    {
+        return Walkable(new Vector2Int(0, 0), new Vector2Int(mapWidth - 1, mapHeight - 1));
     }
 
     public GameObject getTerrainByID(int id)
@@ -453,7 +463,7 @@ public class WorldManager : MonoBehaviour
         return (int)Math.Floor(Math.Log(turnNumber, 3)) + 1;
     }
 
-    public bool MoveUnit(GameObject unit, int x, int y)
+    /* public bool MoveUnit(GameObject unit, int x, int y)
     {
         if(!Walkable(x, y))
         {
@@ -521,7 +531,7 @@ public class WorldManager : MonoBehaviour
                         {
                             if(i == unitScript.GetPlayer())
                             {
-                                players[i].ClaimShrine(f);
+                                players[i].AddShrine(f);
                             }
                             else
                             {
@@ -541,6 +551,27 @@ public class WorldManager : MonoBehaviour
                 Debug.Log("Out of movement");
                 
                 return false;
+            }
+        }
+    } */
+
+    public void CaptureShrine(Vector2Int shrineLocation, int capturingPlayer)
+    {
+        GameObject shrine = featureGrid[shrineLocation.x, shrineLocation.y];
+
+        if(shrine != null)
+        {
+            if(shrine.tag == "MapObjective")
+            {
+                foreach (Player p in players)
+                {
+                    if (p.playerNumber != capturingPlayer)
+                    {
+                        p.RemoveShrine(shrine);
+                    }
+                }
+
+                players[capturingPlayer].AddShrine(shrine);
             }
         }
     }
@@ -642,5 +673,10 @@ public class WorldManager : MonoBehaviour
                 s.ResetMovePoints();
             }
         }
+    }
+
+    public int PlayerCount()
+    {
+        return players.Count();
     }
 }

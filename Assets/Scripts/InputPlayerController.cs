@@ -109,7 +109,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                worldManager.MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else if (selectedObject.tag == "MapFeature")
@@ -118,7 +118,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                worldManager.MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else if (selectedObject.tag == "MapObjective")
@@ -127,7 +127,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                worldManager.MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else

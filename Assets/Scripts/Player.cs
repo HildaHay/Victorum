@@ -341,7 +341,7 @@ public class Player : MonoBehaviour
         return c;
     }
 
-    public void ClaimShrine(GameObject s)
+    public void AddShrine(GameObject s)
     {
         playerObjectiveList.Add(s);
         s.GetComponent<MapObjectiveScript>().Claim(this.playerNumber);

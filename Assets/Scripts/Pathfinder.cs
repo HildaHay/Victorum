@@ -126,7 +126,7 @@ public class Pathfinder : MonoBehaviour
             path.Insert(0, backtrack);
             backtrack = prevVertex[backtrack.x, backtrack.y];
         }
-        path.Insert(0, backtrack);
+        // path.Insert(0, backtrack);
 
         /* String toPrint = "";
         for (int i = 0; i < mapDims.x; i++)

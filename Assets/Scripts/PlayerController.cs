@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
 
     bool MoveUnit(GameObject u, Vector2Int location)
     {
-        return worldManager.MoveUnit(u, location.x, location.y);
+        return u.GetComponent<UnitScript>().MoveUnit(u, location.x, location.y);
     }
 
     public virtual GameObject NextUnit() {
