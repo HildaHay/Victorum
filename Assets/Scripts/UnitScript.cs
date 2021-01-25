@@ -191,11 +191,13 @@ public class UnitScript : MonoBehaviour
                 savedPath.RemoveAt(0);
                 movementPoints--;
 
+                Vector2Int prevLocation = new Vector2Int(mapX, mapY);
+
                 // move the unit
                 mapX = nextTile.x;
                 mapY = nextTile.y;
 
-                worldManager.unitGrid[mapX, mapY] = null;
+                worldManager.unitGrid[prevLocation.x, prevLocation.y] = null;
                 worldManager.unitGrid[mapX, mapY] = unit;
 
                 int[] newScreenCords = worldManager.MapToScreenCoordinates(mapX, mapY);
