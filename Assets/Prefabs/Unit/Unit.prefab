@@ -213,8 +213,12 @@ MonoBehaviour:
   unitName: Unit
   mapX: 0
   mapY: 0
+  location: {x: 0, y: 0}
+  savedPath: []
   isTownBuilder: 0
   playerIndicatorSprite: {fileID: 3338178720786811831}
+  pathMarkerPrefab: {fileID: 1489826655360869228, guid: f9ca2aa161204cf44bcdcb0bfeb8b667,
+    type: 3}
   sprites:
   - {fileID: 21300000, guid: 2d3a5e42cfe6f084894a1e2706103c14, type: 3}
   - {fileID: 21300000, guid: db671b0edee988c4488447a2194efbfc, type: 3}

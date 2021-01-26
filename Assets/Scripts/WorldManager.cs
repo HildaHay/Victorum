@@ -178,11 +178,17 @@ public class WorldManager : MonoBehaviour
 
     public void Select(GameObject target)
     {
+        Deselect();
         selected = target;
         if (selected != null)
         {
             selectionBox.SetActive(true);
             selectionBox.transform.position = new Vector3(selected.transform.position.x, selected.transform.position.y, -1.01f);
+
+            if(selected.tag == "Unit")
+            {
+                selected.GetComponent<UnitScript>().DrawPath();
+            }
         }
         else
         {
@@ -195,6 +201,18 @@ public class WorldManager : MonoBehaviour
         GameObject t = SpawnTown(x, y, p);
         players[p].setMainTown(t);
         return t;
+    }
+
+    public void Deselect()
+    {
+        if(selected != null)
+        {
+            if(selected.tag == "Unit")
+            {
+                selected.GetComponent<UnitScript>().ClearPath();
+            }
+        }
+        selected = null;
     }
 
     public bool CanBuildTown(Vector2Int location)
@@ -230,7 +248,9 @@ public class WorldManager : MonoBehaviour
 
         if (s.isTownBuilder && CanBuildTown(xy))
         {
-            DeleteUnit(selected);
+            GameObject temp = selected;
+            Deselect();
+            DeleteUnit(temp);
             SpawnTown(xy.x, xy.y, p);
             // return SpawnTown(xy.x, xy.y, p);
         } else
@@ -243,9 +263,11 @@ public class WorldManager : MonoBehaviour
     {
         if (unitGrid[x, y] == null)
         {
-            int[] screencoords = MapToScreenCoordinates(x, y);
+            // int[] screencoords = MapToScreenCoordinates(x, y);
 
-            GameObject newTown = Instantiate(strongholdPrefab, new Vector3(screencoords[0], screencoords[1], -1), Quaternion.identity);
+            Vector3 screencoords = MapToScreenCoordinates(x, y, -1);
+
+            GameObject newTown = Instantiate(strongholdPrefab, screencoords, Quaternion.identity);
 
             TownScript townScript = newTown.GetComponent<TownScript>();
 
@@ -295,8 +317,7 @@ public class WorldManager : MonoBehaviour
             newUnit.GetComponent<UnitScript>().mapX = x;
             newUnit.GetComponent<UnitScript>().mapY = y;
 
-            int[] screenCoords = mapToScreenCoordinates(x, y);
-            newUnit.transform.position = new Vector3(screenCoords[0], screenCoords[1], -1);
+            newUnit.transform.position = MapToScreenCoordinates(x, y, -1);
         }
 
         return newUnit;
@@ -361,12 +382,14 @@ public class WorldManager : MonoBehaviour
         return true;
     }
 
-    public int[] MapToScreenCoordinates(int x, int y)
+    // Takes a pair of map coordinates and translates them to a Vector3 representing a position in rendering space
+    // z is defined seperately for sprite layering
+    public Vector3 MapToScreenCoordinates(int x, int y, int z)
     {
         int a = x - mapWidth / 2;
         int b = y - mapHeight / 2;
 
-        return new int[] { x - mapWidth / 2, -y + mapHeight / 2};
+        return new Vector3 ( x - mapWidth / 2, -y + mapHeight / 2, z);
     }
 
     // Check if one tile is walkable
@@ -463,98 +486,6 @@ public class WorldManager : MonoBehaviour
         return (int)Math.Floor(Math.Log(turnNumber, 3)) + 1;
     }
 
-    /* public bool MoveUnit(GameObject unit, int x, int y)
-    {
-        if(!Walkable(x, y))
-        {
-            // Debug.Log("Space not walkable");
-            return false;
-        }
-        if (unitGrid[x, y] != null)
-        {
-            // Debug.Log("Space occupied");
-            return false;
-        }
-        else
-        {
-            UnitScript unitScript = unit.GetComponent<UnitScript>();
-
-            // Take a subsection of the map, and find the shortest path within that subsection
-            // 
-
-            Vector2Int currLocation = unitScript.xy();
-            Vector2Int a = new Vector2Int(currLocation.x - unitScript.GetMovePoints(), currLocation.y - unitScript.GetMovePoints());
-            Vector2Int b = new Vector2Int(currLocation.x + unitScript.GetMovePoints(), currLocation.y + unitScript.GetMovePoints());
-
-            bool[,] area = Walkable(a, b);
-
-            Vector2Int destination = new Vector2Int(x, y);
-
-            List<Vector2Int> path = Pathfinder.OffsetPath(currLocation, destination, area, a);
-
-            if(path == null)
-            {
-                Debug.Log("Couldn't find path to destination - either too far or inaccessible");
-
-                return false;
-            }
-
-            // path includes both the starting and ending tiles, so subtract 1 to get the actual move distance
-            int numMoves = path.Count() - 1;
-
-            // Move the unit only if it has enough movement points left 
-            if(unitScript.TryMove(numMoves))
-            {
-                unitGrid[unitScript.mapX, unitScript.mapY] = null;
-                unitGrid[x, y] = unit;
-
-                unitScript.mapX = x;
-                unitScript.mapY = y;
-
-                int[] newScreenCords = MapToScreenCoordinates(x, y);
-                unit.transform.position = new Vector3(newScreenCords[0], newScreenCords[1], -1);
-
-                if (unitScript.GetPlayer() >= 0)    // hackish bypass for bug w/ neutral untis
-                {
-                    players[unitScript.GetPlayer()].CheckVision(x, y, unitScript.visionRange);
-                }
-
-                // uiController.ShowUnitInfo(unit);
-
-                GameObject f = featureGrid[x, y];
-
-                if (f != null)
-                {
-                    if (f.tag == "MapObjective")
-                    {
-                        for(int i = 0; i < players.Length; i++)
-                        {
-                            if(i == unitScript.GetPlayer())
-                            {
-                                players[i].AddShrine(f);
-                            }
-                            else
-                            {
-                                players[i].RemoveShrine(f);
-                            }
-                        }
-
-                        // players[unitScript.GetPlayer()].ClaimShrine(featureGrid[x, y]);
-                    }
-                }
-
-                return true;
-            }
-            else
-            {
-                // uiController.ShowUnitInfo(unit);
-                Debug.Log("Out of movement");
-                
-                return false;
-            }
-        }
-    } */
-
     public void CaptureShrine(Vector2Int shrineLocation, int capturingPlayer)
     {
         GameObject shrine = featureGrid[shrineLocation.x, shrineLocation.y];
@@ -601,7 +532,9 @@ public class WorldManager : MonoBehaviour
     public void EndTurn()
     {
         endTurnPressed = false;
-        selected = null;
+
+        Deselect();
+
         players[currPlayer].EndTurn();
         currPlayer = (currPlayer + 1) % numPlayers;
 
@@ -652,7 +585,7 @@ public class WorldManager : MonoBehaviour
         return new int[] { mapWidth, mapHeight};
     }
 
-    public int[] mapToScreenCoordinates(int x, int y)
+    /* public int[] mapToScreenCoordinates(int x, int y)
     {
         int[] mapDimensions = GetMapDimensions();
 
@@ -660,7 +593,7 @@ public class WorldManager : MonoBehaviour
         int b = -y + mapDimensions[0] / 2;
 
         return new int[] { a, b };
-    }
+    } */
 
     void MoveNeutralUnits()
     {

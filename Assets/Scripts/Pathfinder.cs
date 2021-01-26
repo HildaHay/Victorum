@@ -145,11 +145,6 @@ public class Pathfinder : MonoBehaviour
 
         Debug.Log(toPrint); */
 
-        foreach (Vector2Int v in path)
-        {
-            Debug.Log(v.x + ", " + v.y);
-        }
-
         return path;
     }
 

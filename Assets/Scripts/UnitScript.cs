@@ -41,6 +41,9 @@ public class UnitScript : MonoBehaviour
     protected Player player;
 
     public GameObject playerIndicatorSprite;
+    public List<GameObject> pathMarkers;
+
+    public GameObject pathMarkerPrefab;
 
     public Sprite[] sprites;
 
@@ -50,6 +53,8 @@ public class UnitScript : MonoBehaviour
         movementPoints = maxMovement;
 
         HP = maxHP;
+
+        pathMarkers = new List<GameObject>();
     }
 
     public void Initialize(WorldManager wm)
@@ -200,8 +205,8 @@ public class UnitScript : MonoBehaviour
                 worldManager.unitGrid[prevLocation.x, prevLocation.y] = null;
                 worldManager.unitGrid[mapX, mapY] = unit;
 
-                int[] newScreenCords = worldManager.MapToScreenCoordinates(mapX, mapY);
-                unit.transform.position = new Vector3(newScreenCords[0], newScreenCords[1], -1);
+                // unit.transform.position = new Vector3(mapX, mapY, -1);
+                unit.transform.position = worldManager.MapToScreenCoordinates(mapX, mapY, -1);
 
                 if (playerNumber >= 0)    // neutral units don't track vision or capture shrines
                 {
@@ -209,6 +214,7 @@ public class UnitScript : MonoBehaviour
                     worldManager.CaptureShrine(nextTile, player.playerNumber);
                 }
             }
+            DrawPath();
 
             return true;
         }
@@ -224,6 +230,7 @@ public class UnitScript : MonoBehaviour
         } else
         {
             savedPath = newPath;
+            DrawPath();
             return true;
         }
     }
@@ -231,6 +238,20 @@ public class UnitScript : MonoBehaviour
     public void DrawPath()
     {
         // to do
+        ClearPath();
+        if (playerNumber >= 0)
+        {
+            foreach (Vector2Int a in savedPath)
+            {
+                pathMarkers.Add(Instantiate(pathMarkerPrefab, worldManager.MapToScreenCoordinates(a.x, a.y, -1), Quaternion.identity));
+            }
+        }
+    }
+
+    public void ClearPath()
+    {
+        pathMarkers.ForEach(Destroy);
+        pathMarkers.Clear();
     }
 
     public string GetName()
@@ -250,11 +271,6 @@ public class UnitScript : MonoBehaviour
         playerNumber = p.playerNumber;
         return playerNumber;
     }
-
-    /*public bool CanMove()
-    {
-        return movementPoints > 0;
-    }*/
 
     public int GetMovePoints()
     {
