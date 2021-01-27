@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InputPlayerController : PlayerController
 {
@@ -29,7 +30,9 @@ public class InputPlayerController : PlayerController
             uiManager.SetSelectedObject(null);
         }
 
-        if (Input.GetMouseButtonDown(0) && worldManager.gameOver == false)
+        // note: IsPointerOverGameObject is true when the mouse is over UI elements such as buttons
+        // to make sure we don't accidentally select or move a unit when clicking a button!
+        if (Input.GetMouseButtonDown(0) && worldManager.gameOver == false && !EventSystem.current.IsPointerOverGameObject())
         {
 
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector3(0, 0, 1));
@@ -109,7 +112,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                selectedObject.GetComponent<UnitScript>().MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().SelectDestination(hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else if (selectedObject.tag == "MapFeature")
@@ -118,7 +121,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                selectedObject.GetComponent<UnitScript>().MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().SelectDestination(hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else if (selectedObject.tag == "MapObjective")
@@ -127,7 +130,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                selectedObject.GetComponent<UnitScript>().MoveUnit(selectedObject, hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().SelectDestination(hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
                             }
                         }
                         else

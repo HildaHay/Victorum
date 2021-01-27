@@ -174,7 +174,7 @@ public class UnitScript : MonoBehaviour
         }
     }
 
-    public bool MoveUnit(GameObject unit, int x, int y)
+    public bool SelectDestination(int x, int y)
     {
         if(!worldManager.Walkable(x, y))
         {
@@ -182,6 +182,7 @@ public class UnitScript : MonoBehaviour
         }
         else
         {
+            // find a path to the destination
             Vector2Int destination = new Vector2Int(x, y);
 
             bool validPath = CreateMovePath(destination);
@@ -190,7 +191,31 @@ public class UnitScript : MonoBehaviour
                 return false;
             }
 
-            while(savedPath.Count > 0 && movementPoints > 0)
+            // move the unit
+            Move();
+
+            return true;
+        }
+    }
+
+    // Move the unit along the pre-created path
+    public bool Move()
+    {
+        if(savedPath.Count > 0)
+        {
+            // Make sure that the path isn't blocked
+            foreach (Vector2Int t in savedPath)
+            {
+                if(!worldManager.Walkable(t.x, t.y))
+                {
+                    // If the path is blocked, clear it - need to find a new one
+                    Debug.Log("Path is blocked - can't go!");
+                    ClearPath();
+                    return false;
+                }
+            }
+
+            while (savedPath.Count > 0 && movementPoints > 0)
             {
                 Vector2Int nextTile = savedPath[0];
                 savedPath.RemoveAt(0);
@@ -198,15 +223,14 @@ public class UnitScript : MonoBehaviour
 
                 Vector2Int prevLocation = new Vector2Int(mapX, mapY);
 
-                // move the unit
                 mapX = nextTile.x;
                 mapY = nextTile.y;
 
                 worldManager.unitGrid[prevLocation.x, prevLocation.y] = null;
-                worldManager.unitGrid[mapX, mapY] = unit;
+                worldManager.unitGrid[mapX, mapY] = this.gameObject;
 
                 // unit.transform.position = new Vector3(mapX, mapY, -1);
-                unit.transform.position = worldManager.MapToScreenCoordinates(mapX, mapY, -1);
+                this.gameObject.transform.position = worldManager.MapToScreenCoordinates(mapX, mapY, -1);
 
                 if (playerNumber >= 0)    // neutral units don't track vision or capture shrines
                 {
@@ -215,8 +239,22 @@ public class UnitScript : MonoBehaviour
                 }
             }
             DrawPath();
-
             return true;
+        } else
+        {
+            return false;
+        }
+    }
+
+    public Vector2Int GetSavedDestination()
+    {
+        if (savedPath.Count > 0)
+        {
+            return savedPath[savedPath.Count - 1];
+        }
+        else
+        {
+            return new Vector2Int(mapX, mapY);
         }
     }
 

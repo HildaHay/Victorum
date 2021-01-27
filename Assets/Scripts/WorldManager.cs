@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Build;
 using UnityEngine;
+using UnityEngine.EventSystems;
 // using UnityEngine.EventSystems;
 
 public class WorldManager : MonoBehaviour
@@ -510,6 +511,17 @@ public class WorldManager : MonoBehaviour
     public void NextUnit()
     {
         players[currPlayer].NextUnit();
+    }
+
+    public void MoveUnit()
+    {
+        if(selected != null)
+        {
+            if(selected.tag == "Unit")
+            {
+                selected.GetComponent<UnitScript>().Move();
+            }
+        }
     }
 
     public void EndTurnButtonPressed()

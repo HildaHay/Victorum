@@ -59,7 +59,7 @@ public class NeutralUnitScript : UnitScript
                     break;
             }
 
-            if (MoveUnit(this.gameObject, targetSquare[0], targetSquare[1]))
+            if (SelectDestination(targetSquare[0], targetSquare[1]))
             {
 
             }
