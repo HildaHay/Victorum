@@ -78,15 +78,29 @@ public class UnitScript : MonoBehaviour
 
     }
 
-    public bool TryAttack(UnitScript target)
+    // Placeholder function; should call TryAttackUnit or TryAttackTown as appropriate
+    // To be implemented
+    public bool TryAttack()
     {
+        return false;
+    }
+
+    public bool TryAttackUnit(UnitScript target)
+    {
+
+        if(this.playerNumber == target.playerNumber)
+        {
+            return false;
+        }
+
         int distance = (Math.Abs(mapX - target.mapX) + Math.Abs(mapY - target.mapY));
 
-        if(distance > range) {
+        if (distance > range)
+        {
             Debug.Log("Out of range");
             return false;
         }
-        if(movementPoints <= 0)
+        if (movementPoints <= 0)
         {
             Debug.Log("Out of movement.");
             return false;
@@ -98,6 +112,12 @@ public class UnitScript : MonoBehaviour
 
     public bool TryAttackTown(TownScript target)
     {
+
+        if (this.playerNumber == target.playerNumber)
+        {
+            return false;
+        }
+
         int distance = (Math.Abs(mapX - target.mapX) + Math.Abs(mapY - target.mapY));
 
         if (distance > range)
@@ -125,7 +145,8 @@ public class UnitScript : MonoBehaviour
         return baseDamage * player.ShrineDamageBonus();
     }
 
-    public bool ReceiveDamage(float d) {
+    public bool ReceiveDamage(float d)
+    {
         // float rawDamage = d / player.ShrineDefenseBonus() - armor;
         float rawDamage = 0;
 
@@ -146,11 +167,12 @@ public class UnitScript : MonoBehaviour
 
         HP -= System.Math.Max(roundedDamage, 0);
 
-        if(HP <= 0)
+        if (HP <= 0)
         {
             Die();
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -163,50 +185,94 @@ public class UnitScript : MonoBehaviour
 
     public bool TryMove(int x)
     {
-        if(movementPoints < x)
+        if (movementPoints < x)
         {
             print("not enough movement points");
             return false;
-        } else
+        }
+        else
         {
             movementPoints -= x;
             return true;
         }
     }
-
-    public bool SelectDestination(int x, int y)
+    
+    // Wrapper for SelectDestination
+    public int SelectDestination(int x, int y)
     {
-        if(!worldManager.Walkable(x, y))
+        return SelectDestination(new Vector2Int(x, y), false);
+    }
+
+    // Function takes a tile coordinate and a bool as an argument
+    // On the first click, this executes pathfinding and saves the path.
+    // On the second click on the same tile, if the path is still the shortest valid path to that tile, move the unit; otherwise, find a new path.
+    // If moveImmediately is set to true, the unit will move on the first click.
+    // Returns 0 if no valid path found, 1 if a new path was found but the unit didn't move, and 2 if the unit successfully moved
+    public int SelectDestination(Vector2Int destination, bool moveImmediately)
+    {
+        if (!worldManager.Walkable(destination.x, destination.y))
         {
-            return false;
+            return 0;
         }
         else
         {
             // find a path to the destination
-            Vector2Int destination = new Vector2Int(x, y);
 
-            bool validPath = CreateMovePath(destination);
+            List<Vector2Int> newPath = CreateMovePath(destination);
 
-            if (!validPath) {
-                return false;
+            if(newPath == null)
+            {
+                // no valid path found
+                return 0;
             }
 
-            // move the unit
-            Move();
+            // Check if new path is the same as the saved path
+            // Note: this also implicitly confirms that the saved path is the shortest valid path
+            bool pathsMatch = true;
+            if (newPath.Count == savedPath.Count)
+            {
+                for (int i = 0; i < newPath.Count; i++)
+                {
+                    if (newPath[i] != savedPath[i])
+                    {
+                        pathsMatch = false;
+                    }
+                }
+            }
+            else
+            {
+                pathsMatch = false;
+            }
 
-            return true;
+            savedPath = newPath;
+            if (pathsMatch || moveImmediately)
+            {
+                Move();
+                return 2;
+            }
+            else
+            {
+                return 1;
+            }
         }
+    }
+
+    // Wrapper for SelectDestination that specifies to execute the move immediately
+    // This should only ever return 0 or 2, never 1
+    public int SelectDestinationAndMove(Vector2Int destination)
+    {
+        return SelectDestination(destination, true);
     }
 
     // Move the unit along the pre-created path
     public bool Move()
     {
-        if(savedPath.Count > 0)
+        if (savedPath.Count > 0)
         {
             // Make sure that the path isn't blocked
             foreach (Vector2Int t in savedPath)
             {
-                if(!worldManager.Walkable(t.x, t.y))
+                if (!worldManager.Walkable(t.x, t.y))
                 {
                     // If the path is blocked, clear it - need to find a new one
                     Debug.Log("Path is blocked - can't go!");
@@ -240,7 +306,8 @@ public class UnitScript : MonoBehaviour
             }
             DrawPath();
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -258,19 +325,11 @@ public class UnitScript : MonoBehaviour
         }
     }
 
-    public bool CreateMovePath(Vector2Int destination)
+    public List<Vector2Int> CreateMovePath(Vector2Int destination)
     {
         List<Vector2Int> newPath = Pathfinder.Path(new Vector2Int(mapX, mapY), destination, worldManager.WalkableMap());
-        
-        if(newPath == null)
-        {
-            return false;
-        } else
-        {
-            savedPath = newPath;
-            DrawPath();
-            return true;
-        }
+
+        return newPath;
     }
 
     public void DrawPath()
@@ -320,9 +379,16 @@ public class UnitScript : MonoBehaviour
         movementPoints = maxMovement;
     }
 
+    // Used for AI management, for units that it can't/doesn't want to move
+    // Should be replaced with an "inactive/ignore" tag
+    public void ZeroMovePoints()
+    {
+        movementPoints = 0;
+    }
+
     public Vector2Int xy()
     {
-        return new Vector2Int (mapX, mapY );
+        return new Vector2Int(mapX, mapY);
     }
 
     public int MapDistance(Vector2Int start, Vector2Int end)

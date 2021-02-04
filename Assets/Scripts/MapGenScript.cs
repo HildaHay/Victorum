@@ -21,14 +21,15 @@ public class MapGenScript : MonoBehaviour
 
     public GameObject neutralUnitPrefab;
 
+    public int landArea = 40;  // 650
+    public int minDistanceBetweenTowns = 4; // 20
+
     public bool GenerateMap(int w, int h)
     // returns true on successful map generation, false on failure
     {
         Debug.Log("Generating terrain");
 
         // int landsize = 650;
-
-        int landsize = 300;
 
         int wOffset = w / 2;
         int hOffset = h / 2;
@@ -48,7 +49,7 @@ public class MapGenScript : MonoBehaviour
 
         int maxElevation = 0;
 
-        while (land.Count < landsize)
+        while (land.Count < landArea)
         {
 
             // Pick a random tile to start at
@@ -117,7 +118,7 @@ public class MapGenScript : MonoBehaviour
                 {
                     int distance = GetDistance(new Vector2Int(townLocations[i][0], townLocations[i][1]), new Vector2Int(townLocations[j][0], townLocations[j][1]));
 
-                    if (distance < 20)
+                    if (distance < minDistanceBetweenTowns)
                     {
                         // make sure the towns are far enough apart
                         placementValid = false;

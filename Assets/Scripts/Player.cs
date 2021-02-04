@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
 
         playerObjectiveList = new List<GameObject>();
 
-        controllerObject = Instantiate(worldManager.playerControllerPrefab, this.gameObject.transform);
+        // controllerObject = Instantiate(worldManager.playerControllerPrefab, this.gameObject.transform);
         controller = controllerObject.GetComponent<PlayerController>();
         controller.player = this;
         controller.uiManager = uiController;
@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
 
     }
 
-    public void Initialize(int p, WorldManager wm, UIManager uiC)
+    public void Initialize(int p, WorldManager wm, UIManager uiC, bool isHuman)
     {
         playerNumber = p;
         worldManager = wm;
@@ -79,6 +79,13 @@ public class Player : MonoBehaviour
         baseGPT = 2;
         townGPT = 0;
         mineGPT = 1;
+
+        if(isHuman) {
+            controllerObject = Instantiate(worldManager.humanPlayerControllerPrefab, this.gameObject.transform);
+        } else
+        {
+            controllerObject = Instantiate(worldManager.aiPlayerControllerPrefab, this.gameObject.transform);
+        }
     }
 
     public void CheckVision(int x, int y, int visionRange)
@@ -145,7 +152,7 @@ public class Player : MonoBehaviour
 
     public void AttackUnit(UnitScript attacker, UnitScript target)  // should be moved to unit script! or something
     {
-        if (attacker.TryAttack(target))
+        if (attacker.TryAttackUnit(target))
         {
             target.ReceiveDamage(attacker.AttackDamage());
         }
@@ -173,7 +180,7 @@ public class Player : MonoBehaviour
         controller.OnTurnStart();
     }
 
-    public void EndTurn()
+    public void EndOfTurnCleanup()
     {
         HideAll();
 
@@ -376,5 +383,10 @@ public class Player : MonoBehaviour
     public List<GameObject> UnitList()
     {
         return playerUnitList;
+    }
+
+    public List<GameObject> TownList()
+    {
+        return playerTownList;
     }
 }

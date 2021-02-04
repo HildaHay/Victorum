@@ -35,7 +35,8 @@ public class WorldManager : MonoBehaviour
 
     public GameObject playerPrefab;
     public GameObject strongholdPrefab;
-    public GameObject playerControllerPrefab;
+    public GameObject humanPlayerControllerPrefab;
+    public GameObject aiPlayerControllerPrefab;
 
     public List<GameObject> unitList;
     public List<GameObject> townList;   // could possibly be combined with unitList
@@ -60,7 +61,7 @@ public class WorldManager : MonoBehaviour
 
     int mapWidth;
     int mapHeight;
-    
+
     public int currPlayer;
     int numPlayers = 2;
 
@@ -97,7 +98,14 @@ public class WorldManager : MonoBehaviour
         {
             playerObjects[i] = Instantiate(playerPrefab);
             players[i] = playerObjects[i].GetComponent<Player>();
-            players[i].Initialize(i, this, uiController);
+            if (i == 0)
+            {
+                players[i].Initialize(i, this, uiController, true);
+            }
+            else
+            {
+                players[i].Initialize(i, this, uiController, false);
+            }
         }
 
         terrainGrid = new GameObject[mapWidth, mapHeight];
@@ -119,13 +127,13 @@ public class WorldManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(startGame == true)
+        if (startGame == true)
         {
             startGame = false;
             StartTurn();
         }
 
-        if(Input.GetKeyDown("up"))
+        if (Input.GetKeyDown("up"))
         {
             mainCamera.transform.position += new Vector3(0, 1, 0);
         }
@@ -158,12 +166,13 @@ public class WorldManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Home))
         {
             mainCamera.orthographicSize = 7;
-            
+
         }
 
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector3(0, 0, 1));
 
-        if (hit) {
+        if (hit)
+        {
             cursorBox.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, -1);
         }
 
@@ -186,7 +195,7 @@ public class WorldManager : MonoBehaviour
             selectionBox.SetActive(true);
             selectionBox.transform.position = new Vector3(selected.transform.position.x, selected.transform.position.y, -1.01f);
 
-            if(selected.tag == "Unit")
+            if (selected.tag == "Unit")
             {
                 selected.GetComponent<UnitScript>().DrawPath();
             }
@@ -206,9 +215,9 @@ public class WorldManager : MonoBehaviour
 
     public void Deselect()
     {
-        if(selected != null)
+        if (selected != null)
         {
-            if(selected.tag == "Unit")
+            if (selected.tag == "Unit")
             {
                 selected.GetComponent<UnitScript>().ClearPath();
             }
@@ -254,7 +263,8 @@ public class WorldManager : MonoBehaviour
             DeleteUnit(temp);
             SpawnTown(xy.x, xy.y, p);
             // return SpawnTown(xy.x, xy.y, p);
-        } else
+        }
+        else
         {
             // return null;
         }
@@ -310,7 +320,7 @@ public class WorldManager : MonoBehaviour
     {
         GameObject newUnit = Instantiate(unitPrefab, new Vector3(0, 0, -1), Quaternion.identity);
         newUnit.GetComponent<UnitScript>().Initialize(this);
-        
+
         if (newUnit != null)
         {
             unitList.Add(newUnit);
@@ -336,7 +346,8 @@ public class WorldManager : MonoBehaviour
 
     public bool DeleteUnit(GameObject u)
     {
-        if(!unitList.Remove(u)) {
+        if (!unitList.Remove(u))
+        {
             Debug.Log("Error: failed to delete unit from list");
             return false;
         }
@@ -390,25 +401,28 @@ public class WorldManager : MonoBehaviour
         int a = x - mapWidth / 2;
         int b = y - mapHeight / 2;
 
-        return new Vector3 ( x - mapWidth / 2, -y + mapHeight / 2, z);
+        return new Vector3(x - mapWidth / 2, -y + mapHeight / 2, z);
     }
 
     // Check if one tile is walkable
     public bool Walkable(int x, int y)
     {
-        if(unitGrid[x, y] != null)
+        if (unitGrid[x, y] != null)
         {
             return false;
         }
 
-        if(featureGrid[x, y] == null)
+        if (featureGrid[x, y] == null)
         {
             return (terrainGrid[x, y].GetComponent<TileScript>().walkable);
-        } else {
+        }
+        else
+        {
             if (featureGrid[x, y].tag == "MapFeature")
             {
                 return (terrainGrid[x, y].GetComponent<TileScript>().walkable && featureGrid[x, y].GetComponent<MapFeatureScript>().walkable);
-            } else
+            }
+            else
             {
                 return (terrainGrid[x, y].GetComponent<TileScript>().walkable);
             }
@@ -420,7 +434,7 @@ public class WorldManager : MonoBehaviour
     // Inclusive
     public bool[,] Walkable(Vector2Int a, Vector2Int b)
     {
-        if(a.x > b.x || a.y > b.y)
+        if (a.x > b.x || a.y > b.y)
         {
             Debug.Log("Bad coordinates");
             return null;
@@ -428,9 +442,9 @@ public class WorldManager : MonoBehaviour
 
         bool[,] walkMap = new bool[b.x - a.x + 1, b.y - a.y + 1];
 
-        for(int i = 0; i <= b.x - a.x; i++)
+        for (int i = 0; i <= b.x - a.x; i++)
         {
-            for(int j = 0; j <= b.y - a.y; j++)
+            for (int j = 0; j <= b.y - a.y; j++)
             {
                 walkMap[i, j] = Walkable(i + a.x, j + a.y);
             }
@@ -467,16 +481,19 @@ public class WorldManager : MonoBehaviour
 
     public GameObject GetTerrainByElevation(int e)
     {
-        if(e == 0)
+        if (e == 0)
         {
             return waterTile;
-        } else if(e < 5)
+        }
+        else if (e < 5)
         {
             return sandTile;
-        } else if(e < 20)
+        }
+        else if (e < 20)
         {
             return grassTile;
-        } else
+        }
+        else
         {
             return stoneTile;
         }
@@ -491,9 +508,9 @@ public class WorldManager : MonoBehaviour
     {
         GameObject shrine = featureGrid[shrineLocation.x, shrineLocation.y];
 
-        if(shrine != null)
+        if (shrine != null)
         {
-            if(shrine.tag == "MapObjective")
+            if (shrine.tag == "MapObjective")
             {
                 foreach (Player p in players)
                 {
@@ -515,16 +532,16 @@ public class WorldManager : MonoBehaviour
 
     public void MoveUnit()
     {
-        if(selected != null)
+        if (selected != null)
         {
-            if(selected.tag == "Unit")
+            if (selected.tag == "Unit")
             {
                 selected.GetComponent<UnitScript>().Move();
             }
         }
     }
 
-    public void EndTurnButtonPressed()
+    public void EndTurnButtonPressed()  // this should be moved to the player controller
     {
         endTurnPressed = true;
     }
@@ -533,7 +550,7 @@ public class WorldManager : MonoBehaviour
     {
         uiController.SetCurrPlayer(players[currPlayer]);
 
-        if(currPlayer == 0)
+        if (currPlayer == 0)
         {
             turnNumber += 1;
         }
@@ -547,10 +564,10 @@ public class WorldManager : MonoBehaviour
 
         Deselect();
 
-        players[currPlayer].EndTurn();
+        players[currPlayer].EndOfTurnCleanup();
         currPlayer = (currPlayer + 1) % numPlayers;
 
-        if(currPlayer == 0)
+        if (currPlayer == 0)
         {
             MoveNeutralUnits();
         }
@@ -560,21 +577,22 @@ public class WorldManager : MonoBehaviour
 
     public int[] GetMapDimensions()
     {
-        return new int[] {mapHeight, mapWidth };
+        return new int[] { mapHeight, mapWidth };
     }
 
     public Player CheckForWinner()
     {
         Player lastActive = null;
 
-        foreach(Player p in players)
+        foreach (Player p in players)
         {
-            if(p.playerActive)
+            if (p.playerActive)
             {
-                if(lastActive == null)
+                if (lastActive == null)
                 {
                     lastActive = p;
-                } else
+                }
+                else
                 {
                     return null;
                 }
@@ -583,7 +601,7 @@ public class WorldManager : MonoBehaviour
 
         }
 
-        if(lastActive != null)
+        if (lastActive != null)
         {
             gameOver = true;
             uiController.SetWinner(lastActive.playerNumber);
@@ -594,7 +612,7 @@ public class WorldManager : MonoBehaviour
 
     public int[] getMapDimensions()
     {
-        return new int[] { mapWidth, mapHeight};
+        return new int[] { mapWidth, mapHeight };
     }
 
     /* public int[] mapToScreenCoordinates(int x, int y)
@@ -609,10 +627,10 @@ public class WorldManager : MonoBehaviour
 
     void MoveNeutralUnits()
     {
-        foreach(GameObject u in unitList)
+        foreach (GameObject u in unitList)
         {
             NeutralUnitScript s = u.GetComponent<NeutralUnitScript>();
-            if(s != null)
+            if (s != null)
             {
                 s.AutoMove();
                 s.ResetMovePoints();
@@ -623,5 +641,22 @@ public class WorldManager : MonoBehaviour
     public int PlayerCount()
     {
         return players.Count();
+    }
+
+    // this was a thing for use debugging something but it ended up being unnecessary. huh.
+    public int CountUnitsOnGrid()
+    {
+        int c = 0;
+        for (int i = 0; i < unitGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < unitGrid.GetLength(1); j++)
+            {
+                if(unitGrid[i, j] != null)
+                {
+                    c++;
+                }
+            }
+        }
+        return c;
     }
 }

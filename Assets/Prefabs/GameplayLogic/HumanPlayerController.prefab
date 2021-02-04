@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1764377970145949274}
-  - component: {fileID: 586077543152440663}
+  - component: {fileID: -3786322849714346678}
   m_Layer: 0
-  m_Name: PlayerController
+  m_Name: HumanPlayerController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &586077543152440663
+--- !u!114 &-3786322849714346678
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4393f41d06001ee4b9751a4ac3c94319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldManager: {fileID: 0}
   player: {fileID: 0}
   uiManager: {fileID: 0}
   selectedObject: {fileID: 0}

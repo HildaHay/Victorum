@@ -893,7 +893,9 @@ MonoBehaviour:
     type: 3}
   strongholdPrefab: {fileID: 5734647812586531819, guid: 43b5903c82999a9438af246a15b23aa6,
     type: 3}
-  playerControllerPrefab: {fileID: 6473478090987532208, guid: 002908e0e0b29c546b1278b955f6bf05,
+  humanPlayerControllerPrefab: {fileID: 6473478090987532208, guid: 002908e0e0b29c546b1278b955f6bf05,
+    type: 3}
+  aiPlayerControllerPrefab: {fileID: 6473478090987532208, guid: 904a42fa46bd9a34eac1c116de272d55,
     type: 3}
   unitList: []
   townList: []

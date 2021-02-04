@@ -43,28 +43,26 @@ public class NeutralUnitScript : UnitScript
 
             switch (directions[r]) {
                 case "up":
-                    targetSquare[1] -= 1;   // Should check if the Y-values for up/down are correct
+                    targetSquare.y -= 1;   // Should check if the Y-values for up/down are correct
                     break;
                 case "down":
-                    targetSquare[1] += 1;
+                    targetSquare.y += 1;
                     break;
                 case "left":
-                    targetSquare[0] -= 1;
+                    targetSquare.x -= 1;
                     break;
                 case "right":
-                    targetSquare[0] += 1;
+                    targetSquare.x += 1;
                     break;
                 default:
                     this.movementPoints = 0;
                     break;
             }
 
-            if (SelectDestination(targetSquare[0], targetSquare[1]))
+            if (SelectDestinationAndMove(targetSquare) != 2)    // Try to move to that square
             {
-
-            }
-            else
-            {
+                // If move failed (square was blocked/inaccessible), zero out move points so the unit doesn't move again
+                // Note: sometimes unit will have other valid moves but this will happen anyway. Ah well! This will be fixed when neutral units get better AI.
                 this.movementPoints = 0;
             }
         }
@@ -73,7 +71,7 @@ public class NeutralUnitScript : UnitScript
     {
         if (target.GetComponent<UnitScript>().GetPlayer() != -1)    // probably won't have to change unless I add multiple neutral factions or something
         {
-            if (TryAttack(target))
+            if (TryAttackUnit(target))
             {
                 target.ReceiveDamage(AttackDamage());
             }

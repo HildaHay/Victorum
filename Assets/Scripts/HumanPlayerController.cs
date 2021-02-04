@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class InputPlayerController : PlayerController
+public class HumanPlayerController : PlayerController
 {
     public GameObject selectedObject;
 
@@ -89,6 +89,10 @@ public class InputPlayerController : PlayerController
                         }
                         break;
                     case "Terrain":
+                        TileScript clickedTile = hit.transform.gameObject.GetComponent<TileScript>();
+
+                        Vector2Int clickedTileCoords = new Vector2Int(clickedTile.mapX, clickedTile.mapY);
+
                         if (selectedObject == null)
                         {
                             int x = hit.transform.gameObject.GetComponent<TileScript>().mapX;
@@ -112,7 +116,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<TileScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                selectedObject.GetComponent<UnitScript>().SelectDestination(hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().SelectDestination(clickedTileCoords, false);
                             }
                         }
                         else if (selectedObject.tag == "MapFeature")
@@ -121,7 +125,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<MapFeatureScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                selectedObject.GetComponent<UnitScript>().SelectDestination(hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().SelectDestination(clickedTileCoords, false);
                             }
                         }
                         else if (selectedObject.tag == "MapObjective")
@@ -130,7 +134,7 @@ public class InputPlayerController : PlayerController
                             int y = hit.transform.gameObject.GetComponent<MapObjectiveScript>().mapY;
                             if (worldManager.Walkable(x, y))
                             {
-                                selectedObject.GetComponent<UnitScript>().SelectDestination(hit.transform.gameObject.GetComponent<TileScript>().mapX, hit.transform.gameObject.GetComponent<TileScript>().mapY);
+                                selectedObject.GetComponent<UnitScript>().SelectDestination(clickedTileCoords, false);
                             }
                         }
                         else

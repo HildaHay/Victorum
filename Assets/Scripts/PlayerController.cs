@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    bool MoveUnit(GameObject u, Vector2Int location)
+    int MoveUnit(GameObject u, Vector2Int location)
     {
         return u.GetComponent<UnitScript>().SelectDestination(location.x, location.y);
     }
