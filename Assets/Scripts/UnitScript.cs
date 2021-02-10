@@ -210,7 +210,7 @@ public class UnitScript : MonoBehaviour
     // Returns 0 if no valid path found, 1 if a new path was found but the unit didn't move, and 2 if the unit successfully moved
     public int SelectDestination(Vector2Int destination, bool moveImmediately)
     {
-        if (!worldManager.Walkable(destination.x, destination.y))
+        if (!worldManager.Walkable(destination.x, destination.y) || !player.tilesExplored[destination.x, destination.y])
         {
             return 0;
         }
@@ -305,6 +305,7 @@ public class UnitScript : MonoBehaviour
                 }
             }
             DrawPath();
+            Camera.main.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, Camera.main.transform.position.z);
             return true;
         }
         else

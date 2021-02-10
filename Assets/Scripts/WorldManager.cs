@@ -209,7 +209,7 @@ public class WorldManager : MonoBehaviour
     public GameObject CreateStartingTown(int x, int y, int p)
     {
         GameObject t = SpawnTown(x, y, p);
-        players[p].setMainTown(t);
+        players[p].SetMainTown(t);
         return t;
     }
 
@@ -632,7 +632,8 @@ public class WorldManager : MonoBehaviour
             NeutralUnitScript s = u.GetComponent<NeutralUnitScript>();
             if (s != null)
             {
-                s.AutoMove();
+                // TODO: Find a bug and re-enable this line
+                // s.AutoMove();
                 s.ResetMovePoints();
             }
         }

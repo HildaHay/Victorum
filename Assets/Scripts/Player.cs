@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     protected List<GameObject> playerTownList;
     protected List<GameObject> playerObjectiveList;
 
-    bool[,] tilesExplored;
+    public bool[,] tilesExplored;
 
     GameObject mainTown;
 
@@ -223,9 +223,14 @@ public class Player : MonoBehaviour
         return newTown;
     }
 
-    public GameObject setMainTown(GameObject t)
+    public GameObject SetMainTown(GameObject t)
     {
         mainTown = t;
+        return mainTown;
+    }
+
+    public GameObject GetMainTown()
+    {
         return mainTown;
     }
 
@@ -286,6 +291,9 @@ public class Player : MonoBehaviour
 
     void SetTileVisibility(int x, int y, bool visible)
     {
+        // for testing! remove this line
+        // visible = true;
+
         worldManager.terrainGrid[x, y].GetComponent<TileScript>().tileRenderer.enabled = visible;
 
         if (worldManager.unitGrid[x, y] != null)

@@ -668,12 +668,6 @@ PrefabInstance:
       objectReference: {fileID: 456241961}
     - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
         type: 3}
-      propertyPath: treePrefab
-      value: 
-      objectReference: {fileID: 5905416010919775522, guid: 7b895a339f501244bacbb8a7cd601faf,
-        type: 3}
-    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
-        type: 3}
       propertyPath: shrinePrefab
       value: 
       objectReference: {fileID: 1024968172763306872, guid: 082918e84d02cc14cb5e258e353e8d17,
@@ -707,6 +701,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1024968172763306872, guid: 082918e84d02cc14cb5e258e353e8d17,
         type: 3}
+    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
+        type: 3}
+      propertyPath: landArea
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
+        type: 3}
+      propertyPath: minDistanceBetweenTowns
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7e0863b572a639948b7bbe59cc164d26, type: 3}
 --- !u!1 &314106943 stripped

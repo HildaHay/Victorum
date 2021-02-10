@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ef570da33ef346418ede443cf953a55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameController: {fileID: 0}
+  worldManager: {fileID: 0}
   grassTile: {fileID: 6622056777648452395, guid: 5c076a95fd1356c4595b1f7ffed71982,
     type: 3}
   sandTile: {fileID: 8976584420132885943, guid: 25c7d886b2fd9654c93ca1da18984489,
@@ -54,4 +54,9 @@ MonoBehaviour:
     type: 3}
   waterTile: {fileID: 5679519308693705190, guid: fdc481aeac09b7042ab9fa99e617df85,
     type: 3}
-  knight: {fileID: 4756081786176530174, guid: 230c58fe595551b4e9d282bd81bc6a95, type: 3}
+  treePrefab: {fileID: 5905416010919775522, guid: 7b895a339f501244bacbb8a7cd601faf,
+    type: 3}
+  objectivePrefabs: []
+  neutralUnitPrefab: {fileID: 0}
+  landArea: 40
+  minDistanceBetweenTowns: 4
