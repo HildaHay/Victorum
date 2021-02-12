@@ -31,8 +31,6 @@ public class UnitScript : MonoBehaviour
     public int mapX;
     public int mapY;
 
-    public Vector2Int location;
-
     public List<Vector2Int> savedPath;
 
     public bool isTownBuilder;

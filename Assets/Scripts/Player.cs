@@ -201,10 +201,10 @@ public class Player : MonoBehaviour
 
     public int[] mapToScreenCoordinates(int x, int y)
     {
-        int[] mapDimensions = worldManager.GetMapDimensions();
+        Vector2Int mapDimensions = worldManager.GetMapDimensions();
 
-        int a = x - mapDimensions[1] / 2;
-        int b = -y + mapDimensions[0] / 2;
+        int a = x - mapDimensions.y / 2;
+        int b = -y + mapDimensions.x / 2;
 
         return new int[] { a, b };
     }
@@ -292,7 +292,7 @@ public class Player : MonoBehaviour
     void SetTileVisibility(int x, int y, bool visible)
     {
         // for testing! remove this line
-        // visible = true;
+        visible = true;
 
         worldManager.terrainGrid[x, y].GetComponent<TileScript>().tileRenderer.enabled = visible;
 

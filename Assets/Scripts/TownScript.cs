@@ -144,6 +144,11 @@ public class TownScript : MonoBehaviour
         return new int[] { mapX, mapY };
     }
 
+    public Vector2Int GetLocation()
+    {
+        return new Vector2Int(mapX, mapY);
+    }
+
     //public GameObject CreateUnit()
     //{
     //    if(gold >= 1)

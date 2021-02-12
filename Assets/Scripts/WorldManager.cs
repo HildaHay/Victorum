@@ -174,6 +174,11 @@ public class WorldManager : MonoBehaviour
         if (hit)
         {
             cursorBox.transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y, -1);
+            if(hit.transform.gameObject.tag == "Terrain")
+            {
+                TileScript tile = hit.transform.gameObject.GetComponent<TileScript>();
+                uiController.SetCoordinatesText(new Vector2Int(tile.mapX, tile.mapY));
+            }
         }
 
         // if (players[currPlayer].controller.IsHuman()) {
@@ -575,9 +580,10 @@ public class WorldManager : MonoBehaviour
         StartTurn();
     }
 
-    public int[] GetMapDimensions()
+    public Vector2Int GetMapDimensions()
     {
-        return new int[] { mapHeight, mapWidth };
+        return new Vector2Int(mapHeight, mapWidth);
+        // return new int[] { mapHeight, mapWidth };
     }
 
     public Player CheckForWinner()
@@ -659,5 +665,10 @@ public class WorldManager : MonoBehaviour
             }
         }
         return c;
+    }
+
+    public static int DistanceBetweenTiles(Vector2Int a, Vector2Int b)
+    {
+        return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
     }
 }

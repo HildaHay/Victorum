@@ -15,6 +15,9 @@ public class UIManager : MonoBehaviour
     public GameObject winnerTextObject;
     Text winnerText;
 
+    public GameObject cursorCoordinatesTextObject;
+    Text cursorCoordinatesText;
+
     public GameObject endTurnButton;
     public GameObject buildTownButton;
     public GameObject nextUnitButton;
@@ -40,6 +43,9 @@ public class UIManager : MonoBehaviour
 
         winnerText = winnerTextObject.GetComponent<Text>();
         winnerText.text = "";
+
+        cursorCoordinatesText = cursorCoordinatesTextObject.GetComponent<Text>();
+        cursorCoordinatesText.text = "";
 
         townMenu.SetActive(false);
 
@@ -121,6 +127,11 @@ public class UIManager : MonoBehaviour
         currPlayerText.text = text;
     }
 
+    public void SetCoordinatesText(Vector2Int c)
+    {
+        cursorCoordinatesText.text = c.ToString();
+    }
+         
     void ShowUnitInfo(GameObject unit)
     {
         selectedObject = unit;

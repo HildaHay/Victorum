@@ -74,6 +74,12 @@ public class AIPlayerController : PlayerController
             }
         }
 
+        List<Vector2Int> explorationTargets = FindExplorationTargets(player.GetMainTown().GetComponent<TownScript>().GetLocation(), 2);
+
+        // AI behavior: The first unit will be sent to explore at the tile furthest away from the main town; the second unit will be sent
+        // to explore at the tile nearest the main town; any other units will move around randomly
+
+        int i = 0;
         foreach (GameObject unit in player.UnitList())
         {
             // Note: If it becomes possible for units to die while attacking, this enumerator will break
@@ -81,7 +87,19 @@ public class AIPlayerController : PlayerController
             if (s.GetMovePoints() > 0)
             {
                 // MoveUnitRandomly(s);
-                MoveUnitToExplore(s);
+                // MoveUnitToExplore(s);
+                if(i == 0 && explorationTargets.Count >= 1)
+                {
+                    MoveUnitToLocation(s, explorationTargets[0]);
+                } else if(i == 1 && explorationTargets.Count >= 2)
+                {
+                    MoveUnitToLocation(s, explorationTargets[1]);
+                } else
+                {
+                    MoveUnitRandomly(s);
+                }
+
+                i++;
             }
         }
 
@@ -152,20 +170,25 @@ public class AIPlayerController : PlayerController
         }
     }
 
-    void MoveUnitToExplore(UnitScript s)
+    //void MoveUnitToExplore(UnitScript s)
+    //{
+    //    TownScript mainTown = player.GetMainTown().GetComponent<TownScript>();
+    //    Vector2Int mainTownCoords = new Vector2Int(mainTown.mapX, mainTown.mapY);
+
+    //    Vector2Int targetSquare = FindFurthestUnexploredTile(mainTownCoords);
+
+    //    if (s.SelectDestinationAndMove(targetSquare) != 2)
+    //    {
+    //        s.ZeroMovePoints();
+    //    }
+    //}
+
+    void MoveUnitToLocation(UnitScript s, Vector2Int l)
     {
-        TownScript mainTown = player.GetMainTown().GetComponent<TownScript>();
-        Vector2Int mainTownCoords = new Vector2Int(mainTown.mapX, mainTown.mapY);
-
-        Vector2Int targetSquare = FindFurthestUnexploredTile(mainTownCoords);
-
-        Debug.Log(mainTownCoords);
-        Debug.Log(targetSquare);
-
-        if (s.SelectDestinationAndMove(targetSquare) != 2)
-        {
-            s.ZeroMovePoints();
-        }
+        Debug.Log(s.mapX + ", " + s.mapY);
+        Debug.Log(l);
+        s.SelectDestinationAndMove(l);
+        s.ZeroMovePoints();
     }
 
 
@@ -195,110 +218,64 @@ public class AIPlayerController : PlayerController
         return false;
     }
 
-    // NOTE: This works but is very slow! Try to re-work the algorithm so that it works faster
-    // Also, make sure the AI can handle the case where it runs out of tiles to explore
-    public Vector2Int FindFurthestUnexploredTile(Vector2Int start)
+    // This makes a list of currently-explored tiles that are adjacent to an unexplored tile, then narrows that list down to a list of
+    // "good" targets to prioritize for exploration
+    // The list will contain up to two tiles, specificed with argument targetsToFind. If 1, it will return the tile furthest from the
+    // player's main town. If 2, it will also return the tile nearest the player's main town.
+    // Bug: This can become stuck if the target tile is one that's not accessible (e.g. peninsula blocked by an obstacle)
+    public List<Vector2Int> FindExplorationTargets(Vector2Int start, int targetsToFind)
     {
-        List<Vector2Int> q = new List<Vector2Int>();
-
-        Vector2Int mapDims = new Vector2Int(worldManager.GetMapDimensions()[0], worldManager.GetMapDimensions()[1]);
-
-        if (start.x < 0 || start.y < 0 || start.x >= mapDims.x || start.y >= mapDims.y)
+        if(targetsToFind == 0)
         {
-            Debug.Log("Pathing: start or destination was outside of map");
-            return new Vector2Int(-1, -1);
+            return null;
         }
 
-        int[,] distanceVals = new int[mapDims.x, mapDims.y];
+        Vector2Int mapDimensions = worldManager.GetMapDimensions();
 
-        for (int i = 0; i < mapDims.x; i++)
+        // Generate a list of all walkable explored tiles that are next to an unexplored tile
+        List<Vector2Int> allPossibleTargets = new List<Vector2Int>();
+
+        for (int i = 0; i < mapDimensions.x; i++)
         {
-            for (int j = 0; j < mapDims.y; j++)
+            for(int j = 0; j < mapDimensions.y; j++)
             {
-                distanceVals[i, j] = int.MaxValue;
-                if (player.tilesExplored[i, j])
-                {
-                    q.Add(new Vector2Int(i, j));
+                if(player.tilesExplored[i, j] && worldManager.Walkable(i, j) && IsNextToUnexploredTile(new Vector2Int(i, j))) {
+                    allPossibleTargets.Add(new Vector2Int(i, j));
                 }
             }
         }
 
-        distanceVals[start.x, start.y] = 0;
-
-        Vector2Int furthestPoint = start;
-
-        while(q.Count > 0)
+        if(allPossibleTargets.Count == 0)
         {
-            // find one with min distance
-            int min = Int32.MaxValue;
-            int minIndex = -1;
-
-            for (int i = 0; i < q.Count; i++)
-            {
-                Vector2Int curr = q[i];
-                if (distanceVals[curr.x, curr.y] < min)
-                {
-                    min = distanceVals[curr.x, curr.y];
-                    minIndex = i;
-                }
-            }
-
-            Debug.Log(minIndex);
-
-            // If minIndex is still -1, all remaining tiles' distance values are Int32.MaxValue. That means none of them are accessible
-            // from the starting tile, so all accessible tiles have already been explored and we can go on to the next step
-            if (minIndex >= 0)
-            {
-                Vector2Int minVertex = q[minIndex];
-                q.RemoveAt(minIndex);
-
-                // set neighbours' distance
-                if (minVertex.x > 0)
-                {
-                    if (player.tilesExplored[minVertex.x - 1, minVertex.y] && worldManager.Walkable(minVertex.x - 1, minVertex.y)
-                        && distanceVals[minVertex.x - 1, minVertex.y] > distanceVals[minVertex.x, minVertex.y] + 1)
-                    {
-                        distanceVals[minVertex.x - 1, minVertex.y] = distanceVals[minVertex.x, minVertex.y] + 1;
-                    }
-                }
-                if (minVertex.x < mapDims.x - 1)
-                {
-                    if (player.tilesExplored[minVertex.x + 1, minVertex.y] && worldManager.Walkable(minVertex.x + 1, minVertex.y)
-                        && distanceVals[minVertex.x + 1, minVertex.y] > distanceVals[minVertex.x, minVertex.y] + 1)
-                    {
-                        distanceVals[minVertex.x + 1, minVertex.y] = distanceVals[minVertex.x, minVertex.y] + 1;
-                    }
-                }
-                if (minVertex.y > 0)
-                {
-                    if (player.tilesExplored[minVertex.x, minVertex.y - 1] && worldManager.Walkable(minVertex.x, minVertex.y - 1)
-                        && distanceVals[minVertex.x, minVertex.y - 1] > distanceVals[minVertex.x, minVertex.y] + 1)
-                    {
-                        distanceVals[minVertex.x, minVertex.y - 1] = distanceVals[minVertex.x, minVertex.y] + 1;
-                    }
-                }
-                if (minVertex.y < mapDims.y - 1)
-                {
-                    if (player.tilesExplored[minVertex.x, minVertex.y + 1] && worldManager.Walkable(minVertex.x, minVertex.y + 1)
-                        && distanceVals[minVertex.x, minVertex.y + 1] > distanceVals[minVertex.x, minVertex.y] + 1)
-                    {
-                        distanceVals[minVertex.x, minVertex.y + 1] = distanceVals[minVertex.x, minVertex.y] + 1;
-                    }
-                }
-
-                // check if this is the most distant tile that is next to an unexplored tile; if it is, it's our new movement target
-                if(IsNextToUnexploredTile(minVertex) && distanceVals[furthestPoint.x, furthestPoint.y] <= distanceVals[minVertex.x, minVertex.y])
-                {
-                    furthestPoint = minVertex;
-                }
-            }
-            else
-            {
-                q.Clear();
-            }
-
+            // nowhere else to explore
+            return null;
         }
 
-        return furthestPoint;
+        Vector2Int furthest = allPossibleTargets[0];
+        int furthestDistance = WorldManager.DistanceBetweenTiles(furthest, start);
+
+        Vector2Int nearest = allPossibleTargets[0];
+        int nearestDistance = WorldManager.DistanceBetweenTiles(nearest, start);
+
+        foreach (Vector2Int t in allPossibleTargets)
+        {
+            if(WorldManager.DistanceBetweenTiles(t, start) > furthestDistance)
+            {
+                furthest = t;
+            }
+            if (WorldManager.DistanceBetweenTiles(t, start) < nearestDistance)
+            {
+                nearest = t;
+            }
+        }
+
+        List<Vector2Int> targets = new List<Vector2Int>();
+        targets.Add(furthest);
+        if(targetsToFind >= 2)
+        {
+            targets.Add(nearest);
+        }
+
+        return targets;
     }
 }
