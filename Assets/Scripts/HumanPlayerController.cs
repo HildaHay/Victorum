@@ -19,6 +19,15 @@ public class HumanPlayerController : PlayerController
         if (worldManager.currPlayer == player.playerNumber)
         {
             worldManager.Select(GetSelection());
+
+            if(Input.GetKeyDown(KeyCode.Q))
+            {
+                worldManager.AutoExplore();
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                worldManager.EndTurnButtonPressed();
+            }
         }
     }
 
@@ -220,4 +229,128 @@ public class HumanPlayerController : PlayerController
     {
         return true;
     }
+
+
+    // VVV TESTING FUNCTIONS  - WILL BE REMOVED VVV
+    /*public void AutoExplore()
+    {
+        List<Vector2Int> explorationTargets = FindExplorationTargets(player.GetMainTown().GetComponent<TownScript>().GetLocation(), 2);
+
+        int i = 0;
+        foreach (GameObject unit in player.UnitList())
+        {
+            // Note: If it becomes possible for units to die while attacking, this enumerator will break
+            UnitScript s = unit.GetComponent<UnitScript>();
+            if (s.GetMovePoints() > 0)
+            {
+                // MoveUnitRandomly(s);
+                // MoveUnitToExplore(s);
+                if (i == 0 && explorationTargets.Count >= 1)
+                {
+                    MoveUnitToLocation(s, explorationTargets[0]);
+                }
+                else if (i == 1 && explorationTargets.Count >= 2)
+                {
+                    MoveUnitToLocation(s, explorationTargets[1]);
+                }
+                else
+                {
+
+                }
+
+                i++;
+            }
+        }
+    }
+
+    void MoveUnitToLocation(UnitScript s, Vector2Int l)
+    {
+        Debug.Log(s.mapX + ", " + s.mapY);
+        Debug.Log(l);
+        s.SelectDestinationAndMove(l);
+        s.ZeroMovePoints();
+    }
+    public List<Vector2Int> FindExplorationTargets(Vector2Int start, int targetsToFind)
+    {
+        if (targetsToFind == 0)
+        {
+            return null;
+        }
+
+        Vector2Int mapDimensions = worldManager.GetMapDimensions();
+
+        // Generate a list of all walkable explored tiles that are next to an unexplored tile
+        List<Vector2Int> allPossibleTargets = new List<Vector2Int>();
+
+        for (int i = 0; i < mapDimensions.x; i++)
+        {
+            for (int j = 0; j < mapDimensions.y; j++)
+            {
+                if (player.tilesExplored[i, j] && worldManager.Walkable(i, j) && IsNextToUnexploredTile(new Vector2Int(i, j)))
+                {
+                    allPossibleTargets.Add(new Vector2Int(i, j));
+                }
+            }
+        }
+
+        if (allPossibleTargets.Count == 0)
+        {
+            // nowhere else to explore
+            return null;
+        }
+
+        Vector2Int furthest = allPossibleTargets[0];
+        int furthestDistance = WorldManager.DistanceBetweenTiles(furthest, start);
+
+        Vector2Int nearest = allPossibleTargets[0];
+        int nearestDistance = WorldManager.DistanceBetweenTiles(nearest, start);
+
+        foreach (Vector2Int t in allPossibleTargets)
+        {
+            if (WorldManager.DistanceBetweenTiles(t, start) > furthestDistance)
+            {
+                furthest = t;
+            }
+            if (WorldManager.DistanceBetweenTiles(t, start) < nearestDistance)
+            {
+                nearest = t;
+            }
+        }
+
+        List<Vector2Int> targets = new List<Vector2Int>();
+        targets.Add(furthest);
+        if (targetsToFind >= 2)
+        {
+            targets.Add(nearest);
+        }
+
+        return targets;
+    }
+
+    bool IsNextToUnexploredTile(Vector2Int t)
+    {
+        if (t.x > 0)
+        {
+            if (player.tilesExplored[t.x - 1, t.y] == false)
+                return true;
+        }
+        if (t.x < worldManager.GetMapDimensions()[0] - 1)
+        {
+            if (player.tilesExplored[t.x + 1, t.y] == false)
+                return true;
+        }
+        if (t.y > 0)
+        {
+            if (player.tilesExplored[t.x, t.y - 1] == false)
+                return true;
+        }
+        if (t.y < worldManager.GetMapDimensions()[1] - 1)
+        {
+            if (player.tilesExplored[t.x, t.y + 1] == false)
+                return true;
+        }
+
+        return false;
+    }*/
+    // ^^^ TESTING FUNCTIONS  - WILL BE REMOVED ^^^
 }

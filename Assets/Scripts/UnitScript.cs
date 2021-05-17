@@ -335,7 +335,7 @@ public class UnitScript : MonoBehaviour
     {
         // to do
         ClearPath();
-        if (playerNumber >= 0)
+        if (playerNumber == 0)
         {
             foreach (Vector2Int a in savedPath)
             {

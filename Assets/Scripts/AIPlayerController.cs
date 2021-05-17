@@ -38,6 +38,8 @@ public class AIPlayerController : PlayerController
         base.OnTurnStart();
         BuildAIMap();
         AITakeTurn();
+
+        worldManager.EndTurn();
     }
 
     public void BuildAIMap()
@@ -68,7 +70,7 @@ public class AIPlayerController : PlayerController
     {
         foreach (GameObject town in player.TownList())
         {
-            if (player.gold > 10)    // cost of a Scout
+            if (player.gold > 10 && player.UnitList().Count < 2)    // cost of a Scout
             {
                 player.TownRecruit(town, scoutPrefab);
             }
@@ -102,8 +104,6 @@ public class AIPlayerController : PlayerController
                 i++;
             }
         }
-
-        worldManager.EndTurn();
     }
 
     void MoveUnitRandomly(UnitScript s)

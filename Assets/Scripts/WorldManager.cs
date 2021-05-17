@@ -671,4 +671,10 @@ public class WorldManager : MonoBehaviour
     {
         return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
     }
+
+    // Testing func
+    /*public void AutoExplore()
+    {
+        ((HumanPlayerController)players[currPlayer].controller).AutoExplore();
+    }*/
 }
