@@ -71,8 +71,18 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1353551497164233637, guid: 9edad0c31a717be45a321c11da7f7597,
+      objectReference: {fileID: 21300000, guid: b6564a0fd589df54ca20f284a3937a37,
         type: 3}
+    - target: {fileID: 7445982729142137188, guid: c13623c2e6eccbc419e124d66fb485fc,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445982729142137188, guid: c13623c2e6eccbc419e124d66fb485fc,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 0.16
+      objectReference: {fileID: 0}
     - target: {fileID: 5825851350020415647, guid: c13623c2e6eccbc419e124d66fb485fc,
         type: 3}
       propertyPath: walkable
