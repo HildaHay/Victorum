@@ -20,10 +20,10 @@ public class HumanPlayerController : PlayerController
         {
             worldManager.Select(GetSelection());
 
-            if(Input.GetKeyDown(KeyCode.Q))
+            /*if(Input.GetKeyDown(KeyCode.Q))
             {
                 worldManager.AutoExplore();
-            }
+            }*/
             if (Input.GetKeyDown(KeyCode.E))
             {
                 worldManager.EndTurnButtonPressed();

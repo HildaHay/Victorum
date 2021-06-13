@@ -41,7 +41,8 @@ public class UnitScript : MonoBehaviour
     public GameObject playerIndicatorSprite;
     public List<GameObject> pathMarkers;
 
-    public GameObject pathMarkerPrefab;
+    public GameObject pathMarker1Prefab;
+    public GameObject pathMarker2Prefab;
 
     public Sprite[] sprites;
 
@@ -337,9 +338,17 @@ public class UnitScript : MonoBehaviour
         ClearPath();
         if (playerNumber == 0)
         {
+            int i = 0;
             foreach (Vector2Int a in savedPath)
             {
-                pathMarkers.Add(Instantiate(pathMarkerPrefab, worldManager.MapToScreenCoordinates(a.x, a.y, -1), Quaternion.identity));
+                if (i < movementPoints)
+                {
+                    pathMarkers.Add(Instantiate(pathMarker1Prefab, worldManager.MapToScreenCoordinates(a.x, a.y, -1), Quaternion.identity));
+                } else
+                {
+                    pathMarkers.Add(Instantiate(pathMarker2Prefab, worldManager.MapToScreenCoordinates(a.x, a.y, -1), Quaternion.identity));
+                }
+                i++;
             }
         }
     }

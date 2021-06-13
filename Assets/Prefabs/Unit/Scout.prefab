@@ -132,6 +132,18 @@ PrefabInstance:
       propertyPath: visionRange
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 4756081786176530146, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: pathMarker1Prefab
+      value: 
+      objectReference: {fileID: 1489826655360869228, guid: f9ca2aa161204cf44bcdcb0bfeb8b667,
+        type: 3}
+    - target: {fileID: 4756081786176530146, guid: 230c58fe595551b4e9d282bd81bc6a95,
+        type: 3}
+      propertyPath: pathMarker2Prefab
+      value: 
+      objectReference: {fileID: 1489826655360869228, guid: ef459b57fa87c994988b98ec9e369447,
+        type: 3}
     - target: {fileID: 4756081786176530175, guid: 230c58fe595551b4e9d282bd81bc6a95,
         type: 3}
       propertyPath: m_Sprite

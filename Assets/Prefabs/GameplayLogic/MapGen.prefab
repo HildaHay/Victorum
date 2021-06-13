@@ -52,7 +52,7 @@ MonoBehaviour:
     type: 3}
   stoneTile: {fileID: 1637392663116852833, guid: b1bc8165df4021442a13a164497faa92,
     type: 3}
-  waterTile: {fileID: 5679519308693705190, guid: fdc481aeac09b7042ab9fa99e617df85,
+  waterTile: {fileID: 7814394938207810362, guid: 2005a29c11777d947be57a0af7ff26a3,
     type: 3}
   treePrefab: {fileID: 5905416010919775522, guid: 7b895a339f501244bacbb8a7cd601faf,
     type: 3}
