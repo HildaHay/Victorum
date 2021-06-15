@@ -70,12 +70,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 24ebc0e95ba768249968963f57e3fd80, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 02e1eb0861c8a354b89851a348a08385, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -98,7 +98,9 @@ MonoBehaviour:
   objectiveName: Strength Shrine
   player: 0
   objectiveType: 0
-  playerObjectiveSprite: {fileID: 0}
-  enemyObjectiveSprite: {fileID: 0}
+  playerObjectiveSprite: {fileID: 21300000, guid: 31f116b7ee42f054999fecd116d217f9,
+    type: 3}
+  enemyObjectiveSprite: {fileID: 21300000, guid: 4f8200cf9c26fc344aa0b6673422455d,
+    type: 3}
   damageMultiplerBonus: 0
   defenseMultiplierBonus: 0

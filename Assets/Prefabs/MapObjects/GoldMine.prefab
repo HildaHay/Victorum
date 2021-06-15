@@ -77,17 +77,5 @@ PrefabInstance:
       propertyPath: objectiveType
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -1790420213515809959, guid: e269cca220364b84fa67c43251f17d20,
-        type: 3}
-      propertyPath: playerObjectiveSprite
-      value: 
-      objectReference: {fileID: -2228487531470528590, guid: 9edad0c31a717be45a321c11da7f7597,
-        type: 3}
-    - target: {fileID: -1790420213515809959, guid: e269cca220364b84fa67c43251f17d20,
-        type: 3}
-      propertyPath: enemyObjectiveSprite
-      value: 
-      objectReference: {fileID: -5263330345866281169, guid: 9edad0c31a717be45a321c11da7f7597,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e269cca220364b84fa67c43251f17d20, type: 3}

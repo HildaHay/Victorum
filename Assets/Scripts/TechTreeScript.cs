@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class TechTreeScript : MonoBehaviour
 {
-    Tech[] TechList;
+    public Tech[] TechList;
 
+    [SerializeField] GameObject techMenuItemPrefab;
+
+    [SerializeField] GameObject techTreeUI;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        CreateDemoTechs(null);
+        CreateTechMenu();
     }
 
     // Update is called once per frame
@@ -23,9 +27,27 @@ public class TechTreeScript : MonoBehaviour
     {
         
     }
+
+    void CreateDemoTechs(Player p)
+    {
+        Tech town = new Tech(0, "Town", true, 0, new int[0], new Tech[0], p);
+        Tech builder = new Tech(1, "Builder", true, 10, new int[] { 0 }, new Tech[] { town }, p);
+        Tech slinger = new Tech(2, "Slinger", true, 10, new int[] { 0 }, new Tech[] { town }, p);
+
+        TechList = new Tech[] { town, builder, slinger };
+    }
+
+    void CreateTechMenu()
+    {
+        foreach(Tech t in TechList)
+        {
+            GameObject newMenuItem = Instantiate(techMenuItemPrefab, techTreeUI.transform);
+            newMenuItem.GetComponent<TechMenuItem>().tech = t;
+        }
+    }
 }
 
-class Tech
+public class Tech
 {
     // Tech info, stored in file
     int TechID;
