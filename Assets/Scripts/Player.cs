@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     UIManager uiController;
 
     GameObject controllerObject;
-    public PlayerController controller; // shouldn't be public
+    [SerializeField] PlayerController controller; // shouldn't be public
 
     protected List<GameObject> playerUnitList;
     protected List<GameObject> playerTownList;
@@ -35,10 +35,16 @@ public class Player : MonoBehaviour
     // int unitVisionDistance = 3;
     int townVisionDistance = 6;
 
-    public int gold;
-    public int baseGPT; // base gold per turn
-    public int townGPT; // additional gold per turn for each town constructed
-    public int mineGPT; // additional gold per turn for each mine controlled
+    [SerializeField] int gold;
+    [SerializeField] int baseGPT; // base gold per turn
+    [SerializeField] int townGPT; // additional gold per turn for each town constructed
+    [SerializeField] int mineGPT; // additional gold per turn for each mine controlled
+
+    [SerializeField] int baseSciencePerTurn;
+
+    [SerializeField] GameObject TechTreePrefab;
+    GameObject TechTreeObject;
+    TechTreeScript TechTree;
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +60,11 @@ public class Player : MonoBehaviour
         controller.player = this;
         controller.uiManager = uiController;
         controller.worldManager = worldManager;
+
+        TechTreeObject = Instantiate(TechTreePrefab);
+        TechTree = TechTreeObject.GetComponent<TechTreeScript>();
+        TechTree.player = this;
+        TechTree.Initialize();
     }
 
     // Update is called once per frame
@@ -79,6 +90,8 @@ public class Player : MonoBehaviour
         baseGPT = 2;
         townGPT = 0;
         mineGPT = 1;
+
+        baseSciencePerTurn = 10;
 
         if(isHuman) {
             controllerObject = Instantiate(worldManager.humanPlayerControllerPrefab, this.gameObject.transform);
@@ -174,6 +187,7 @@ public class Player : MonoBehaviour
         }
 
         AddGPT();
+        AdvanceResearch();
 
         ShowExplored();
 
@@ -197,6 +211,11 @@ public class Player : MonoBehaviour
     public void AddGPT()
     {
         gold += goldPerTurn();
+    }
+
+    public void AdvanceResearch()
+    {
+        TechTree.ProgressResearch(baseSciencePerTurn);
     }
 
     public int[] mapToScreenCoordinates(int x, int y)
@@ -396,5 +415,32 @@ public class Player : MonoBehaviour
     public List<GameObject> TownList()
     {
         return playerTownList;
+    }
+
+    public int Gold()
+    {
+        return gold;
+    }
+
+    public int AddGold(int a)
+    {
+        gold += a;
+        return gold;
+    }
+
+    public int RemoveGold(int r)
+    {
+        gold -= r;
+        return gold;
+    }
+
+    public bool TechResearched(String techName)
+    {
+        return true;
+    }
+
+    public bool IsHuman()
+    {
+        return false;
     }
 }

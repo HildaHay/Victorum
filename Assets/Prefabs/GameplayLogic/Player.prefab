@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8423272147467407224}
   - component: {fileID: 8423272147467407231}
   m_Layer: 0
-  m_Name: PlayerController
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,8 +43,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4bb751af01d05145b843ef504d651a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerUnits: []
-  gameController: {fileID: 0}
-  UIController: {fileID: 0}
-  terrainGrid: []
-  unitList: []
+  controller: {fileID: 0}
+  playerNumber: 0
+  playerActive: 0
+  gold: 0
+  baseGPT: 0
+  townGPT: 0
+  mineGPT: 0
+  baseSciencePerTurn: 0
+  TechTreePrefab: {fileID: 8132261610399735829, guid: 44b76b1293a853d479093e98eb5b5138,
+    type: 3}

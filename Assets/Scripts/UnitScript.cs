@@ -9,6 +9,9 @@ public class UnitScript : MonoBehaviour
 
     public int cost;
 
+    [SerializeField] bool TechRequired;
+    [SerializeField] string TechName;
+
     public int maxMovement;
     protected int movementPoints;
 
@@ -402,5 +405,10 @@ public class UnitScript : MonoBehaviour
     public int MapDistance(Vector2Int start, Vector2Int end)
     {
         return Math.Abs(start[0] - end[0]) + Math.Abs(start[1] - end[1]);
+    }
+
+    public bool AvailableToBuild()
+    {
+        return true;
     }
 }

@@ -74,12 +74,12 @@ public class TownScript : MonoBehaviour
 
     public bool CanBuy()
     {
-        return player.gold > 0;
+        return player.Gold() > 0;
     }
 
     public int GetGold()
     {
-        return player.gold;
+        return player.Gold();
     }
 
     public int GetPlayer()
@@ -101,9 +101,9 @@ public class TownScript : MonoBehaviour
     {
         // actual unit spawning handled by worldManagerScript
 
-        if(player.gold >= unitPrefab.GetComponent<UnitScript>().cost)
+        if(player.Gold() >= unitPrefab.GetComponent<UnitScript>().cost)
         {
-            player.gold -= unitPrefab.GetComponent<UnitScript>().cost;
+            player.RemoveGold(unitPrefab.GetComponent<UnitScript>().cost);
 
             return worldManager.SpawnPlayerUnit(unitPrefab, worldManager.playerObjects[playerNumber].GetComponent<Player>());
         }

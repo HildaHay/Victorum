@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 8946815707187762005, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: m_Name
-      value: Knight
+      value: Soldier
       objectReference: {fileID: 0}
     - target: {fileID: 8946815707187762004, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
@@ -31,12 +31,12 @@ PrefabInstance:
     - target: {fileID: 8946815707187761994, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.16
+      value: 0.26666668
       objectReference: {fileID: 0}
     - target: {fileID: 8946815707187761994, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.16
+      value: 0.26666668
       objectReference: {fileID: 0}
     - target: {fileID: 8946815707187761995, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
@@ -146,7 +146,7 @@ PrefabInstance:
     - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}
       propertyPath: unitName
-      value: Knight
+      value: Soldier
       objectReference: {fileID: 0}
     - target: {fileID: 4862019263442298094, guid: bb3c0c0726db9e3448c655e8848cdbd8,
         type: 3}

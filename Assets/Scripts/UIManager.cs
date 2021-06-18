@@ -102,7 +102,7 @@ public class UIManager : MonoBehaviour
 
         if(currPlayer != null) {
             currPlayerText.text = "Player " + currPlayer.playerNumber.ToString() + "\n"
-                + "Gold: " + currPlayer.gold + " (+" + currPlayer.goldPerTurn() + " per turn)" + "\n"
+                + "Gold: " + currPlayer.Gold() + " (+" + currPlayer.goldPerTurn() + " per turn)" + "\n"
                 + "Shrines: " + currPlayer.ShrineCount();
         } else
         {

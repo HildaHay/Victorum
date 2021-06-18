@@ -70,7 +70,7 @@ public class AIPlayerController : PlayerController
     {
         foreach (GameObject town in player.TownList())
         {
-            if (player.gold > 10 && player.UnitList().Count < 2)    // cost of a Scout
+            if (player.Gold() > 10 && player.UnitList().Count < 2)    // cost of a Scout
             {
                 player.TownRecruit(town, scoutPrefab);
             }
