@@ -69,6 +69,7 @@ public class NeutralUnitScript : UnitScript
     }
     public void NeutralAttackUnit(UnitScript target)   // This is a mess
     {
+        Debug.Log("SHITTY FUNCTION CALLED! FIX NeutralAttackUnit() YOU LAZY BITCH");
         if (target.GetComponent<UnitScript>().GetPlayer() != -1)    // probably won't have to change unless I add multiple neutral factions or something
         {
             if (TryAttackUnit(target))

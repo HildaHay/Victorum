@@ -112,10 +112,13 @@ public class Player : MonoBehaviour
         {
             for (int j = ymin; j < ymax; j++)
             {
-                if (Math.Abs(x - i) + Math.Abs(y - j) < visionRange)
+                if (i >= 0 && j >= 0 && i < tilesExplored.GetLength(0) && j < tilesExplored.GetLength(1))
                 {
-                    tilesExplored[i, j] = true;
-                    SetTileVisibility(i, j, tilesExplored[i, j]);
+                    if (Math.Abs(x - i) + Math.Abs(y - j) < visionRange)
+                    {
+                        tilesExplored[i, j] = true;
+                        SetTileVisibility(i, j, tilesExplored[i, j]);
+                    }
                 }
             }
         }
@@ -165,9 +168,12 @@ public class Player : MonoBehaviour
 
     public void AttackUnit(UnitScript attacker, UnitScript target)  // should be moved to unit script! or something
     {
-        if (attacker.TryAttackUnit(target))
+        while (attacker.GetMovePoints() > 0)
         {
-            target.ReceiveDamage(attacker.AttackDamage());
+            if (attacker.TryAttackUnit(target))
+            {
+                target.ReceiveDamage(attacker.AttackDamage());
+            }
         }
     }
 
