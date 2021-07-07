@@ -195,23 +195,24 @@ public class MapGenScript : MonoBehaviour
                             newFeature.GetComponent<MapFeatureScript>().mapY = j;
                         }
                     }
-                    if (r >= 10 && r < 12)
-                    {
-                        bool validSpawn = true;
-                        for(int k = 0; k < playerCount; k++)
-                        {
+                    // Spawning neutral units disabled
+                    //if (r >= 10 && r < 12)
+                    //{
+                    //    bool validSpawn = true;
+                    //    for(int k = 0; k < playerCount; k++)
+                    //    {
 
-                            if (GetDistance(new Vector2Int(i, j), new Vector2Int(townLocations[k][0], townLocations[k][1])) < 10)
-                            {
-                                validSpawn = false;
-                            }
-                        }
+                    //        if (GetDistance(new Vector2Int(i, j), new Vector2Int(townLocations[k][0], townLocations[k][1])) < 10)
+                    //        {
+                    //            validSpawn = false;
+                    //        }
+                    //    }
 
-                        if(validSpawn)
-                        {
-                            worldManager.SpawnUnit(neutralUnitPrefab, i, j);
-                        }
-                    }
+                    //    if(validSpawn)
+                    //    {
+                    //        worldManager.SpawnUnit(neutralUnitPrefab, i, j);
+                    //    }
+                    //}
                 }
 
                 if (map[i][j] != 0 && worldManager.unitGrid[i, j] == null && worldManager.featureGrid[i, j] == null
