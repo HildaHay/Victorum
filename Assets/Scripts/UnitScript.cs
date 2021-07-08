@@ -7,6 +7,14 @@ public class UnitScript : MonoBehaviour
 {
     // Start is called before the first frame update
 
+    public enum UnitType {
+        Builder,
+        Scout,
+        Infantry,
+        Cavalry,
+        Archer
+    }
+
     public int cost;
 
     [SerializeField] bool TechRequired;
@@ -30,6 +38,7 @@ public class UnitScript : MonoBehaviour
     protected int playerNumber;
 
     public string unitName = "";
+    public UnitType unitType;
 
     public int mapX;
     public int mapY;

@@ -68,13 +68,7 @@ public class AIPlayerController : PlayerController
     // Handles everything the AI does on its turn
     public void AITakeTurn()
     {
-        foreach (GameObject town in player.TownList())
-        {
-            if (player.Gold() > 10 && player.UnitList().Count < 2)    // cost of a Scout
-            {
-                player.TownRecruit(town, scoutPrefab);
-            }
-        }
+        RecruitUnits();
 
         List<Vector2Int> explorationTargets = FindExplorationTargets(player.GetMainTown().GetComponent<TownScript>().GetLocation(), 2);
 
@@ -104,6 +98,39 @@ public class AIPlayerController : PlayerController
                 i++;
             }
         }
+    }
+
+    int ScoutCount()
+    {
+        int c = 0;
+        foreach(GameObject u in player.UnitList())
+        {
+            if(u.GetComponent<UnitScript>().unitName == "Scout")
+            {
+                c++;
+            }
+        }
+        return c;
+    }
+
+    void RecruitUnits()
+    {
+        bool[] recruited = new bool[player.TownList().Count];   // Track which towns have already recruited a unit this turn
+
+        int i = 0;
+        foreach (GameObject town in player.TownList())
+        {
+            Debug.Log(recruited[i]);    
+            // The AI tries to have two scouts alive at all times; if there are fewer than two, it recruits another
+            if (player.Gold() > 10 && ScoutCount() < 2)
+            {
+                player.TownRecruit(town, scoutPrefab);
+                recruited[i] = true;
+            }
+            i++;
+        }
+
+
     }
 
     void MoveUnitRandomly(UnitScript s)
@@ -185,8 +212,8 @@ public class AIPlayerController : PlayerController
 
     void MoveUnitToLocation(UnitScript s, Vector2Int l)
     {
-        Debug.Log(s.mapX + ", " + s.mapY);
-        Debug.Log(l);
+        //Debug.Log(s.mapX + ", " + s.mapY);
+        //Debug.Log(l);
         s.SelectDestinationAndMove(l);
         s.ZeroMovePoints();
     }

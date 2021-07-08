@@ -31,7 +31,6 @@ public class TechTreeScript : MonoBehaviour
     {
         CreateDemoTechs(null);
         CreateTechMenu();
-        Debug.Log("Techs: " + TechList.Length);
     }
 
     void CreateDemoTechs(Player p)
