@@ -149,7 +149,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            Debug.Log("Space occupied");
+            //Debug.Log("Space occupied");
         }
 
         uiController.SetSelectedObject(t);
@@ -162,6 +162,9 @@ public class Player : MonoBehaviour
         if (attacker.TryAttackTown(target))
         {
             target.ReceiveDamage(attacker.AttackDamage());
+        } else
+        {
+            return;
         }
 
     }
@@ -173,6 +176,9 @@ public class Player : MonoBehaviour
             if (attacker.TryAttackUnit(target))
             {
                 target.ReceiveDamage(attacker.AttackDamage());
+            } else
+            {
+                return;
             }
         }
     }
@@ -317,7 +323,7 @@ public class Player : MonoBehaviour
     void SetTileVisibility(int x, int y, bool visible)
     {
         // for testing! remove this line
-        //visible = true;
+        visible = true;
 
         worldManager.terrainGrid[x, y].GetComponent<TileScript>().tileRenderer.enabled = visible;
 
@@ -385,7 +391,6 @@ public class Player : MonoBehaviour
     {
         playerObjectiveList.Add(s);
         s.GetComponent<MapObjectiveScript>().Claim(this.playerNumber);
-        Debug.Log("Shrine Claimed");
     }
 
     public bool RemoveShrine(GameObject s)

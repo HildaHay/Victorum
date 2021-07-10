@@ -434,6 +434,56 @@ public class WorldManager : MonoBehaviour
         }
     }
 
+    // Checks if there is an enemy that can be attacked on the tile
+    // p is the player who owns the attacking unit
+    public bool Attackable(int x, int y, int p)
+    {
+        if (unitGrid[x, y] == null)
+        {
+            return false;
+        } else
+        {
+            GameObject o = unitGrid[x, y];
+            if(o.CompareTag("Unit"))
+            {
+                UnitScript u = o.GetComponent<UnitScript>();
+                if(u.GetPlayer() == p)
+                {
+                    // Can't attack your own town
+                    return false;
+                } else
+                {
+                    return true;
+                }
+            } else if(o.CompareTag("Town"))
+            {
+                TownScript t = o.GetComponent<TownScript>();
+                if (t.GetPlayer() == p)
+                {
+                    // Can't attack your own town
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            } else
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    public bool WalkableOrAttackable(int x, int y, int p)
+    {
+        Debug.Log("checking");
+        if (Walkable(x, y)) return true;
+        if (Attackable(x, y, p)) return true;
+        return false;
+    }
+
     // Takes a pair of map coordinates that mark the corners of a box
     // Returns an array of booleans representing that section of the map, indicating which tiles are walkable
     // Inclusive

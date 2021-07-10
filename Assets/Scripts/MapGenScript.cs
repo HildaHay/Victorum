@@ -173,7 +173,8 @@ public class MapGenScript : MonoBehaviour
                 {
                     int r = UnityEngine.Random.Range(0, 100);
 
-                    if (r >= 0 && r < 10)
+                    // Create trees
+                    if (r >= 0 && r < 10 && false)  // temporarily disabled cuz it causes problems w/ AI
                     {
                         bool validSpawn = true;
                         for (int k = 0; k < playerCount; k++)
