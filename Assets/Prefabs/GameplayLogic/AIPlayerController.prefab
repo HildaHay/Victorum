@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1764377970145949274}
   - component: {fileID: 3638298416039030392}
   m_Layer: 0
-  m_Name: AIPlayerController 1
+  m_Name: AIPlayerController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,3 +48,6 @@ MonoBehaviour:
   uiManager: {fileID: 0}
   scoutPrefab: {fileID: 6268014236401909299, guid: 1d38584d8000d4f468e450436d2f8136,
     type: 3}
+  soldierPrefab: {fileID: 1507525689734398081, guid: ded301b72f7a743449d76c4e6f1dab31,
+    type: 3}
+  enemyTowns: []
