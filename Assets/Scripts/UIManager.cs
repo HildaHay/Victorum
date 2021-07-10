@@ -224,7 +224,14 @@ public class UIManager : MonoBehaviour
 
     public void SetWinner(int p)
     {
-        winnerText.text = "Player " + p.ToString() + " wins!";
+        //winnerText.text = "Player " + p.ToString() + " wins!";
+        if(p == 0)
+        {
+            winnerText.text = "You win!";
+        } else
+        {
+            winnerText.text = "You were defeated.";
+        }
         selectedObject = null;
         currPlayer = null;
 

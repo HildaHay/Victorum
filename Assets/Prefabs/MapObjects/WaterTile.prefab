@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 1047009946548829921, guid: 7a187622b6cdd604abf417d0bcae1fb2,
         type: 3}
       propertyPath: m_Name
-      value: BasicTile Variant
+      value: WaterTile
       objectReference: {fileID: 0}
     - target: {fileID: 1047009946548829920, guid: 7a187622b6cdd604abf417d0bcae1fb2,
         type: 3}

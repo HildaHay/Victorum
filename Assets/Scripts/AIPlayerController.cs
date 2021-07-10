@@ -7,7 +7,7 @@ using System;
 public class AIPlayerController : PlayerController
 {
     public GameObject scoutPrefab;  // temp for dev - remove
-    public GameObject soldierPrefab;
+    public GameObject soldierPrefab;    // temp for dev - remove
 
     int[,] aiMap;  // 0 = unexplored, 1 = walkable, 2 = unwalkable
 
@@ -134,8 +134,16 @@ public class AIPlayerController : PlayerController
             UnitScript s = unit.GetComponent<UnitScript>();
             if (enemyTowns.Count > 0)
             {
-                Vector2Int target = AttackNearestEnemyTown.Execute(this, s);
-                MoveUnitToLocation(s, target);
+                // check if next to a town it can attack
+                GameObject adjacentTown = GetAdjacentEnemyTown(s);
+                if (adjacentTown != null) {
+                    s.AttackTarget(adjacentTown);
+                }
+                else
+                {
+                    Vector2Int target = ApproachNearestEnemyTown.Execute(this, s);
+                    MoveUnitToLocation(s, target);
+                }
             } else
             {
                 MoveUnitRandomly(s);
@@ -168,6 +176,60 @@ public class AIPlayerController : PlayerController
         //        i++;
         //    }
         //}
+    }
+
+    // Temporary function; checks if a unit's next to an enemy town, to attack that town.
+    GameObject GetAdjacentEnemyTown(UnitScript u)
+    {
+        Vector2Int location = u.xy();
+
+        // i know this code sucks, it's just temporary though
+
+        // Above
+        if (worldManager.unitGrid[location.x - 1, location.y] != null)
+        {
+            if(worldManager.unitGrid[location.x - 1, location.y].CompareTag("Town"))
+            {
+                if(worldManager.unitGrid[location.x - 1, location.y].GetComponent<TownScript>().playerNumber != player.playerNumber) {
+                    return worldManager.unitGrid[location.x - 1, location.y];
+                }
+            }
+        }
+        // Below
+        if (worldManager.unitGrid[location.x + 1, location.y] != null)
+        {
+            if (worldManager.unitGrid[location.x + 1, location.y].CompareTag("Town"))
+            {
+                if (worldManager.unitGrid[location.x + 1, location.y].GetComponent<TownScript>().playerNumber != player.playerNumber)
+                {
+                    return worldManager.unitGrid[location.x + 1, location.y];
+                }
+            }
+        }
+        // Right
+        if (worldManager.unitGrid[location.x, location.y + 1] != null)
+        {
+            if (worldManager.unitGrid[location.x, location.y + 1].CompareTag("Town"))
+            {
+                if (worldManager.unitGrid[location.x, location.y + 1].GetComponent<TownScript>().playerNumber != player.playerNumber)
+                {
+                    return worldManager.unitGrid[location.x, location.y + 1];
+                }
+            }
+        }
+        // Left
+        if (worldManager.unitGrid[location.x, location.y - 1] != null)
+        {
+            if (worldManager.unitGrid[location.x, location.y - 1].CompareTag("Town"))
+            {
+                if (worldManager.unitGrid[location.x, location.y - 1].GetComponent<TownScript>().playerNumber != player.playerNumber)
+                {
+                    return worldManager.unitGrid[location.x, location.y - 1];
+                }
+            }
+        }
+
+        return null;
     }
 
     // This function calculates priority values for different strategies, which will influence the behavior of individual units
@@ -305,7 +367,7 @@ public class AIPlayerController : PlayerController
 
     void MoveUnitToLocation(UnitScript s, Vector2Int l)
     {
-        Debug.Log(s.SelectDestinationAndMove(l));
+        s.SelectDestinationAndMove(l);
         s.ZeroMovePoints();
     }
 
@@ -450,12 +512,13 @@ class RandomMoveOnce : UnitBehavior
     }
 }
 
-class AttackNearestEnemyTown : UnitBehavior
+class ApproachNearestEnemyTown : UnitBehavior
 {
+    // This function moves the unit to a tile adjacent to the enemy's town
+    // It will be replaced with a function AttackNearestEnemyTown, whicn instead will return the town's location. However, the way that
+    // unit movement is implemented makes this not work yet
     public static Vector2Int Execute(AIPlayerController p, UnitScript u)
     {
-        Debug.Log("Attacking!");
-
         // This code is messy and could use some cleanup
         List<TownScript> targets = p.enemyTowns;
         if (targets.Count == 0)
@@ -481,7 +544,31 @@ class AttackNearestEnemyTown : UnitBehavior
 
         if (nearestTown != null)
         {
-            return nearestTown.GetLocation();
+            Vector2Int townLocation = nearestTown.GetLocation();
+            // Move to one of the four tiles adjacent to the town
+            // Above
+            if (p.worldManager.Walkable(townLocation.x - 1, townLocation.y))
+            {
+                return townLocation + new Vector2Int(-1, 0);
+            }
+            // Below
+            if (p.worldManager.Walkable(townLocation.x + 1, townLocation.y))
+            {
+                return townLocation + new Vector2Int(1, 0);
+            }
+            // Left
+            if (p.worldManager.Walkable(townLocation.x, townLocation.y - 1))
+            {
+                return townLocation + new Vector2Int(0, -1);
+            }
+            // Right
+            if (p.worldManager.Walkable(townLocation.x, townLocation.y + 1))
+            {
+                return townLocation + new Vector2Int(0, 1);
+            }
+
+            // all tiles are occupied
+            return new Vector2Int(0, 0);
         }
         else
         {

@@ -90,19 +90,15 @@ public class UnitScript : MonoBehaviour
     }
 
     // calls TryAttackUnit or TryAttackTown as appropriate
-    public bool TryAttack(GameObject target)
+    public void AttackTarget(GameObject target)
     {
         if (target.CompareTag("Unit"))
         {
-            return TryAttackUnit(target.GetComponent<UnitScript>());
+            player.AttackUnit(this, target.GetComponent<UnitScript>());
         }
         else if (target.CompareTag("Town"))
         {
-            return TryAttackTown(target.GetComponent<TownScript>());
-        }
-        else
-        {
-            return false;
+            player.AttackTown(this, target.GetComponent<TownScript>());
         }
     }
 
@@ -288,31 +284,13 @@ public class UnitScript : MonoBehaviour
     // Move the unit along the pre-created path
     public bool Move()
     {
-        // TODO: This function will attack an enemy town or unit if there is one at the end of the movement.
-        // This should probably be changed, so that it'll only do so IF that enemy town/unit was selected as the target when the player
-        // issued the command originally, and instead the move path is cancelled
 
         if (savedPath.Count > 0)
         {
-            int i = 0;
 
             // Make sure that the path isn't blocked
             foreach (Vector2Int t in savedPath)
             {
-                i++;
-                if (i == savedPath.Count)
-                {
-                    // If the last tile's occupied with an enemy, we want to attack it
-                    if (!worldManager.WalkableOrAttackable(t.x, t.y, player.playerNumber))
-                    {
-                        // If the path is blocked, clear it - need to find a new one
-                        Debug.Log("Path is blocked - can't go!");
-                        ClearPath();
-                        return false;
-                    }
-                }
-                else
-                {
                     if (!worldManager.Walkable(t.x, t.y))
                     {
                         // If the path is blocked, clear it - need to find a new one
@@ -320,7 +298,6 @@ public class UnitScript : MonoBehaviour
                         ClearPath();
                         return false;
                     }
-                }
             }
 
             while (savedPath.Count > 0 && movementPoints > 0)
@@ -329,27 +306,21 @@ public class UnitScript : MonoBehaviour
                 savedPath.RemoveAt(0);
                 movementPoints--;
                 
-                if(worldManager.Attackable(nextTile.x, nextTile.y, player.playerNumber)) {
-                    GameObject target = worldManager.unitGrid[nextTile.x, nextTile.y];
-                    TryAttack(target);
-                } else
+                Vector2Int prevLocation = new Vector2Int(mapX, mapY);
+
+                mapX = nextTile.x;
+                mapY = nextTile.y;
+
+                worldManager.unitGrid[prevLocation.x, prevLocation.y] = null;
+                worldManager.unitGrid[mapX, mapY] = this.gameObject;
+
+                // unit.transform.position = new Vector3(mapX, mapY, -1);
+                this.gameObject.transform.position = worldManager.MapToScreenCoordinates(mapX, mapY, -1);
+
+                if (playerNumber >= 0)    // neutral units don't track vision or capture shrines
                 {
-                    Vector2Int prevLocation = new Vector2Int(mapX, mapY);
-
-                    mapX = nextTile.x;
-                    mapY = nextTile.y;
-
-                    worldManager.unitGrid[prevLocation.x, prevLocation.y] = null;
-                    worldManager.unitGrid[mapX, mapY] = this.gameObject;
-
-                    // unit.transform.position = new Vector3(mapX, mapY, -1);
-                    this.gameObject.transform.position = worldManager.MapToScreenCoordinates(mapX, mapY, -1);
-
-                    if (playerNumber >= 0)    // neutral units don't track vision or capture shrines
-                    {
-                        player.CheckVision(mapX, mapY, visionRange);
-                        worldManager.CaptureShrine(nextTile, player.playerNumber);
-                    }
+                    player.CheckVision(mapX, mapY, visionRange);
+                    worldManager.CaptureShrine(nextTile, player.playerNumber);
                 }
             }
             DrawPath();
