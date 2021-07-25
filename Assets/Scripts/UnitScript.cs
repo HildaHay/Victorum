@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitScript : MonoBehaviour
+public class UnitScript : GameEntity
 {
     // Start is called before the first frame update
 
@@ -85,6 +85,16 @@ public class UnitScript : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+
+    }
+
+    public override void OnSelect()
+    {
+
+    }
+
+    public override void OnDeselect()
     {
 
     }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MapGenScript : MonoBehaviour
+public class MapGenerator : MonoBehaviour
 {
     public WorldManager worldManager;
 
@@ -16,12 +16,14 @@ public class MapGenScript : MonoBehaviour
 
     public GameObject treePrefab;
 
+    public GameObject goldPrefab;
+
     public GameObject[] objectivePrefabs;
 
     public GameObject neutralUnitPrefab;
 
-    public int landArea = 45;  // 650
-    public int minDistanceBetweenTowns = 4; // 20
+    public int landArea = 50;  // 650
+    public int minDistanceBetweenTowns = 5; // 20
 
     public bool GenerateMap(int w, int h)
     // returns true on successful map generation, false on failure
@@ -162,6 +164,7 @@ public class MapGenScript : MonoBehaviour
             return false;
         }
 
+
         // create map tiles, features, and shrines
 
         for (int i = 0; i < w; i++)
@@ -169,6 +172,9 @@ public class MapGenScript : MonoBehaviour
             for (int j = 0; j < h; j++)
             {
                 GameObject newTile = Instantiate(getTerrainByElevation(map[i][j]), new Vector3(i - wOffset, -j + hOffset, 0), Quaternion.identity);
+
+                // testing
+                //newTile.GetComponent<SpriteRenderer>().color = Color.blue;
 
                 newTile.GetComponent<TileScript>().mapX = i;
                 newTile.GetComponent<TileScript>().mapY = j;
@@ -248,6 +254,59 @@ public class MapGenScript : MonoBehaviour
                     }
                 }
 
+            }
+        }
+
+        // First-pass resource adding
+        // Divides the map into 5x5 sections, and places 2 resource tiles in each
+        for (int x = 0; x < w; x += 5)
+        {
+            for (int y = 0; y < h; y += 5)
+            {
+                // TODO: Make this code more extensible so that the number of resources per section can be modified easily
+                Vector2Int resourceLoc1 = new Vector2Int(x + UnityEngine.Random.Range(0, 5), y + UnityEngine.Random.Range(0, 5));
+                Vector2Int resourceLoc2 = new Vector2Int(x + UnityEngine.Random.Range(0, 5), y + UnityEngine.Random.Range(0, 5));
+                while (resourceLoc1 == resourceLoc2)
+                {
+                    // Make sure both the resources aren't placed in the same spot
+                    resourceLoc2 = new Vector2Int(UnityEngine.Random.Range(0, 5), UnityEngine.Random.Range(0, 5));
+                }
+
+
+                if (worldManager.featureGrid[resourceLoc1.x, resourceLoc1.y] == null && worldManager.terrainGrid[resourceLoc1.x, resourceLoc1.y].GetComponent<TileScript>().walkable)
+                {
+                    GameObject newResource1 = Instantiate(goldPrefab, new Vector3(resourceLoc1.x - wOffset, -resourceLoc1.y + hOffset, -1), Quaternion.identity);
+                    worldManager.featureGrid[resourceLoc1.x, resourceLoc1.y] = newResource1;
+                    newResource1.GetComponent<MapFeatureScript>().mapX = x;
+                    newResource1.GetComponent<MapFeatureScript>().mapY = y;
+                }
+
+                if (worldManager.featureGrid[resourceLoc2.x, resourceLoc2.y] == null && worldManager.terrainGrid[resourceLoc2.x, resourceLoc2.y].GetComponent<TileScript>().walkable)
+                {
+                    GameObject newResource2 = Instantiate(goldPrefab, new Vector3(resourceLoc2.x - wOffset, -resourceLoc2.y + hOffset, -1), Quaternion.identity);
+                    worldManager.featureGrid[resourceLoc2.x, resourceLoc2.y] = newResource2;
+                    newResource2.GetComponent<MapFeatureScript>().mapX = x;
+                    newResource2.GetComponent<MapFeatureScript>().mapY = y;
+                }
+            }
+        }
+
+        // Second-pass resource adding
+        // Goes over every tile, and has a 2% chance of adding a resource to each tile
+        for(int x = 0; x < w; x++)
+        {
+            for(int y = 0; y < h; y++)
+            {
+                if(UnityEngine.Random.Range(0, 100) < 2)
+                {
+                    if(worldManager.featureGrid[x, y] == null && worldManager.terrainGrid[x, y].GetComponent<TileScript>().walkable)
+                    {
+                        GameObject newResource = Instantiate(goldPrefab, new Vector3(x - wOffset, -y + hOffset, -1), Quaternion.identity);
+                        worldManager.featureGrid[x, y] = newResource;
+                        newResource.GetComponent<MapFeatureScript>().mapX = x;
+                        newResource.GetComponent<MapFeatureScript>().mapY = y;
+                    }
+                }
             }
         }
 

@@ -826,11 +826,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
         type: 3}
-      propertyPath: objectivePrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
-        type: 3}
       propertyPath: gameController
       value: 
       objectReference: {fileID: 456241961}
@@ -842,43 +837,9 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
         type: 3}
-      propertyPath: neutralUnitPrefab
-      value: 
-      objectReference: {fileID: 9207821679074410927, guid: 06224813bd907cb41af9d006fab31628,
-        type: 3}
-    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
-        type: 3}
       propertyPath: worldManager
       value: 
       objectReference: {fileID: 456241961}
-    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
-        type: 3}
-      propertyPath: objectivePrefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 1024968172763306872, guid: e954b6b4fc037af41be6a1eb3a7204b3,
-        type: 3}
-    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
-        type: 3}
-      propertyPath: objectivePrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 1024968172763306872, guid: ac097347874d9154c8b8fd6ba8ae04ec,
-        type: 3}
-    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
-        type: 3}
-      propertyPath: objectivePrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 1024968172763306872, guid: 082918e84d02cc14cb5e258e353e8d17,
-        type: 3}
-    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
-        type: 3}
-      propertyPath: landArea
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 4954842645006975017, guid: 7e0863b572a639948b7bbe59cc164d26,
-        type: 3}
-      propertyPath: minDistanceBetweenTowns
-      value: 25
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7e0863b572a639948b7bbe59cc164d26, type: 3}
 --- !u!1 &314106943 stripped

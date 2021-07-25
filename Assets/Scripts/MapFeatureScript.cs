@@ -11,6 +11,8 @@ public class MapFeatureScript : MonoBehaviour
 
     public bool walkable;
 
+    public int resourceYield;
+
     // Start is called before the first frame update
     void Start()
     {

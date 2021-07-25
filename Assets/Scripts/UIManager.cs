@@ -26,7 +26,7 @@ public class UIManager : MonoBehaviour
 
     Player currPlayer;
 
-    GameObject selectedObject;
+    GameObject selectedObject;  // This should only be changed through the SetSelectedObject function
 
     public GameObject townMenu;
     List<GameObject> recruitButtons;
@@ -102,7 +102,7 @@ public class UIManager : MonoBehaviour
 
         if(currPlayer != null) {
             currPlayerText.text = "Player " + currPlayer.playerNumber.ToString() + "\n"
-                + "Gold: " + currPlayer.Gold() + " (+" + currPlayer.goldPerTurn() + " per turn)" + "\n"
+                + "Gold: " + currPlayer.Gold() + " (+" + currPlayer.GoldPerTurn() + " per turn)" + "\n"
                 + "Shrines: " + currPlayer.ShrineCount();
         } else
         {
@@ -112,7 +112,15 @@ public class UIManager : MonoBehaviour
 
     public void SetSelectedObject(GameObject s)
     {
+        if(selectedObject != null)
+        {
+            selectedObject.GetComponent<GameEntity>().OnDeselect();
+        }
         selectedObject = s;
+        if(selectedObject != null)
+        {
+            selectedObject.GetComponent<GameEntity>().OnSelect();
+        }
     }
 
     public Player SetCurrPlayer(Player p)
@@ -134,7 +142,8 @@ public class UIManager : MonoBehaviour
          
     void ShowUnitInfo(GameObject unit)
     {
-        selectedObject = unit;
+        //selectedObject = unit;
+        SetSelectedObject(unit);
 
         UnitScript script = selectedObject.GetComponent<UnitScript>();
 
@@ -145,17 +154,19 @@ public class UIManager : MonoBehaviour
 
     void ShowTownInfo(GameObject town)
     {
-        selectedObject = town;
+        //selectedObject = town;
+        SetSelectedObject(town);
 
         TownScript script = selectedObject.GetComponent<TownScript>();
 
         selectionText.text = "Town" + "\n" + "Player: " + script.GetPlayer().ToString() + "\n"
-            + "Gold: " + script.GetGold();
+            + "Gold: " + script.GetPlayerGold();
     }
 
     void ShowFeatureInfo(GameObject feature)
     {
-        selectedObject = feature;
+        //selectedObject = feature;
+        SetSelectedObject(feature);
 
         MapFeatureScript script = selectedObject.GetComponent<MapFeatureScript>();
 
@@ -164,7 +175,8 @@ public class UIManager : MonoBehaviour
 
     void ShowObjectiveInfo(GameObject objective)
     {
-        selectedObject = objective;
+        //selectedObject = objective;
+        SetSelectedObject(objective);
 
         MapObjectiveScript script = selectedObject.GetComponent<MapObjectiveScript>();
 

@@ -66,9 +66,10 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\AIPlayerController.cs" />
     <Compile Include="Assets\Scripts\AIUnitBehaviors.cs" />
+    <Compile Include="Assets\Scripts\GameEntity.cs" />
     <Compile Include="Assets\Scripts\HumanPlayerController.cs" />
     <Compile Include="Assets\Scripts\MapFeatureScript.cs" />
-    <Compile Include="Assets\Scripts\MapGenScript.cs" />
+    <Compile Include="Assets\Scripts\MapGenerator.cs" />
     <Compile Include="Assets\Scripts\MapObjectiveScript.cs" />
     <Compile Include="Assets\Scripts\NeutralUnitScript.cs" />
     <Compile Include="Assets\Scripts\Pathfinder.cs" />

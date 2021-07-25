@@ -56,7 +56,7 @@ public class WorldManager : MonoBehaviour
     UIManager uiController;
 
     public GameObject mapGeneratorObject;
-    MapGenScript mapGenerator;
+    MapGenerator mapGenerator;
 
     public GameObject cursorBox;
     public GameObject selectionBox;
@@ -85,8 +85,9 @@ public class WorldManager : MonoBehaviour
 
         debugTurnTimer = 10.0f;
 
-        mapWidth = 41;
-        mapHeight = 41;
+        // These should always be divisible by 5
+        mapWidth = 50;
+        mapHeight = 50;
 
         mainCamera = Camera.main;
 
@@ -95,7 +96,7 @@ public class WorldManager : MonoBehaviour
 
         uiController = UIControllerObject.GetComponent<UIManager>();
 
-        mapGenerator = mapGeneratorObject.GetComponent<MapGenScript>();
+        mapGenerator = mapGeneratorObject.GetComponent<MapGenerator>();
 
         playerObjects = new GameObject[2];
         players = new Player[2];
@@ -402,7 +403,7 @@ public class WorldManager : MonoBehaviour
             return false;
         }
 
-        int[] townCoords = t.GetComponent<TownScript>().xy();
+        Vector2Int townCoords = t.GetComponent<TownScript>().xy();
 
         print(townCoords[0]);
         print(townCoords[1]);

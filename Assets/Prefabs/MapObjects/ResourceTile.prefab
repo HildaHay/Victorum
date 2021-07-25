@@ -10,7 +10,28 @@ PrefabInstance:
     - target: {fileID: 4266145708553155434, guid: 97a46ded23b1baf49a2a58511f07bb67,
         type: 3}
       propertyPath: m_Name
-      value: MapFeature
+      value: ResourceTile
+      objectReference: {fileID: 0}
+    - target: {fileID: 3950790104517092985, guid: 97a46ded23b1baf49a2a58511f07bb67,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 15270a906c85f1040803df5584358b1c,
+        type: 3}
+    - target: {fileID: 3950790104517092985, guid: 97a46ded23b1baf49a2a58511f07bb67,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 3950790104517092985, guid: 97a46ded23b1baf49a2a58511f07bb67,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 3950790104517092985, guid: 97a46ded23b1baf49a2a58511f07bb67,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3961859084375768246, guid: 97a46ded23b1baf49a2a58511f07bb67,
         type: 3}
@@ -66,6 +87,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1551231702543249801, guid: 97a46ded23b1baf49a2a58511f07bb67,
+        type: 3}
+      propertyPath: featureName
+      value: Gold
+      objectReference: {fileID: 0}
+    - target: {fileID: 1551231702543249801, guid: 97a46ded23b1baf49a2a58511f07bb67,
+        type: 3}
+      propertyPath: walkable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1551231702543249801, guid: 97a46ded23b1baf49a2a58511f07bb67,
+        type: 3}
+      propertyPath: resourceYield
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97a46ded23b1baf49a2a58511f07bb67, type: 3}

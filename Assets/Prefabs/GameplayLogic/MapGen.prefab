@@ -56,7 +56,13 @@ MonoBehaviour:
     type: 3}
   treePrefab: {fileID: 5905416010919775522, guid: 7b895a339f501244bacbb8a7cd601faf,
     type: 3}
-  objectivePrefabs: []
-  neutralUnitPrefab: {fileID: 0}
-  landArea: 40
-  minDistanceBetweenTowns: 4
+  goldPrefab: {fileID: 3676597424763099388, guid: 7f812e3693441474d8214dcc5c256369,
+    type: 3}
+  objectivePrefabs:
+  - {fileID: 1024968172763306872, guid: e954b6b4fc037af41be6a1eb3a7204b3, type: 3}
+  - {fileID: 1024968172763306872, guid: 082918e84d02cc14cb5e258e353e8d17, type: 3}
+  - {fileID: 1024968172763306872, guid: ac097347874d9154c8b8fd6ba8ae04ec, type: 3}
+  neutralUnitPrefab: {fileID: 9207821679074410927, guid: 06224813bd907cb41af9d006fab31628,
+    type: 3}
+  landArea: 500
+  minDistanceBetweenTowns: 25

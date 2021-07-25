@@ -215,14 +215,22 @@ public class Player : MonoBehaviour
         uiController.SetSelectedObject(null);
     }
 
-    public int goldPerTurn()
+    public int GoldPerTurn()
     {
-        return baseGPT + townGPT * playerTownList.Count + mineGPT * GetPlayerMineCount();
+        int g = baseGPT;
+        g += mineGPT * GetPlayerMineCount();
+        foreach(GameObject t in TownList())
+        {
+            g += t.GetComponent<TownScript>().GoldYield();
+        }
+        g += townGPT * playerTownList.Count;
+
+        return g;
     }
 
     public void AddGPT()
     {
-        gold += goldPerTurn();
+        gold += GoldPerTurn();
     }
 
     public void AdvanceResearch()
