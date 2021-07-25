@@ -257,8 +257,12 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
+        // Note: should add some code to make sure each starting town has the same number of resources in its local range, for fairness reasons
+
         // First-pass resource adding
         // Divides the map into 5x5 sections, and places 2 resource tiles in each
+        // Maybe this should happen before other features are added; currently, if either of the selected tiles are already occupied w/
+        // other features, the resource is simply left out
         for (int x = 0; x < w; x += 5)
         {
             for (int y = 0; y < h; y += 5)
@@ -293,6 +297,7 @@ public class MapGenerator : MonoBehaviour
 
         // Second-pass resource adding
         // Goes over every tile, and has a 2% chance of adding a resource to each tile
+        // This should probably be placed before the first-pass, for probability reasons
         for(int x = 0; x < w; x++)
         {
             for(int y = 0; y < h; y++)
