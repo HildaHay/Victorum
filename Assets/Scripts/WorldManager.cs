@@ -8,6 +8,11 @@ using UnityEngine.EventSystems;
 
 public class WorldManager : MonoBehaviour
 {
+    // Debug Options
+    [SerializeField] public bool debugMode;
+    [SerializeField] public bool debugNoFoW;
+    [SerializeField] public bool debugAutoPlay;
+    float debugTurnTimer;
 
     GameObject selected;
 
@@ -78,6 +83,8 @@ public class WorldManager : MonoBehaviour
         // mapWidth = 17;
         // mapHeight = 11;
 
+        debugTurnTimer = 10.0f;
+
         mapWidth = 41;
         mapHeight = 41;
 
@@ -109,7 +116,12 @@ public class WorldManager : MonoBehaviour
 
         terrainGrid = new GameObject[mapWidth, mapHeight];
         featureGrid = new GameObject[mapWidth, mapHeight];
-        mapGenerator.GenerateMap(mapWidth, mapHeight);
+        bool mapgenSuccess = mapGenerator.GenerateMap(mapWidth, mapHeight);
+        if(!mapgenSuccess)
+        {
+            Debug.Log("Failed to generate map.");
+            Application.Quit();
+        }
 
         currPlayer = 0;
         uiController.SetCurrPlayer(players[currPlayer]);
@@ -183,6 +195,16 @@ public class WorldManager : MonoBehaviour
         // if (players[currPlayer].controller.IsHuman()) {
         //     Select(players[currPlayer].controller.getPlayerSelection(selected));
         // }
+
+        if (debugAutoPlay)
+        {
+            debugTurnTimer -= Time.deltaTime;
+            if (debugTurnTimer <= 0)
+            {
+                endTurnPressed = true;
+                debugTurnTimer = 0.4f;
+            }
+        }
 
         if (endTurnPressed)
         {

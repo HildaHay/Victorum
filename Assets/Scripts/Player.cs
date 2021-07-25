@@ -322,8 +322,10 @@ public class Player : MonoBehaviour
 
     void SetTileVisibility(int x, int y, bool visible)
     {
-        // for testing! remove this line
-        // visible = true;
+        if (worldManager.debugNoFoW)
+        {
+            visible = true;
+        }
 
         worldManager.terrainGrid[x, y].GetComponent<TileScript>().tileRenderer.enabled = visible;
 

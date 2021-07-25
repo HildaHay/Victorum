@@ -20,7 +20,7 @@ public class MapGenScript : MonoBehaviour
 
     public GameObject neutralUnitPrefab;
 
-    public int landArea = 40;  // 650
+    public int landArea = 45;  // 650
     public int minDistanceBetweenTowns = 4; // 20
 
     public bool GenerateMap(int w, int h)
@@ -125,10 +125,17 @@ public class MapGenScript : MonoBehaviour
                     
                 }
 
-                if (map[townLocations[i][0]][townLocations[i][1] + 1] == 0)
+                for (int x = -1; x <= 1; x++)
                 {
-                    // make sure the tile below the town (where units spawn) is land
-                    placementValid = false;
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        if (map[townLocations[i][0] + x][townLocations[i][1] + y] == 0)
+                        {
+                            // make sure all tiles around the town are walkable land
+                            // this ensures that units can move around the town and aren't trapped
+                            placementValid = false;
+                        }
+                    }
                 }
             }
 

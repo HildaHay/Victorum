@@ -5,11 +5,13 @@ using UnityEngine.UIElements;
 
 public class TownScript : MonoBehaviour
 {
-    public int maxHP;
+    [SerializeField] int maxHP;
     int HP;
 
     public int mapX;
     public int mapY;
+
+    [SerializeField] int baseResourceCollectionRange = 2;
 
     // public int goldPerTurn;
     // int gold;
@@ -85,6 +87,11 @@ public class TownScript : MonoBehaviour
     public int GetPlayer()
     {
         return playerNumber;
+    }
+
+    public int GetCollectionRage()
+    {
+        return baseResourceCollectionRange;
     }
 
     public void OpenMenu()
