@@ -37,10 +37,11 @@ public class WorldManager : MonoBehaviour
 
     public int[] tileWeights;
 
-    public GameObject playerPrefab;
-    public GameObject strongholdPrefab;
-    public GameObject humanPlayerControllerPrefab;
-    public GameObject aiPlayerControllerPrefab;
+    [SerializeField] GameObject playerPrefab;
+    [SerializeField] GameObject strongholdPrefab;
+    [SerializeField] public GameObject humanPlayerControllerPrefab;
+    [SerializeField] public GameObject aiPlayerControllerPrefab;
+    [SerializeField] public GameObject techTreePrefab;
 
     public List<GameObject> unitList;
     public List<GameObject> townList;   // could possibly be combined with unitList

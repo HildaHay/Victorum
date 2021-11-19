@@ -210,7 +210,8 @@ public class TownScript : GameEntity
     // gets all MapFeatures within the town's orders
     public List<GameObject> GetOwnedFeatures()
     {
-        Debug.Log("GetOwnedFeatures called");   // don't want to call this too often since it probably takes a while
+        //Debug.Log("GetOwnedFeatures called");   // don't want to call this too often since it probably takes a while
+        // todo: make this happen less often
         List<GameObject> features = new List<GameObject>();
 
         // Note: this will crash if the town is too close to the edge of the map!

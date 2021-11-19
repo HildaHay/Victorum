@@ -26,6 +26,8 @@ public class Player : MonoBehaviour
 
     public int playerNumber;
 
+    bool human;
+
     Camera mainCamera;
 
     Vector3 playerCameraPosition;
@@ -60,11 +62,6 @@ public class Player : MonoBehaviour
         controller.player = this;
         controller.uiManager = uiController;
         controller.worldManager = worldManager;
-
-        TechTreeObject = Instantiate(TechTreePrefab);
-        TechTree = TechTreeObject.GetComponent<TechTreeScript>();
-        TechTree.player = this;
-        TechTree.Initialize();
     }
 
     // Update is called once per frame
@@ -93,12 +90,19 @@ public class Player : MonoBehaviour
 
         baseSciencePerTurn = 10;
 
-        if(isHuman) {
+        this.human = isHuman;
+
+        if(this.human) {
             controllerObject = Instantiate(worldManager.humanPlayerControllerPrefab, this.gameObject.transform);
         } else
         {
             controllerObject = Instantiate(worldManager.aiPlayerControllerPrefab, this.gameObject.transform);
         }
+
+        TechTreeObject = Instantiate(TechTreePrefab);
+        TechTree = TechTreeObject.GetComponent<TechTreeScript>();
+        TechTree.player = this;
+        TechTree.Initialize();
     }
 
     public void CheckVision(int x, int y, int visionRange)
@@ -462,6 +466,6 @@ public class Player : MonoBehaviour
 
     public bool IsHuman()
     {
-        return false;
+        return human;
     }
 }

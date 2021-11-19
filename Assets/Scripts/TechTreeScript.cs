@@ -46,7 +46,10 @@ public class TechTreeScript : MonoBehaviour
     {
         int i = 0;
 
-        if(player.IsHuman())
+        Debug.Log(player.playerNumber);
+        Debug.Log(player.IsHuman());
+
+        if (player.IsHuman())
         {
             techTreeUI = GameObject.Find("TechTreeMenu");
             TechMenuItems = new GameObject[TechList.Length];
