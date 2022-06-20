@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] GameObject TechTreePrefab;
     GameObject TechTreeObject;
-    TechTreeScript TechTree;
+    public TechTreeScript TechTree;
 
     // Start is called before the first frame update
     void Start()
@@ -217,6 +217,11 @@ public class Player : MonoBehaviour
         playerCameraPosition = mainCamera.transform.position;
 
         uiController.SetSelectedObject(null);
+    }
+
+    public void ToggleTechTreeVisible()
+    {
+        TechTree.ToggleVisible();
     }
 
     public int GoldPerTurn()

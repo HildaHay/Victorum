@@ -608,6 +608,11 @@ public class WorldManager : MonoBehaviour
         players[currPlayer].NextUnit();
     }
 
+    public void ToggleTechTreeVisible()
+    {
+        players[currPlayer].ToggleTechTreeVisible();
+    }
+
     public void MoveUnit()
     {
         if (selected != null)

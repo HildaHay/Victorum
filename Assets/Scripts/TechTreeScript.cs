@@ -46,9 +46,6 @@ public class TechTreeScript : MonoBehaviour
     {
         int i = 0;
 
-        Debug.Log(player.playerNumber);
-        Debug.Log(player.IsHuman());
-
         if (player.IsHuman())
         {
             techTreeUI = GameObject.Find("TechTreeMenu");
@@ -83,6 +80,31 @@ public class TechTreeScript : MonoBehaviour
                 float horizPosition = 1000 * o.GetComponent<TechMenuItem>().tech.Tier / maxtier - 500;
                 o.transform.position += new Vector3(horizPosition, 0, 0);
             }
+            HideTechTree();
+        }
+
+    }
+
+    public void ShowTechTree()
+    {
+        foreach (GameObject t in TechMenuItems) {
+            t.SetActive(true);
+        }
+    }
+
+    public void HideTechTree()
+    {
+        foreach (GameObject t in TechMenuItems)
+        {
+            t.SetActive(false);
+        }
+    }
+
+    public void ToggleVisible()
+    {
+        foreach (GameObject t in TechMenuItems)
+        {
+            t.SetActive(!t.activeSelf);
         }
     }
 
